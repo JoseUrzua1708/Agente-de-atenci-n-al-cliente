@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f5f0">
+    <meta name="description" content="Panel de administración de Maison Hotel">
+    <title>Administración | Maison Hotel</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <main class="main-content">
+
+        <header class="topbar">
+            <div class="page-heading">
+                <span class="eyebrow">MAISON HOTEL / ADMINISTRACIÓN</span>
+                <h1 id="pageTitle">Panel de control</h1>
+                <p id="pageDescription">
+                    Supervisa la operación de tu hotel desde un solo lugar.
+                </p>
+            </div>
+
+            <div class="topbar-actions">
+                <button class="icon-button" id="notificationButton"
+                        aria-label="Notificaciones" title="Notificaciones">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                              stroke="currentColor" stroke-width="1.6"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M10 21h4" stroke="currentColor"
+                              stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                    <span class="notification-dot"></span>
+                </button>
+
+                <button class="top-profile" id="profileButton"
+                        aria-label="Abrir perfil">
+                    <span class="avatar">AD</span>
+                    <span class="top-profile-info">
+                        <strong>Administrador</strong>
+                        <small>Administración</small>
+                    </span>
+                    <svg class="chevron" viewBox="0 0 24 24" fill="none"
+                         aria-hidden="true">
+                        <path d="m7 10 5 5 5-5" stroke="currentColor"
+                              stroke-width="1.6" stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <div class="profile-popover" id="profilePopover" hidden>
+                    <div class="popover-heading">
+                        <span class="avatar">AD</span>
+                        <div>
+                            <strong>Administrador</strong>
+                            <small>Administrador del hotel</small>
+                        </div>
+                    </div>
+                    <button class="popover-item" data-page="perfil">
+                        Mi perfil
+                    </button>
+                    <button class="popover-item" data-page="configuracion">
+                        Configuración de cuenta
+                    </button>
+                    <button class="popover-item logout-item" id="logoutButton">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- VISTA INICIO -->
+        <section class="view-section active" id="view-inicio">
+
+            <div class="welcome-banner">
+                <div>
+                    <span class="banner-label">RESUMEN GENERAL</span>
+                    <h2>Bienvenido, Administrador</h2>
+                    <p>
+                        Consulta el estado de tu hotel y mantén cada operación
+                        bajo control.
+                    </p>
+                </div>
+
+                <div class="banner-decoration" aria-hidden="true">
+                    <svg viewBox="0 0 120 120" fill="none">
+                        <path d="M25 100V43L60 20L95 43V100"
+                              stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M43 100V66H77V100"
+                              stroke="currentColor" stroke-width="1.2"/>
+                        <path d="M48 48H72M60 36V60"
+                              stroke="currentColor" stroke-width="1.2"/>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- INDICADORES -->
+            <div class="section-heading">
+                <div>
+                    <h2>Indicadores del hotel</h2>
+                    <p>Resumen de la actividad operativa.</p>
+                </div>
+                <span class="period-label" id="currentDate"></span>
+            </div>
+
+            <div class="stats-grid">
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Habitaciones</span>
+                        <span class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 aria-hidden="true">
+                                <rect x="3" y="10" width="18" height="10"
+                                      rx="1.5" stroke="currentColor"
+                                      stroke-width="1.6"/>
+                                <path d="M3 15h18M6 10V6h5a3 3 0 0 1 3 3v1"
+                                      stroke="currentColor" stroke-width="1.6"
+                                      stroke-linejoin="round"/>
+                                <path d="M5 20v2M19 20v2" stroke="currentColor"
+                                      stroke-width="1.6" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <strong class="stat-number">--</strong>
+                    <span class="stat-description">Total de habitaciones</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Reservaciones</span>
+                        <span class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="16"
+                                      rx="2" stroke="currentColor"
+                                      stroke-width="1.6"/>
+                                <path d="M7 3v4M17 3v4M3 10h18M8 14h3"
+                                      stroke="currentColor" stroke-width="1.6"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <strong class="stat-number">--</strong>
+                    <span class="stat-description">Reservaciones registradas</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Huéspedes</span>
+                        <span class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 aria-hidden="true">
+                                <circle cx="9" cy="8" r="4"
+                                        stroke="currentColor" stroke-width="1.6"/>
+                                <path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a4 4 0 0 1 0 8M18 15a5 5 0 0 1 4 5"
+                                      stroke="currentColor" stroke-width="1.6"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <strong class="stat-number">--</strong>
+                    <span class="stat-description">Huéspedes registrados</span>
+                </article>
+
+                <article class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Ingresos</span>
+                        <span class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none"
+                                 aria-hidden="true">
+                                <path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                                      stroke="currentColor" stroke-width="1.6"
+                                      stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </div>
+                    <strong class="stat-number">--</strong>
+                    <span class="stat-description">Ingresos del periodo</span>
+                </article>
+
+            </div>
+
+            <!-- ACTIVIDAD -->
+            <div class="section-heading activity-heading">
+                <div>
+                    <h2>Actividad reciente</h2>
+                    <p>Consulta los movimientos de la operación hotelera.</p>
+                </div>
+                <button class="text-button" data-page="reservaciones">
+                    Ver reservaciones
+                </button>
+            </div>
+
+            <div class="activity-card">
+                <div class="empty-state">
+                    <span class="empty-icon">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="17"
+                                  rx="2" stroke="currentColor"
+                                  stroke-width="1.5"/>
+                            <path d="M7 9h10M7 13h10M7 17h6"
+                                  stroke="currentColor" stroke-width="1.5"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <h3>Actividad pendiente de conexión</h3>
+                    <p>
+                        Los movimientos aparecerán aquí cuando se conecte
+                        el panel con la base de datos del hotel.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- VISTAS DE NAVEGACIÓN -->
+        <section class="view-section" id="view-reservaciones">
+            <div class="content-card">
+                <span class="card-kicker">OPERACIÓN HOTELERA</span>
+                <h2>Reservaciones</h2>
+                <p>Consulta y administra las reservaciones de tus huéspedes.</p>
+                <div class="placeholder">
+                    El módulo de reservaciones se integrará en esta sección.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-habitaciones">
+            <div class="content-card">
+                <span class="card-kicker">ALOJAMIENTO</span>
+                <h2>Habitaciones</h2>
+                <p>Administra las habitaciones, su disponibilidad y estado.</p>
+                <div class="placeholder">
+                    El módulo de habitaciones se integrará en esta sección.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-huespedes">
+            <div class="content-card">
+                <span class="card-kicker">ATENCIÓN AL HUÉSPED</span>
+                <h2>Huéspedes</h2>
+                <p>Consulta y administra la información de los huéspedes.</p>
+                <div class="placeholder">
+                    El directorio de huéspedes se integrará en esta sección.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-personal">
+            <div class="content-card">
+                <span class="card-kicker">RECURSOS HUMANOS</span>
+                <h2>Personal</h2>
+                <p>Gestiona al personal y consulta sus datos de trabajo.</p>
+                <div class="placeholder">
+                    La administración del personal se integrará en esta sección.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-reportes">
+            <div class="content-card">
+                <span class="card-kicker">ANÁLISIS Y SEGUIMIENTO</span>
+                <h2>Reportes</h2>
+                <p>Consulta indicadores e informes de la operación hotelera.</p>
+                <div class="placeholder">
+                    Los reportes se integrarán cuando existan datos disponibles.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-configuracion">
+            <div class="content-card">
+                <span class="card-kicker">PREFERENCIAS DEL SISTEMA</span>
+                <h2>Configuración</h2>
+                <p>Administra las preferencias y los parámetros del hotel.</p>
+                <div class="placeholder">
+                    Las opciones de configuración se integrarán en esta sección.
+                </div>
+            </div>
+        </section>
+
+        <section class="view-section" id="view-perfil">
+            <div class="content-card">
+                <span class="card-kicker">CUENTA PERSONAL</span>
+                <h2>Mi perfil</h2>
+                <div class="profile-details">
+                    <div class="large-avatar">AD</div>
+                    <div>
+                        <h3>Administrador</h3>
+                        <p>Administrador del hotel</p>
+                        <p class="muted">Conecta esta sección con los datos reales de la cuenta.</p>
+                    </div>
+                </div>
+                <div class="placeholder">
+                    Aquí podrás consultar y editar los datos de tu perfil.
+                </div>
+            </div>
+        </section>
+
+        <footer class="main-footer">
+            <span>© <span id="footerYear"></span> Maison Hotel</span>
+            <span>Administración hotelera</span>
+        </footer>
+
+    </main>
+
+    <!-- MENÚ LATERAL DERECHO -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-brand">
+            <div class="brand-symbol" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                    <path d="M10 38V17L24 8L38 17V38"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M18 38V25H30V38"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M20 17H28M24 13V21"
+                          stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+            </div>
+            <div>
+                <span class="brand-name">MAISON</span>
+                <span class="brand-caption">HOTEL MANAGEMENT</span>
+            </div>
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <span class="menu-label">MENÚ PRINCIPAL</span>
+
+        <nav class="side-nav" aria-label="Navegación principal">
+
+            <button class="nav-item active" data-page="inicio">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" rx="1"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"
+                          stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+                <span>Inicio</span>
+            </button>
+
+            <button class="nav-item" data-page="reservaciones">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="16" rx="2"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M7 3v4M17 3v4M3 10h18M8 14h3"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+                <span>Reservaciones</span>
+            </button>
+
+            <button class="nav-item" data-page="habitaciones">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <rect x="3" y="10" width="18" height="10" rx="1.5"
+                          stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M3 15h18M6 10V6h5a3 3 0 0 1 3 3v1"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linejoin="round"/>
+                    <path d="M5 20v2M19 20v2" stroke="currentColor"
+                          stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <span>Habitaciones</span>
+            </button>
+
+            <button class="nav-item" data-page="huespedes">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="9" cy="8" r="4" stroke="currentColor"
+                            stroke-width="1.6"/>
+                    <path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a4 4 0 0 1 0 8M18 15a5 5 0 0 1 4 5"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+                <span>Huéspedes</span>
+            </button>
+
+            <button class="nav-item" data-page="personal">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="8" r="4" stroke="currentColor"
+                            stroke-width="1.6"/>
+                    <path d="M4 21a8 8 0 0 1 16 0"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+                <span>Personal</span>
+            </button>
+
+            <button class="nav-item" data-page="reportes">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+                <span>Reportes</span>
+            </button>
+
+            <button class="nav-item" data-page="configuracion">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <circle cx="12" cy="12" r="3"
+                            stroke="currentColor" stroke-width="1.6"/>
+                    <path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.7a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.7-1.4-2.4 1.4-1.1a7 7 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.7a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.7 1.4 2.4-1.4 1.1a7 7 0 0 1 0 2Z"
+                          stroke="currentColor" stroke-width="1.3"
+                          stroke-linejoin="round"/>
+                </svg>
+                <span>Configuración</span>
+            </button>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="sidebar-divider"></div>
+
+            <button class="nav-item profile-nav" data-page="perfil">
+                <span class="avatar">AD</span>
+                <span class="profile-nav-text">
+                    <strong>Mi perfil</strong>
+                    <small>Administrar cuenta</small>
+                </span>
+                <svg class="profile-arrow" viewBox="0 0 24 24" fill="none"
+                     aria-hidden="true">
+                    <path d="m9 18 6-6-6-6" stroke="currentColor"
+                          stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round"/>
+                </svg>
+            </button>
+
+            <button class="logout-button" id="sidebarLogout">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M10 17l5-5-5-5M15 12H3"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+                <span>Cerrar sesión</span>
+            </button>
+
+            <div class="sidebar-version">MAISON HOTEL · ADMINISTRACIÓN</div>
+        </div>
+    </aside>
+
+</div>
+
+<!-- FONDO PARA EL MENÚ MÓVIL -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+<!-- BOTÓN DEL MENÚ MÓVIL -->
+<button class="mobile-menu-button" id="mobileMenuButton"
+        aria-label="Abrir menú" aria-expanded="false">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16"
+              stroke="currentColor" stroke-width="1.7"
+              stroke-linecap="round"/>
+    </svg>
+</button>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

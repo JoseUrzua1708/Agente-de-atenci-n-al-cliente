@@ -1,0 +1,14 @@
+# Para instalar todas las extensiones sigue los siguientes pasos:
+# 
+# Paso 1: Entrar en la carpeta backend
+# Paso 2: Usar el siguiente comando en la terminal: pip install -r requirements.txt
+mysql-connector-python>=8.3.0
+Flask>=3.1.0
+Flask-Cors>=4.0.0
+python-dotenv>=1.0.1
+bcrypt>=4.2.0
+PyJWT>=2.8.0
+pydantic>=2.14.0
+pytest>=8.1.1
+requests>=2.31.0
+

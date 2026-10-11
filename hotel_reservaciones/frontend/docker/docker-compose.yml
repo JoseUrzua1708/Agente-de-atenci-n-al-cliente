@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  # Servicio de Base de Datos MySQL 8.0+
+  db:
+    image: mysql:8.0
+    container_name: hotel_mysql_db
+    restart: always
+    environment:
+      MYSQL_DATABASE: hotel_reservaciones
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+    networks:
+      - hotel_network
+
+  # Servicio del Backend (Python / Flask)
+  backend:
+    build:
+      context: ../backend
+      dockerfile: ../docker/Dockerfile
+    container_name: hotel_backend_app
+    restart: always
+    ports:
+      - "4005:4005"  # <--- Actualizado al puerto 4005
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=hotel_reservaciones
+      - DB_USER=root
+      - DB_PASS=${DB_PASS}
+      - SECRET_KEY=${SECRET_KEY}
+      - PORT=4005
+    env_file:
+      - ../backend/.env
+    depends_on:
+      - db
+    networks:
+      - hotel_network
+
+volumes:
+  mysql_data:
+
+networks:
+  hotel_network:
+    driver: bridge
