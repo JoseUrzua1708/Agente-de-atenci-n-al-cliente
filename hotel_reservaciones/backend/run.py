@@ -1,9 +1,11 @@
 import os
 import logging
+from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
 from app import create_app
 from app.config.database import db
+load_dotenv()# Carga las variables de entorno desde un archivo .env   
 
 # Configuración estricta de logging para seguridad y auditoría en producción/desarrollo
 log_path = os.path.join(os.path.dirname(__file__), 'security_audit.log')

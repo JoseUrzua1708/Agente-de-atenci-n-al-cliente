@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f5f0">
+    <meta name="description" content="Recuperar contraseña de Maison Hotel">
+    <title>Recuperar contraseña | Maison Hotel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recuperar_contraseña.css') }}">
+    <script src="{{ url_for('static', filename='js/recuperar_contraseña.js') }}" defer></script>
+</head>
+<body>
+<main class="login-page">
+    <section class="visual-panel" aria-label="Maison Hotel">
+        <div class="visual-overlay"></div>
+        <header class="brand">
+            <div class="brand-symbol" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M10 38V17L24 8L38 17V38M18 38V25H30V38M20 17H28M24 13V21" stroke="currentColor" stroke-width="1.6"/></svg>
+            </div>
+            <div><span class="brand-name">MAISON</span><span class="brand-caption">HOTEL MANAGEMENT</span></div>
+        </header>
+        <div class="visual-content">
+            <span class="eyebrow">TU ACCESO, SIEMPRE SEGURO</span>
+            <h1 id="visualTitle">Recupera tu acceso<br>en unos pasos.</h1>
+            <p id="visualDescription">Verifica tu correo y te enviaremos las instrucciones para crear una nueva contraseña y volver a tu cuenta.</p>
+            <div class="visual-line"></div>
+            <span class="visual-footer">HOSPITALIDAD · CALIDAD · CONFIANZA</span>
+        </div>
+        <footer class="visual-bottom">Maison Hotel · Plataforma de gestión hotelera</footer>
+    </section>
+
+    <section class="form-panel">
+        <div class="login-card" id="recoverCard">
+            <div class="mobile-brand">
+                <div class="brand-symbol" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" fill="none"><path d="M10 38V17L24 8L38 17V38M18 38V25H30V38M20 17H28M24 13V21" stroke="currentColor" stroke-width="1.6"/></svg>
+                </div>
+                <div><span class="brand-name">MAISON</span><span class="brand-caption">HOTEL MANAGEMENT</span></div>
+            </div>
+
+            <button type="button" class="back-link" id="backToLogin" data-login-page="/">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M12 5L5 12L12 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Volver al inicio de sesión
+            </button>
+
+            <div class="welcome">
+                <span class="welcome-label" id="welcomeLabel">¿OLVIDASTE TU CONTRASEÑA?</span>
+                <h2 id="formTitle">Recuperar contraseña</h2>
+                <p id="formSubtitle">Escribe el correo de tu cuenta y te enviaremos las instrucciones. Los campos marcados con <span class="required">*</span> son obligatorios.</p>
+            </div>
+
+            <div class="message" id="formMessage" role="status" aria-live="polite" hidden></div>
+
+            <ol class="stepper" aria-label="Progreso">
+                <li class="step active" id="stepIndicator1"><span class="step-number">1</span><span class="step-label">Verificación</span></li>
+                <li class="step-line" aria-hidden="true"></li>
+                <li class="step" id="stepIndicator2"><span class="step-number">2</span><span class="step-label">Revisa tu correo</span></li>
+            </ol>
+
+            <!-- Paso 1 -->
+            <form
+                id="recoverForm"
+                class="step-card"
+                data-recover-url="/recuperar-contrasena"
+                novalidate
+            >
+                <div class="step-header">
+                    <div class="step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 7L12 13L21 7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div>
+                        <h3>1. Verifica tu cuenta</h3>
+                        <p>Usaremos este correo para enviarte las instrucciones.</p>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="email">Correo electrónico <span class="required">*</span></label>
+                    <div class="input-wrapper">
+                        <input type="email" id="email" name="email" placeholder="nombre@correo.com" autocomplete="email" maxlength="150" required>
+                    </div>
+                    <small class="field-error" id="emailError"></small>
+                    <small class="field-hint">Escribe el correo con el que te registraste.</small>
+                </div>
+
+                <div class="step-footer">
+                    <span class="step-count">Paso 1 de 2</span>
+                    <button type="submit" class="login-button" id="submitButton">
+                        <span class="button-text">Enviar instrucciones</span>
+                        <svg class="button-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        <span class="spinner" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Paso 2 -->
+            <div class="step-card" id="sentStep" hidden>
+                <div class="step-header">
+                    <div class="step-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="m8 12 2.5 2.5L16 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                    <div>
+                        <h3>2. Revisa tu correo</h3>
+                        <p>Si <strong id="sentEmail"></strong> está registrado, recibirás un enlace para crear una nueva contraseña. Revisa también tu carpeta de spam.</p>
+                    </div>
+                </div>
+
+                <div class="step-footer">
+                    <span class="step-count">Paso 2 de 2</span>
+                    <button type="button" class="login-button" id="resendButton">
+                        <span class="button-text">Reenviar correo</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="access-note"><span class="note-line"></span><span id="accessNoteText">Acceso exclusivo para personal autorizado</span><span class="note-line"></span></div>
+            <footer class="form-footer"><span>© <span id="year"></span> Maison Hotel</span><span>Todos los derechos reservados</span></footer>
+        </div>
+    </section>
+</main>
+</body>
+</html>

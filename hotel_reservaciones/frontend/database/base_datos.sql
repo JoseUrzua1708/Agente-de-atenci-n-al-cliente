@@ -13,15 +13,16 @@ USE hotel_reservaciones;
 
 -- ============================================================
 -- 1. ROLES
+-- 1 = ADMINISTRADOR, 2 = RECEPCIONISTA, 3 = CLIENTE
 -- ============================================================
 CREATE TABLE roles (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL UNIQUE,
     descripcion VARCHAR(255),
-    estado TINYINT(1) NOT NULL DEFAULT 1,
+    estado TINYINT(1) NOT NULL DEFAULT 1, -- 1: ACTIVO, 2: INACTIVO
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
-
+-
 -- ============================================================
 -- 2. USUARIOS
 -- ============================================================
@@ -91,7 +92,7 @@ CREATE TABLE tipos_habitacion (
     capacidad_ninos TINYINT UNSIGNED NOT NULL DEFAULT 0,
     precio_base DECIMAL(10,2) NOT NULL,
     amenidades TEXT,
-    estado TINYINT(1) NOT NULL DEFAULT 1,
+    estado TINYINT(1) NOT NULL DEFAULT 1, -- 1: ACTIVO, 2: INACTIVO
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT chk_tipo_precio CHECK (precio_base >= 0),
@@ -248,7 +249,7 @@ CREATE TABLE preguntas_frecuentes (
     idioma VARCHAR(10) NOT NULL DEFAULT 'es',
     palabras_clave VARCHAR(500),
     prioridad TINYINT UNSIGNED NOT NULL DEFAULT 1,
-    estado TINYINT(1) NOT NULL DEFAULT 1,
+    estado TINYINT(1) NOT NULL DEFAULT 1, -- 1: ACTIVO, 2: INACTIVO
     fecha_creacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
         ON UPDATE CURRENT_TIMESTAMP,
@@ -260,7 +261,6 @@ CREATE TABLE preguntas_frecuentes (
 
 -- ============================================================
 -- 9. SOLICITUDES DE ATENCIÓN
--- Sirve para clasificación y enrutamiento automático.
 -- ============================================================
 CREATE TABLE solicitudes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -314,7 +314,6 @@ CREATE TABLE solicitudes (
 
 -- ============================================================
 -- 10. NOTIFICACIONES
--- Seguimiento de confirmaciones, recordatorios y post-venta.
 -- ============================================================
 CREATE TABLE notificaciones (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -394,7 +393,6 @@ CREATE TABLE encuestas (
 
 -- ============================================================
 -- 12. HISTORIAL DE ESTADOS DE RESERVACIÓN
--- Permite conocer quién y cuándo cambió una reservación.
 -- ============================================================
 CREATE TABLE historial_reservaciones (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -419,24 +417,23 @@ CREATE TABLE historial_reservaciones (
 ) ENGINE=InnoDB;
 
 -- ============================================================
--- DATOS INICIALES
+-- DATOS INICIALES (Con roles numéricos: 1=ADMIN, 2=RECEPCIONISTA, 3=CLIENTE)
 -- ============================================================
 
-INSERT INTO roles (nombre, descripcion) VALUES
-('ADMINISTRADOR', 'Administración general del sistema'),
-('RECEPCIONISTA', 'Gestión de clientes y reservaciones'),
-('GERENTE', 'Consulta de información y reportes'),
-('CLIENTE', 'Cliente que realiza reservaciones');
+INSERT INTO roles (id, nombre, descripcion, estado) VALUES
+(1, 'ADMINISTRADOR', 'Administración general del sistema', 1),
+(2, 'RECEPCIONISTA', 'Gestión de clientes y reservaciones', 1),
+(3, 'CLIENTE', 'Cliente que realiza reservaciones', 1);
 
 INSERT INTO tipos_habitacion
-(nombre, descripcion, capacidad_adultos, capacidad_ninos, precio_base, amenidades)
+(nombre, descripcion, capacidad_adultos, capacidad_ninos, precio_base, amenidades, estado)
 VALUES
 ('Individual', 'Habitación para una persona', 1, 0, 850.00,
- 'Wi-Fi, TV, Aire acondicionado'),
+ 'Wi-Fi, TV, Aire acondicionado', 1),
 ('Doble', 'Habitación para dos personas', 2, 1, 1200.00,
- 'Wi-Fi, TV, Aire acondicionado'),
+ 'Wi-Fi, TV, Aire acondicionado', 1),
 ('Suite', 'Habitación amplia con servicios adicionales', 2, 2, 2200.00,
- 'Wi-Fi, TV, Aire acondicionado, Minibar, Sala');
+ 'Wi-Fi, TV, Aire acondicionado, Minibar, Sala', 1);
 
 INSERT INTO habitaciones
 (tipo_id, numero, piso, descripcion, precio, estado)
@@ -448,31 +445,31 @@ VALUES
 (3, '301', 3, 'Suite principal', 2200.00, 'DISPONIBLE');
 
 INSERT INTO preguntas_frecuentes
-(pregunta, respuesta, categoria, idioma, palabras_clave, prioridad)
+(pregunta, respuesta, categoria, idioma, palabras_clave, prioridad, estado)
 VALUES
 ('¿A qué hora es el check-in?',
  'El horario de check-in es a partir de las 15:00 horas.',
- 'CHECK-IN', 'es', 'check-in,entrada,llegada', 1),
+ 'CHECK-IN', 'es', 'check-in,entrada,llegada', 1, 1),
 
 ('¿A qué hora es el check-out?',
  'El horario de check-out es hasta las 12:00 horas.',
- 'CHECK-OUT', 'es', 'check-out,salida,horario', 1),
+ 'CHECK-OUT', 'es', 'check-out,salida,horario', 1, 1),
 
 ('¿Cómo puedo realizar una reservación?',
  'Seleccione las fechas de entrada y salida, consulte la disponibilidad y complete los datos solicitados.',
- 'RESERVACIONES', 'es', 'reservar,reservación,habitación', 1),
+ 'RESERVACIONES', 'es', 'reservar,reservación,habitación', 1, 1),
 
 ('¿El hotel cuenta con Wi-Fi?',
  'Sí. El hotel cuenta con servicio de Wi-Fi para los huéspedes.',
- 'SERVICIOS', 'es', 'wifi,internet,conexión', 2),
+ 'SERVICIOS', 'es', 'wifi,internet,conexión', 2, 1),
 
 ('What time is check-in?',
  'Check-in starts at 3:00 PM.',
- 'CHECK-IN', 'en', 'check-in,arrival', 1),
+ 'CHECK-IN', 'en', 'check-in,arrival', 1, 1),
 
 ('What time is check-out?',
  'Check-out is until 12:00 PM.',
- 'CHECK-OUT', 'en', 'check-out,departure', 1);
+ 'CHECK-OUT', 'en', 'check-out,departure', 1, 1);
 
 -- ============================================================
 -- VISTAS ÚTILES

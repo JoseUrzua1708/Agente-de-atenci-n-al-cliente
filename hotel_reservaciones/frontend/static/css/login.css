@@ -164,3 +164,122 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
 }
+/* Notificaciones: icono y texto alineados */
+.message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    min-height: 42px;
+    margin-bottom: 16px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: left;
+}
+
+.message[hidden] {
+    display: none;
+}
+
+/* Icono pequeño, centrado verticalmente */
+.message-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 15px;
+    width: 15px;
+    height: 15px;
+    margin: 0;
+}
+
+.message-icon svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+}
+
+/* El texto conserva su alineación y no se deforma */
+.message-text {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+/* Colores de las notificaciones */
+.message.error {
+    border-color: #edd4d1;
+    background: #fff6f5;
+    color: var(--error);
+}
+
+.message.success {
+    border-color: #d7e7d9;
+    background: #f3f9f3;
+    color: var(--success);
+}
+
+.message.info {
+    border-color: #e5ded1;
+    background: #f8f5ef;
+    color: var(--primary-dark);
+}
+/* Notificación flotante: no mueve el formulario */
+.login-card {
+    position: relative;
+}
+
+.message {
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: max-content;
+    max-width: 90%;
+    min-height: 42px;
+    margin: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 12px;
+    line-height: 1.5;
+    text-align: left;
+    box-shadow: 0 4px 14px rgba(48, 45, 40, 0.08);
+}
+
+.message[hidden] {
+    display: none;
+}
+
+.message-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 15px;
+    width: 15px;
+    height: 15px;
+}
+
+.message-icon svg {
+    display: block;
+    width: 15px;
+    height: 15px;
+}
+
+.message-text {
+    flex: 0 1 auto;
+    min-width: 0;
+    margin: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+}

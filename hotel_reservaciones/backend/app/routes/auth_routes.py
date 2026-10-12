@@ -7,7 +7,7 @@ class AuthRoutes:
         self._register_routes()
 
     def _register_routes(self):
-        """Registra los endpoints consumiendo los métodos del controlador."""
+        """Registra exclusivamente los endpoints correspondientes al flujo de login y autenticación."""
         
         @self.blueprint.route('/', methods=['GET'])
         def index_redirect():
@@ -20,10 +20,6 @@ class AuthRoutes:
         @self.blueprint.route('/login', methods=['POST'])
         def login_action():
             return AuthController.process_login()
-
-        @self.blueprint.route('/admin/panel', methods=['GET'])
-        def admin_panel_view():
-            return AuthController.render_admin_panel()
 
     def get_blueprint(self):
         return self.blueprint
