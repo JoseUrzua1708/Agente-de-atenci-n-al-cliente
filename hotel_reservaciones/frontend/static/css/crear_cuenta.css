@@ -219,3 +219,69 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .date-wrap input::-webkit-datetime-edit-month-field,.date-wrap input::-webkit-datetime-edit-day-field,.date-wrap input::-webkit-datetime-edit-year-field{border-radius:3px;padding:2px;}
 .date-wrap input::-webkit-datetime-edit-month-field:focus,.date-wrap input::-webkit-datetime-edit-day-field:focus,.date-wrap input::-webkit-datetime-edit-year-field:focus{background:#eee6d9;color:#55452f;outline:none;}
 @media(max-width:760px){.smart-select-menu{max-height:calc(100dvh - 20px);}}
+
+/* Fecha de nacimiento: un solo icono personalizado a la derecha */
+.date-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.date-wrap input {
+    display: block;
+    width: 100%;
+    min-height: 45px;
+    padding: 10px 45px 10px 11px;
+    border: 1px solid #dcd3c5;
+    border-radius: var(--radius);
+    background: #fff;
+    color: var(--text);
+    color-scheme: light;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Ocultar el icono nativo del navegador */
+.date-wrap input::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+/* Conservar únicamente el icono SVG de la derecha */
+.date-picker-button {
+    position: absolute;
+    top: 1px;
+    right: 2px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: calc(100% - 2px);
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--primary);
+    cursor: pointer;
+}
+
+.date-picker-button svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+    pointer-events: none;
+}
+
+.date-picker-button:hover {
+    background: #f5f0e7;
+    color: var(--primary-dark);
+}
+
+.date-picker-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: -3px;
+}
+
+.date-wrap input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(121, 100, 72, 0.11);
+}
