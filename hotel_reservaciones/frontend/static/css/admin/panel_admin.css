@@ -1137,3 +1137,53 @@ button:disabled {
         opacity: 1;
     }
 }
+
+/* =========================================
+   ENCABEZADO PERSISTENTE DEL PANEL
+   ========================================= */
+
+.main-content {
+    min-width: 0;
+}
+
+/* Mantiene el encabezado visible durante el desplazamiento */
+#adminTopbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    isolation: isolate;
+
+    /* Conserva la paleta existente del panel */
+    background: var(--background, #f7f5f0);
+}
+
+/* Evita que los botones se compriman al reducir la pantalla */
+#adminTopbar .topbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Evita que el nombre del administrador desaparezca por compresión */
+#adminTopbar .top-profile {
+    flex-shrink: 0;
+}
+
+/* Ajustes para pantallas pequeñas sin cambiar los colores */
+@media (max-width: 600px) {
+    #adminTopbar {
+        gap: 12px;
+        padding-top: 12px;
+        padding-bottom: 12px;
+    }
+
+    #adminTopbar .topbar-actions {
+        gap: 8px;
+    }
+
+    #adminTopbar .top-profile-info {
+        display: none;
+    }
+}
