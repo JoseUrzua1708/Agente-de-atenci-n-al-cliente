@@ -97,6 +97,13 @@ class AuthController:
                     "message": "Acceso de administrador autorizado",
                     "redirect": "/admin/panel"
                 }), 200
+            elif user_rol == 2:
+                logger.info(f"Acceso de recepción autorizado con éxito: {email}")
+                return jsonify({
+                    "success": True,
+                    "message": "Acceso de recepción autorizado",
+                    "redirect": "/recepcion/inicio"
+                }), 200
             else:
                 logger.info(f"Acceso de usuario estándar autorizado con éxito: {email}")
                 return jsonify({

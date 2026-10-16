@@ -1,0 +1,159 @@
+/* Info del hotel (usa la base de solicitudes.css) */
+
+/* HABITACIONES POR PISO */
+.piso {
+    margin-bottom: 18px;
+}
+
+.piso-titulo {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.cuartos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.cuarto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--estado, var(--border));
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.cuarto:not(:disabled):hover {
+    box-shadow: 0 6px 18px rgba(48, 45, 40, 0.06);
+    transform: translateY(-2px);
+}
+
+.cuarto:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+.cuarto strong {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.cuarto span,
+.cuarto small {
+    color: var(--muted);
+}
+
+.cuarto .etiqueta-cuarto {
+    color: var(--estado);
+    font-weight: 600;
+}
+
+.cuarto-disponible { --estado: #3d6b33; }
+.cuarto-reservada { --estado: #3a5f86; }
+.cuarto-ocupada { --estado: var(--primary); }
+.cuarto-limpieza { --estado: #8a6a1a; }
+.cuarto-mantenimiento { --estado: #9a3b31; }
+.cuarto-inactiva { --estado: var(--muted); }
+
+/* RESPUESTAS RÁPIDAS */
+.filtro-busqueda {
+    flex: 1 1 260px;
+}
+
+.filtros input[type="search"] {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit;
+    font-size: 12px;
+}
+
+.faqs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.faq summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    list-style: none;
+}
+
+.faq summary::-webkit-details-marker {
+    display: none;
+}
+
+.faq-categoria {
+    min-width: 90px;
+    color: var(--primary);
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.faq summary strong {
+    flex: 1;
+    font-weight: 500;
+}
+
+.faq-inactiva {
+    opacity: 0.6;
+}
+
+.faq-respuesta {
+    padding: 0 16px 10px;
+    font-size: 12px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+.faq-pie {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 0 16px 10px;
+}
+
+.campo-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+@media (max-width: 600px) {
+    .faq summary {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .faq-categoria {
+        min-width: 0;
+        width: 100%;
+    }
+}

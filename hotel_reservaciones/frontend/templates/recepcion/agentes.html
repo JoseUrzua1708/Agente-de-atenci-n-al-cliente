@@ -1,0 +1,147 @@
+{% extends "recepcion/base.html" %}
+
+{% block titulo %}Agentes IA{% endblock %}
+{% block encabezado %}Agentes IA{% endblock %}
+{% block descripcion %}Supervisa los chats de los bots y toma el control cuando haga falta.{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/solicitudes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/agentes.css') }}">
+{% endblock %}
+
+{% block contenido %}
+
+<div class="section-heading">
+    <div>
+        <h2>Chats en vivo</h2>
+        <p>Se actualiza cada 15 segundos. Primero los que piden una persona.</p>
+    </div>
+    <span class="period-label">{{ por_revisar }} respuestas de IA por revisar</span>
+</div>
+
+<div class="monitor">
+
+    <!-- LISTA DE CHATS -->
+    <nav class="content-card chats" aria-label="Conversaciones activas">
+        {% for c in conversaciones %}
+        <a class="chat-item {{ 'activo' if actual and actual.id == c.id }}" href="{{ url_for('recepcion.agentes_view', id=c.id) }}">
+            <div class="chat-item-top">
+                <strong>{{ c.nombre }}</strong>
+                <small>{{ c.ultimo_mensaje.strftime('%H:%M') }}</small>
+            </div>
+            <span class="chat-preview">{{ c.ultimo_texto or 'Sin mensajes' }}</span>
+            <div class="chat-badges">
+                <span class="etiqueta estado-cerrada">{{ canales[c.canal] }}</span>
+                {% if c.requiere_humano %}
+                <span class="etiqueta prioridad-urgente">Pide persona</span>
+                {% elif c.modo == 'HUMANO' %}
+                <span class="etiqueta prioridad-media">{{ 'Lo atiendes tú' if c.atendida_por == mi_id else 'Recepción' }}</span>
+                {% else %}
+                <span class="etiqueta estado-abierta">Bot</span>
+                {% endif %}
+            </div>
+        </a>
+        {% else %}
+        <div class="empty-state"><p>No hay chats activos.</p></div>
+        {% endfor %}
+    </nav>
+
+    <!-- CONVERSACIÓN -->
+    <section class="content-card conversacion">
+        {% if actual %}
+        {% set es_mio = actual.modo == 'HUMANO' and actual.atendida_por == mi_id %}
+        <header class="conversacion-cabecera">
+            <div>
+                <strong>{{ actual.nombre }}</strong>
+                <small>
+                    {{ canales[actual.canal] }} · {{ actual.contacto }}
+                    {% if actual.habitacion %} · Hab. {{ actual.habitacion }}{% endif %}
+                    {% if actual.codigo_reservacion %} · {{ actual.codigo_reservacion }}{% endif %}
+                </small>
+            </div>
+
+            <div class="conversacion-acciones">
+                {% if actual.modo == 'BOT' %}
+                <form method="post" action="{{ url_for('recepcion.agentes_accion', conversacion_id=actual.id, accion='tomar') }}">
+                    <button class="btn-primario" type="submit">Tomar control</button>
+                </form>
+                {% elif es_mio %}
+                <form method="post" action="{{ url_for('recepcion.agentes_accion', conversacion_id=actual.id, accion='devolver') }}">
+                    <button class="btn-secundario" type="submit">Devolver al bot</button>
+                </form>
+                {% else %}
+                <span class="texto-tenue">Lo atiende {{ actual.atiende }}</span>
+                {% endif %}
+                <form method="post" action="{{ url_for('recepcion.agentes_accion', conversacion_id=actual.id, accion='cerrar') }}"
+                      data-confirmar="¿Cerrar esta conversación?">
+                    <button class="text-button" type="submit">Cerrar chat</button>
+                </form>
+            </div>
+        </header>
+
+        <div class="mensajes" id="mensajes">
+            {% for m in mensajes %}
+            <div class="mensaje mensaje-{{ m.emisor | lower }} {{ 'mensaje-incorrecto' if m.marcado_incorrecto }}">
+                <span class="mensaje-autor">
+                    {{ emisores[m.emisor] }}{% if m.respondio %} · {{ m.respondio }}{% endif %}
+                    · {{ m.fecha.strftime('%H:%M') }}
+                    {% if m.emisor == 'RECEPCION' and not m.entregado %} · pendiente de envío{% endif %}
+                </span>
+                <p>{{ m.contenido }}</p>
+
+                {% if m.emisor == 'BOT' %}
+                {% if m.marcado_incorrecto %}
+                <small class="nota-revision">⚑ {{ m.nota_revision or 'Marcada como incorrecta' }}</small>
+                {% endif %}
+                <button class="text-button btn-revisar" type="button"
+                        data-accion="{{ url_for('recepcion.agentes_marcar', mensaje_id=m.id) }}"
+                        data-nota="{{ m.nota_revision or '' }}">
+                    {{ 'Editar revisión' if m.marcado_incorrecto else 'Marcar incorrecta' }}
+                </button>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="texto-tenue">Sin mensajes todavía.</p>
+            {% endfor %}
+        </div>
+
+        {% if es_mio %}
+        <form class="responder" method="post" action="{{ url_for('recepcion.agentes_responder', conversacion_id=actual.id) }}">
+            <textarea name="contenido" id="respuesta" rows="2" maxlength="2000" required placeholder="Escribe tu respuesta al huésped…"></textarea>
+            <button class="btn-primario" type="submit">Enviar</button>
+        </form>
+        {% else %}
+        <p class="responder-aviso texto-tenue">Toma el control para responder tú al huésped.</p>
+        {% endif %}
+
+        {% else %}
+        <div class="empty-state"><p>Elige un chat de la lista.</p></div>
+        {% endif %}
+    </section>
+</div>
+
+<!-- DIÁLOGO: REVISIÓN DE RESPUESTA DEL BOT -->
+<dialog class="dialogo" id="dlgRevision">
+    <form method="post" id="frmRevision">
+        <h2>Revisión de respuesta</h2>
+        <input type="hidden" name="conversacion_id" value="{{ actual.id if actual else '' }}">
+        <label class="campo-check">
+            <input type="checkbox" name="incorrecto" value="1" id="revIncorrecto">
+            <span>La respuesta de la IA es incorrecta</span>
+        </label>
+        <label class="campo">
+            <span>¿Qué estuvo mal? (para corregir la IA o las respuestas rápidas)</span>
+            <textarea name="nota" id="revNota" rows="3" maxlength="500"></textarea>
+        </label>
+        <div class="dialogo-acciones">
+            <button class="btn-secundario" type="button" data-cerrar>Cancelar</button>
+            <button class="btn-primario" type="submit">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recepcion/agentes.js') }}"></script>
+{% endblock %}

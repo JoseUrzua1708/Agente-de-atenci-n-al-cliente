@@ -1,0 +1,217 @@
+{% extends "recepcion/base.html" %}
+
+{% set consulta = '?' ~ request.query_string.decode() if request.query_string else '' %}
+
+{% block titulo %}Solicitudes{% endblock %}
+{% block encabezado %}Solicitudes{% endblock %}
+{% block descripcion %}Recibe, clasifica y da seguimiento a las peticiones de los huéspedes.{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/solicitudes.css') }}">
+{% endblock %}
+
+{% block contenido %}
+
+<!-- FILTROS (GET para que se puedan compartir/recargar) -->
+<div class="section-heading">
+    <div>
+        <h2>Bandeja de solicitudes</h2>
+        <p>Ordenadas por prioridad y fecha. Máximo 200 resultados.</p>
+    </div>
+    <button class="btn-primario" type="button" id="btnNueva">+ Nueva solicitud</button>
+</div>
+
+<form class="filtros" method="get" action="{{ url_for('recepcion.solicitudes_view') }}">
+    <label>
+        <span>Estado</span>
+        <select name="estado">
+            <option value="ACTIVAS" {{ 'selected' if filtros.estado == 'ACTIVAS' }}>Pendientes</option>
+            <option value="TODAS" {{ 'selected' if filtros.estado == 'TODAS' }}>Todas</option>
+            {% for clave, nombre in estados.items() %}
+            <option value="{{ clave }}" {{ 'selected' if filtros.estado == clave }}>{{ nombre }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        <span>Prioridad</span>
+        <select name="prioridad">
+            <option value="">Todas</option>
+            {% for clave, nombre in prioridades.items() %}
+            <option value="{{ clave }}" {{ 'selected' if filtros.prioridad == clave }}>{{ nombre }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>
+        <span>Tipo</span>
+        <select name="tipo">
+            <option value="">Todos</option>
+            {% for clave, nombre in tipos.items() %}
+            <option value="{{ clave }}" {{ 'selected' if filtros.tipo == clave }}>{{ nombre }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button class="btn-secundario" type="submit">Filtrar</button>
+</form>
+
+<!-- LISTA -->
+<div class="content-card tabla-contenedor">
+    {% if solicitudes %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Asunto</th>
+                <th>Huésped</th>
+                <th>Tipo</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Recibida</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in solicitudes %}
+            <tr>
+                <td class="col-id">{{ s.id }}</td>
+                <td>
+                    <strong>{{ s.asunto }}</strong>
+                    <small>{{ canales[s.canal] }}</small>
+                </td>
+                <td>
+                    {% if s.huesped %}
+                    {{ s.huesped }}{% if s.habitacion %}<small>Hab. {{ s.habitacion }}</small>{% endif %}
+                    {% else %}<span class="texto-tenue">Sin huésped</span>{% endif %}
+                </td>
+                <td>{{ tipos[s.tipo] }}</td>
+                <td><span class="etiqueta prioridad-{{ s.prioridad | lower }}">{{ prioridades[s.prioridad] }}</span></td>
+                <td><span class="etiqueta estado-{{ s.estado | lower }}">{{ estados[s.estado] }}</span></td>
+                <td class="col-fecha">{{ s.fecha_creacion.strftime('%d/%m %H:%M') }}</td>
+                <td>
+                    <!-- Los datos viajan en data-* y el JS llena el diálogo -->
+                    <button class="text-button btn-atender" type="button"
+                            data-accion="{{ url_for('recepcion.solicitudes_actualizar', solicitud_id=s.id) }}{{ consulta }}"
+                            data-id="{{ s.id }}"
+                            data-asunto="{{ s.asunto }}"
+                            data-mensaje="{{ s.mensaje }}"
+                            data-estado="{{ s.estado }}"
+                            data-prioridad="{{ s.prioridad }}"
+                            data-respuesta="{{ s.respuesta or '' }}"
+                            data-atendio="{{ s.atendio or '' }}">
+                        Atender
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No hay solicitudes con estos filtros.</p>
+    </div>
+    {% endif %}
+</div>
+
+<!-- DIÁLOGO: NUEVA SOLICITUD -->
+<dialog class="dialogo" id="dlgNueva">
+    <form method="post" action="{{ url_for('recepcion.solicitudes_crear') }}{{ consulta }}">
+        <h2>Nueva solicitud</h2>
+
+        <label class="campo">
+            <span>Asunto *</span>
+            <input name="asunto" maxlength="200" required placeholder="Ej. Toallas extra">
+        </label>
+
+        <label class="campo">
+            <span>Detalle *</span>
+            <textarea name="mensaje" rows="3" required></textarea>
+        </label>
+
+        <div class="campos-fila">
+            <label class="campo">
+                <span>Tipo *</span>
+                <select name="tipo" required>
+                    {% for clave, nombre in tipos.items() %}
+                    <option value="{{ clave }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="campo">
+                <span>Prioridad</span>
+                <select name="prioridad">
+                    {% for clave, nombre in prioridades.items() %}
+                    <option value="{{ clave }}" {{ 'selected' if clave == 'MEDIA' }}>{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <div class="campos-fila">
+            <label class="campo">
+                <span>Canal</span>
+                <select name="canal">
+                    {% for clave in canales_manuales %}
+                    <option value="{{ clave }}">{{ canales[clave] }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="campo">
+                <span>Huésped hospedado</span>
+                <select name="reservacion_id">
+                    <option value="">Sin huésped</option>
+                    {% for h in huespedes %}
+                    <option value="{{ h.id }}">Hab. {{ h.habitacion }} · {{ h.huesped }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <div class="dialogo-acciones">
+            <button class="btn-secundario" type="button" data-cerrar>Cancelar</button>
+            <button class="btn-primario" type="submit">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- DIÁLOGO: ATENDER SOLICITUD -->
+<dialog class="dialogo" id="dlgAtender">
+    <form method="post" id="frmAtender">
+        <h2 id="atenderTitulo"></h2>
+        <p class="dialogo-mensaje" id="atenderMensaje"></p>
+        <p class="texto-tenue" id="atenderAtendio"></p>
+
+        <div class="campos-fila">
+            <label class="campo">
+                <span>Estado</span>
+                <select name="estado" id="atenderEstado">
+                    {% for clave, nombre in estados.items() %}
+                    <option value="{{ clave }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+            <label class="campo">
+                <span>Prioridad</span>
+                <select name="prioridad" id="atenderPrioridad">
+                    {% for clave, nombre in prioridades.items() %}
+                    <option value="{{ clave }}">{{ nombre }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </div>
+
+        <label class="campo">
+            <span>Respuesta / qué se hizo</span>
+            <textarea name="respuesta" id="atenderRespuesta" rows="3"></textarea>
+        </label>
+
+        <div class="dialogo-acciones">
+            <button class="btn-secundario" type="button" data-cerrar>Cancelar</button>
+            <button class="btn-primario" type="submit">Guardar cambios</button>
+        </div>
+    </form>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recepcion/solicitudes.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,158 @@
+{% extends "recepcion/base.html" %}
+
+{% block titulo %}Check-in / Check-out{% endblock %}
+{% block encabezado %}Check-in / Check-out{% endblock %}
+{% block descripcion %}Registra llegadas y salidas, y revisa reservas y pagos.{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/solicitudes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/checkin.css') }}">
+{% endblock %}
+
+{# Fila reutilizable para las dos tablas #}
+{% macro fila(r, accion, texto_boton) %}
+<tr>
+    <td>
+        <strong>{{ r.huesped }}</strong>
+        <small>{{ r.codigo_reservacion }}</small>
+    </td>
+    <td>
+        Hab. {{ r.habitacion }}
+        <small>{{ r.tipo_habitacion }}</small>
+    </td>
+    <td class="col-fecha">
+        {{ r.fecha_entrada.strftime('%d/%m') }} → {{ r.fecha_salida.strftime('%d/%m') }}
+        {% if accion == 'entrada' and r.fecha_entrada < hoy %}
+        <small class="texto-alerta">Llegada atrasada</small>
+        {% elif accion == 'salida' and r.fecha_salida < hoy %}
+        <small class="texto-alerta">Salida vencida</small>
+        {% elif accion == 'salida' and r.fecha_salida == hoy %}
+        <small class="texto-aviso">Sale hoy</small>
+        {% endif %}
+    </td>
+    <td>
+        {% if r.saldo > 0 %}
+        <span class="etiqueta prioridad-alta">Debe ${{ '{:,.2f}'.format(r.saldo) }}</span>
+        {% else %}
+        <span class="etiqueta estado-resuelta">Pagado</span>
+        {% endif %}
+    </td>
+    <td class="col-acciones">
+        <button class="text-button btn-detalle" type="button" data-plantilla="detalle-{{ r.id }}">Ver detalle</button>
+
+        {% set bloqueada = accion == 'entrada' and r.habitacion_estado not in habitacion_lista %}
+        <form method="post" class="form-movimiento"
+              action="{{ url_for('recepcion.checkin_' ~ accion, reservacion_id=r.id) }}"
+              data-confirmar="{{ texto_boton }} de {{ r.huesped }} (Hab. {{ r.habitacion }}){% if r.saldo > 0 %}. Ojo: tiene saldo pendiente de ${{ '{:,.2f}'.format(r.saldo) }}{% endif %}">
+            <button class="btn-primario" type="submit" {{ 'disabled' if bloqueada }}
+                    title="{{ 'Habitación en ' ~ r.habitacion_estado | lower if bloqueada else '' }}">
+                {{ texto_boton }}
+            </button>
+        </form>
+    </td>
+</tr>
+{% endmacro %}
+
+{% block contenido %}
+
+<!-- LLEGADAS -->
+<div class="section-heading">
+    <div>
+        <h2>Llegadas pendientes</h2>
+        <p>Reservas de hoy o atrasadas que aún no hacen check-in.</p>
+    </div>
+    <span class="period-label">{{ llegadas | length }} por llegar</span>
+</div>
+
+<div class="content-card tabla-contenedor">
+    {% if llegadas %}
+    <table class="tabla">
+        <thead>
+            <tr><th>Huésped</th><th>Habitación</th><th>Estancia</th><th>Pago</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for r in llegadas %}{{ fila(r, 'entrada', 'Check-in') }}{% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No hay llegadas pendientes.</p></div>
+    {% endif %}
+</div>
+
+<!-- HOSPEDADOS -->
+<div class="section-heading">
+    <div>
+        <h2>Huéspedes en casa</h2>
+        <p>Ordenados por fecha de salida.</p>
+    </div>
+    <span class="period-label">{{ hospedados | length }} hospedados</span>
+</div>
+
+<div class="content-card tabla-contenedor">
+    {% if hospedados %}
+    <table class="tabla">
+        <thead>
+            <tr><th>Huésped</th><th>Habitación</th><th>Estancia</th><th>Pago</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for r in hospedados %}{{ fila(r, 'salida', 'Check-out') }}{% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><p>No hay huéspedes hospedados.</p></div>
+    {% endif %}
+</div>
+
+<!-- DETALLES: una plantilla por reserva, el JS la copia al diálogo -->
+{% for r in llegadas + hospedados %}
+<template id="detalle-{{ r.id }}">
+    <h2>{{ r.huesped }}</h2>
+    <p class="texto-tenue">{{ r.codigo_reservacion }} · {{ estados_reserva[r.estado] }} · Origen {{ r.origen | lower }}</p>
+
+    <dl class="detalle-datos">
+        <div><dt>Habitación</dt><dd>{{ r.habitacion }} · {{ r.tipo_habitacion }}</dd></div>
+        <div><dt>Estancia</dt><dd>{{ r.fecha_entrada.strftime('%d/%m/%Y') }} → {{ r.fecha_salida.strftime('%d/%m/%Y') }} ({{ r.numero_noches }} noches)</dd></div>
+        <div><dt>Huéspedes</dt><dd>{{ r.adultos }} adultos{% if r.ninos %}, {{ r.ninos }} niños{% endif %}</dd></div>
+        <div><dt>Contacto</dt><dd>{{ r.telefono or 'Sin teléfono' }} · {{ r.email }}</dd></div>
+        <div><dt>Identificación</dt><dd>{{ (r.documento_tipo ~ ' ' ~ r.documento_numero) if r.documento_numero else 'Pendiente' }}</dd></div>
+        {% if r.comentarios %}<div><dt>Peticiones</dt><dd>{{ r.comentarios }}</dd></div>{% endif %}
+    </dl>
+
+    <h3>Pagos</h3>
+    {% if pagos.get(r.id) %}
+    <table class="tabla tabla-compacta">
+        <tbody>
+            {% for p in pagos[r.id] %}
+            <tr>
+                <td>{{ p.fecha.strftime('%d/%m/%Y') }}</td>
+                <td>{{ metodos_pago[p.metodo_pago] }}{% if p.referencia %}<small>{{ p.referencia }}</small>{% endif %}</td>
+                <td>{{ estados_pago[p.estado] }}</td>
+                <td class="col-monto">${{ '{:,.2f}'.format(p.monto) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="texto-tenue">Sin pagos registrados.</p>
+    {% endif %}
+
+    <div class="detalle-totales">
+        <span>Total ${{ '{:,.2f}'.format(r.total) }}</span>
+        <span>Pagado ${{ '{:,.2f}'.format(r.pagado) }}</span>
+        <strong class="{{ 'texto-alerta' if r.saldo > 0 }}">Saldo ${{ '{:,.2f}'.format(r.saldo) }}</strong>
+    </div>
+</template>
+{% endfor %}
+
+<dialog class="dialogo" id="dlgDetalle">
+    <div id="detalleContenido"></div>
+    <div class="dialogo-acciones">
+        <button class="btn-secundario" type="button" data-cerrar>Cerrar</button>
+    </div>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recepcion/checkin.js') }}"></script>
+{% endblock %}

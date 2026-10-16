@@ -1,0 +1,87 @@
+{% extends "recepcion/base.html" %}
+
+{% block titulo %}Recepción{% endblock %}
+{% block encabezado %}Inicio{% endblock %}
+{% block descripcion %}Atiende a los huéspedes y da seguimiento a la operación del día.{% endblock %}
+
+{% block contenido %}
+<div class="welcome-banner">
+    <div>
+        <span class="banner-label">TURNO ACTUAL</span>
+        <h2>Bienvenida, {{ usuario.nombre }}</h2>
+        <p>Revisa las llegadas, salidas y solicitudes pendientes de hoy.</p>
+    </div>
+</div>
+
+<!-- INDICADORES DEL DÍA ('--' si la BD no responde) -->
+<div class="section-heading">
+    <div>
+        <h2>Resumen del día</h2>
+        <p>Datos en tiempo real de la operación.</p>
+    </div>
+    <span class="period-label" id="currentDate"></span>
+</div>
+
+<div class="stats-grid">
+    <a class="stat-card stat-link" href="{{ url_for('recepcion.solicitudes_view') }}">
+        <div class="stat-top"><span class="stat-label">Solicitudes</span></div>
+        <strong class="stat-number">{{ indicadores.get('solicitudes', '--') }}</strong>
+        <span class="stat-description">Abiertas o en proceso</span>
+    </a>
+
+    <a class="stat-card stat-link" href="{{ url_for('recepcion.checkin_view') }}">
+        <div class="stat-top"><span class="stat-label">Llegadas</span></div>
+        <strong class="stat-number">{{ indicadores.get('llegadas', '--') }}</strong>
+        <span class="stat-description">Check-in esperados hoy</span>
+    </a>
+
+    <a class="stat-card stat-link" href="{{ url_for('recepcion.checkin_view') }}">
+        <div class="stat-top"><span class="stat-label">Salidas</span></div>
+        <strong class="stat-number">{{ indicadores.get('salidas', '--') }}</strong>
+        <span class="stat-description">Check-out esperados hoy</span>
+    </a>
+
+    <a class="stat-card stat-link" href="{{ url_for('recepcion.info_view') }}">
+        <div class="stat-top"><span class="stat-label">Habitaciones</span></div>
+        <strong class="stat-number">{{ indicadores.get('disponibles', '--') }}</strong>
+        <span class="stat-description">
+            Disponibles · {{ indicadores.get('en_servicio', '--') }} en limpieza o mantenimiento
+        </span>
+    </a>
+</div>
+
+<!-- MÓDULOS DEL ROL -->
+<div class="section-heading activity-heading">
+    <div>
+        <h2>Módulos de recepción</h2>
+        <p>Acceso directo a cada módulo.</p>
+    </div>
+</div>
+
+<div class="stats-grid">
+    {% for modulo in [
+        ('Agentes IA', 'Monitorea los chats de los bots y toma el control cuando haga falta.', 'recepcion.agentes_view'),
+        ('Solicitudes', 'Recibe, asigna y da seguimiento a las peticiones de los huéspedes.', 'recepcion.solicitudes_view'),
+        ('Check-in / Check-out', 'Valida el pre-registro, reservas, pagos y envía avisos.', 'recepcion.checkin_view'),
+        ('Info del hotel', 'Respuestas rápidas y estado de las habitaciones.', 'recepcion.info_view')
+    ] %}
+    {% if modulo[2] %}
+    <a class="stat-card module-card stat-link" href="{{ url_for(modulo[2]) }}">
+        <div class="stat-top">
+            <span class="stat-label">{{ modulo[0] }}</span>
+            <span class="badge-soon badge-ready">Disponible</span>
+        </div>
+        <span class="stat-description">{{ modulo[1] }}</span>
+    </a>
+    {% else %}
+    <article class="stat-card module-card">
+        <div class="stat-top">
+            <span class="stat-label">{{ modulo[0] }}</span>
+            <span class="badge-soon">Próximamente</span>
+        </div>
+        <span class="stat-description">{{ modulo[1] }}</span>
+    </article>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
