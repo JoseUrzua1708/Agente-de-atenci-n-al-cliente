@@ -1,5 +1,4 @@
-
-from flask import Blueprint
+from flask import Blueprint, render_template, session, redirect, url_for
 from app.controllers.perfil_controller import PerfilController
 
 
@@ -11,11 +10,23 @@ class PerfilRoutes:
             __name__,
             url_prefix=url_prefix
         )
-
         self.registrar_rutas()
 
     def registrar_rutas(self):
-        """Registra las direcciones del perfil y del cierre de sesión."""
+
+        @self.blueprint.route("/perfil", methods=["GET"])
+        def ver_perfil():
+            if not session.get("user_id"):
+                return redirect(url_for("auth.login_view"))
+
+            try:
+                if int(session.get("role_id", 0)) != 1:
+                    return redirect(url_for("auth.login_view"))
+            except (TypeError, ValueError):
+                session.clear()
+                return redirect(url_for("auth.login_view"))
+
+            return render_template("admin/perfil_admin.html")
 
         @self.blueprint.route("/perfil/datos", methods=["GET"])
         def obtener_datos_perfil():

@@ -4,6 +4,7 @@ from app.routes.auth_routes import AuthRoutes
 from app.routes.admin_routes import admin_bp
 from app.routes.register_routes import register_bp
 from app.routes.recovery_routes import recovery_bp
+from app.routes.perfil_routes import PerfilRoutes
 
 def create_app():
     # Apuntamos la carpeta de templates y estáticos
@@ -21,5 +22,6 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(register_bp)
     app.register_blueprint(recovery_bp)
+    app.register_blueprint(PerfilRoutes().get_blueprint())
     
     return app

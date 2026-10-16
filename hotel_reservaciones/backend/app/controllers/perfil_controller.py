@@ -45,6 +45,7 @@ class PerfilController:
             cursor = conexion.cursor(dictionary=True)
 
             # Consultar los datos del usuario y su rol
+            
             consulta = """
                 SELECT
                     u.id,
@@ -52,34 +53,34 @@ class PerfilController:
                     u.apellidos,
                     u.email,
                     u.telefono,
+                    u.estado,
+                    u.ultimo_acceso,
+                    u.fecha_creacion,
+                    u.fecha_actualizacion,
                     r.nombre AS nombre_rol
                 FROM usuarios AS u
                 INNER JOIN roles AS r ON r.id = u.rol_id
                 WHERE u.id = %s
-                  AND u.rol_id = %s
+                  AND u.rol_id = 1
                   AND u.estado = 'ACTIVO'
                   AND r.estado = 1
                 LIMIT 1
             """
 
-            cursor.execute(
-                consulta,
-                (session["user_id"], 1)
-            )
-
+            cursor.execute(consulta, (session["user_id"],))
             usuario = cursor.fetchone()
 
-            # Si la cuenta ya no está activa, terminar la sesión
             if not usuario:
                 session.clear()
-
                 return jsonify({
                     "success": False,
                     "message": "La cuenta no está disponible.",
                     "redirect": url_for("auth.login_view")
                 }), 401
 
-            # Preparar únicamente la información necesaria para el frontend
+            def formatear_fecha(valor):
+                return valor.strftime("%d/%m/%Y %H:%M:%S") if valor else None
+
             nombre = usuario.get("nombre") or ""
             apellidos = usuario.get("apellidos") or ""
 
@@ -92,9 +93,20 @@ class PerfilController:
                     "nombre_completo": f"{nombre} {apellidos}".strip(),
                     "correo": usuario.get("email") or "",
                     "telefono": usuario.get("telefono") or "",
-                    "rol": usuario.get("nombre_rol") or "ADMINISTRADOR"
+                    "rol": usuario.get("nombre_rol") or "",
+                    "estado": usuario.get("estado") or "",
+                    "ultimo_acceso": formatear_fecha(
+                        usuario.get("ultimo_acceso")
+                    ),
+                    "fecha_creacion": formatear_fecha(
+                        usuario.get("fecha_creacion")
+                    ),
+                    "fecha_actualizacion": formatear_fecha(
+                        usuario.get("fecha_actualizacion")
+                    )
                 }
             }), 200
+
 
         except Exception:
             logger.error(

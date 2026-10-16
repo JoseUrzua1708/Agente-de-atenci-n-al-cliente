@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f7f5f0">
+    <title>Mi perfil | Maison Hotel</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/admin/perfil_admin.css') }}">
+</head>
+<body>
+    <main class="profile-page">
+        <header class="profile-header">
+            <a class="brand" href="{{ url_for('admin.admin_panel_view') }}">
+
+                <span class="brand-name">MAISON</span>
+                <span class="brand-caption">HOTEL MANAGEMENT</span>
+            </a>
+
+<a class="back-link" href="{{ url_for('admin.admin_panel_view') }}">
+                Volver al panel
+            </a>
+        </header>
+
+        <section class="page-heading">
+            <span class="eyebrow">MAISON HOTEL / CUENTA</span>
+            <h1>Mi perfil</h1>
+            <p>Consulta la información de tu cuenta administrativa.</p>
+        </section>
+
+        <section class="profile-card" aria-labelledby="profileTitle">
+            <div id="profileStatus" class="profile-status" role="status">
+                Consultando información de tu cuenta...
+            </div>
+
+            
+<div class="details-grid">
+
+    <div class="detail">
+        <span class="detail-label">Nombre</span>
+        <p id="profileName">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Apellidos</span>
+        <p id="profileLastName">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Correo electrónico</span>
+        <p id="profileEmail">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Teléfono</span>
+        <p id="profilePhone">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Estado de la cuenta</span>
+        <p id="profileState">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Último acceso</span>
+        <p id="profileLastAccess">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Fecha de creación</span>
+        <p id="profileCreated">—</p>
+    </div>
+
+    <div class="detail">
+        <span class="detail-label">Última actualización</span>
+        <p id="profileUpdated">—</p>
+    </div>
+</div>
+
+        </section>
+
+        <footer class="page-footer">
+            <span>© <span id="footerYear"></span> Maison Hotel</span>
+            <span>Administración hotelera</span>
+        </footer>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/admin/perfil_admin.js') }}"
+            defer></script>
+</body>
+</html>
