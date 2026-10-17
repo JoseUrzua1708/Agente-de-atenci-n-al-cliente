@@ -276,15 +276,6 @@ svg {
     transform: rotate(180deg);
 }
 
-/*
-   Cuando la vista de perfil está activa, se ocultan
-   las notificaciones y el botón del perfil superior.
-   El encabezado conserva su título y descripción.
-*/
-
-.main-content:has(#view-perfil.active) #adminTopbar .topbar-actions {
-    display: none;
-}
 
 /* =====================================================
    BIENVENIDA
@@ -1141,26 +1132,40 @@ svg {
     }
 }
 
-/* Contenedor del menú de usuario */
+
+
+/* ========================================
+   CONTENEDOR DEL MENÚ DE USUARIO
+======================================== */
+
 .profile-menu {
     position: relative;
     display: inline-flex;
     align-items: center;
 }
 
-/* Botón superior */
+/* ========================================
+   BOTÓN SUPERIOR DEL PERFIL
+======================================== */
+
 .top-profile {
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 8px 12px;
+
     border: 1px solid transparent;
     border-radius: 12px;
+
     background: transparent;
     color: inherit;
+
     cursor: pointer;
     text-align: left;
-    transition: background 0.25s ease, border-color 0.25s ease;
+
+    transition:
+        background 0.25s ease,
+        border-color 0.25s ease;
 }
 
 .top-profile:hover,
@@ -1168,6 +1173,8 @@ svg {
     background: rgba(160, 125, 80, 0.09);
     border-color: rgba(160, 125, 80, 0.2);
 }
+
+/* Información del usuario */
 
 .top-profile-info {
     display: flex;
@@ -1185,25 +1192,36 @@ svg {
     opacity: 0.7;
 }
 
-/* Avatar */
+/* ========================================
+   AVATAR DEL USUARIO
+======================================== */
+
 .profile-menu .avatar {
     width: 40px;
     height: 40px;
     flex-shrink: 0;
+
     display: grid;
     place-items: center;
+
     border-radius: 50%;
     background: #e9dfd0;
     color: #725638;
+
     font-size: 13px;
     font-weight: 700;
 }
 
-/* Animación de la flecha */
+/* ========================================
+   FLECHA DEL BOTÓN SUPERIOR
+======================================== */
+
 .profile-menu .chevron {
     width: 17px;
     height: 17px;
+    flex-shrink: 0;
     margin-left: 5px;
+
     transition: transform 0.3s ease;
 }
 
@@ -1211,124 +1229,208 @@ svg {
     transform: rotate(180deg);
 }
 
-/* Modal desplegable */
+/* ========================================
+   MODAL DESPLEGABLE COMPACTO
+======================================== */
+
 .profile-dropdown {
     position: absolute;
     z-index: 1000;
-    top: calc(100% + 10px);
+
+    top: calc(100% + 8px);
     right: 0;
-    width: 270px;
-    padding: 16px;
+
+    width: 180px;
+    padding: 8px;
+    box-sizing: border-box;
+
     border: 1px solid #e9e1d6;
-    border-radius: 15px;
+    border-radius: 11px;
+
     background: #fffdf9;
     color: #332c24;
-    box-shadow: 0 14px 40px rgba(45, 35, 22, 0.15);
+
+    box-shadow: 0 8px 24px rgba(45, 35, 22, 0.15);
 
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    transform: translateY(-8px) scale(0.97);
+
+    transform: translateY(-6px) scale(0.97);
     transform-origin: top right;
 
     transition:
-        opacity 0.22s ease,
-        transform 0.22s ease,
-        visibility 0.22s ease;
+        opacity 0.2s ease,
+        transform 0.2s ease,
+        visibility 0.2s ease;
 }
 
-/* Estado abierto */
+/* Modal abierto */
+
 .profile-dropdown.is-open {
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
+
     transform: translateY(0) scale(1);
 }
 
-/* Cabecera del modal */
+/* ========================================
+   CABECERA DEL PERFIL (OPCIONAL)
+======================================== */
+
 .profile-dropdown-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 3px 2px 14px;
+    gap: 9px;
+
+    padding: 3px 2px 10px;
 }
 
 .profile-dropdown-info {
     min-width: 0;
+
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 4px;
 }
 
 .profile-dropdown-info strong {
     overflow-wrap: anywhere;
-    font-size: 14px;
+
+    font-size: 13px;
     font-weight: 650;
 }
 
 .profile-dropdown-info span {
     color: #8a765f;
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .profile-dropdown-divider {
     height: 1px;
+    margin-bottom: 7px;
+
     background: #eee6dc;
-    margin-bottom: 9px;
 }
 
-/* Enlaces y botones */
+/* ========================================
+   BOTONES DEL MODAL
+   ICONO + TEXTO CENTRADOS JUNTOS
+======================================== */
+
 .profile-dropdown-link,
 .profile-dropdown-logout {
+    position: relative;
+
     box-sizing: border-box;
     width: 100%;
-    min-height: 43px;
+    min-height: 34px;
+
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 10px;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 7px 4px;
+
     border: none;
-    border-radius: 9px;
-    background: transparent;
-    color: #42382d;
-    font: inherit;
-    font-size: 13px;
-    text-align: left;
+    border-radius: 7px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    text-align: center;
     text-decoration: none;
+    line-height: 1.3;
+
     cursor: pointer;
-    transition: background 0.2s ease, color 0.2s ease;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
+
+/* Iconos de los botones */
 
 .profile-dropdown-link svg,
 .profile-dropdown-logout svg {
-    width: 19px;
-    height: 19px;
+    position: static;
+
+    display: block;
+    width: 16px;
+    height: 16px;
+
     flex-shrink: 0;
 }
 
-.profile-dropdown-link:hover {
-    background: #f3ede4;
+/* ========================================
+   BOTÓN VER PERFIL
+======================================== */
+
+.profile-dropdown-link {
+    background: transparent;
+    color: #42382d;
 }
+
+.profile-dropdown-link:hover {
+    background: #f0e7da;
+    color: #241b13;
+}
+
+/* ========================================
+   BOTÓN CERRAR SESIÓN
+======================================== */
 
 .profile-dropdown-logout {
-    color: #a3443d;
+    margin-top: 4px;
+
+    background: #b83232;
+    color: #ffffff;
 }
 
+/* Hover: rojo más oscuro */
+
 .profile-dropdown-logout:hover {
-    background: #fbefed;
+    background: #962525;
+    color: #ffffff;
 }
+
+/* Al mantener presionado */
+
+.profile-dropdown-logout:active {
+    background: #7f1d1d;
+    color: #ffffff;
+}
+
+/* Evitar que el navegador cambie los colores del botón */
+
+.profile-dropdown-logout:visited,
+.profile-dropdown-logout:focus {
+    color: #ffffff;
+}
+
+/* ========================================
+   ACCESIBILIDAD Y FOCO DEL TECLADO
+======================================== */
 
 .profile-dropdown-link:focus-visible,
 .profile-dropdown-logout:focus-visible,
 .top-profile:focus-visible {
     outline: 2px solid #a8875c;
-    outline-offset: 3px;
+    outline-offset: 2px;
 }
+
+/* ========================================
+   DISEÑO RESPONSIVO PARA MÓVILES
+======================================== */
 
 @media (max-width: 600px) {
     .profile-dropdown {
         right: 0;
-        width: min(270px, calc(100vw - 32px));
+        width: 175px;
+        max-width: calc(100vw - 24px);
     }
 
     .top-profile-info {
@@ -1340,10 +1442,325 @@ svg {
     }
 }
 
+/* ========================================
+   RESPETAR MOVIMIENTO REDUCIDO
+======================================== */
+
 @media (prefers-reduced-motion: reduce) {
     .profile-dropdown,
     .profile-menu .chevron,
-    .top-profile {
+    .top-profile,
+    .profile-dropdown-link,
+    .profile-dropdown-logout {
         transition: none;
     }
+}
+
+
+/* BOTÓN VER PERFIL: COLOR FIJO */
+.profile-dropdown-link {
+    background: #eee3d2;
+    color: #5b4630;
+}
+
+/* Hover: beige más oscuro */
+.profile-dropdown-link:hover {
+    background: #dfcdb3;
+    color: #3e2d1c;
+}
+
+/* Mantener el color del texto al usar el teclado */
+.profile-dropdown-link:focus {
+    color: #5b4630;
+}
+
+/* BOTÓN CERRAR SESIÓN: ROJO FIJO */
+.profile-dropdown-logout {
+    background: #b83232;
+    color: #ffffff;
+}
+
+.profile-dropdown-logout:hover {
+    background: #962525;
+    color: #ffffff;
+}
+
+
+/* ========================================
+   MODAL DE CONFIRMACIÓN DE CIERRE DE SESIÓN
+======================================== */
+
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    box-sizing: border-box;
+
+    background: rgba(35, 27, 20, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    transition:
+        opacity 0.22s ease,
+        visibility 0.22s ease;
+}
+
+/* Modal visible */
+.logout-modal-overlay.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Tarjeta del modal */
+.logout-modal {
+    width: 100%;
+    max-width: 390px;
+    box-sizing: border-box;
+
+    padding: 28px 25px 22px;
+
+    border: 1px solid #e9e1d6;
+    border-radius: 17px;
+
+    background: #fffdf9;
+    color: #332c24;
+
+    text-align: center;
+
+    box-shadow: 0 20px 60px rgba(35, 27, 20, 0.22);
+
+    transform: translateY(12px) scale(0.97);
+    transition: transform 0.22s ease;
+}
+
+.logout-modal-overlay.is-open .logout-modal {
+    transform: translateY(0) scale(1);
+}
+
+/* Icono decorativo */
+.logout-modal-icon {
+    width: 54px;
+    height: 54px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin: 0 auto 17px;
+
+    border-radius: 50%;
+    background: #f8e8e5;
+    color: #b83232;
+}
+
+.logout-modal-icon svg {
+    width: 26px;
+    height: 26px;
+}
+
+/* Título */
+.logout-modal h2 {
+    margin: 0 0 10px;
+
+    color: #332c24;
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+}
+
+/* Descripción */
+.logout-modal p {
+    margin: 0 auto 24px;
+    max-width: 310px;
+
+    color: #786d61;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* Contenedor de botones */
+.logout-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Estilo compartido */
+.logout-cancel-button,
+.logout-confirm-button {
+    min-height: 40px;
+    flex: 1;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+
+    padding: 10px 12px;
+    box-sizing: border-box;
+
+    border: 1px solid transparent;
+    border-radius: 9px;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+/* Cancelar */
+.logout-cancel-button {
+    background: #f1e9de;
+    border-color: #e7dccd;
+    color: #554536;
+}
+
+.logout-cancel-button:hover {
+    background: #e6d8c5;
+    border-color: #d9c6ad;
+    color: #38291b;
+}
+
+/* Confirmar cierre */
+.logout-confirm-button {
+    background: #b83232;
+    color: #ffffff;
+}
+
+.logout-confirm-button:hover {
+    background: #962525;
+    color: #ffffff;
+}
+
+.logout-confirm-button:active {
+    background: #7f1d1d;
+}
+
+/* Icono del botón de confirmar */
+.logout-confirm-button svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* Estado mientras se procesa */
+.logout-confirm-button:disabled,
+.logout-cancel-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+/* Foco accesible */
+.logout-cancel-button:focus-visible,
+.logout-confirm-button:focus-visible {
+    outline: 2px solid #a8875c;
+    outline-offset: 3px;
+}
+
+/* Pantallas pequeñas */
+@media (max-width: 420px) {
+    .logout-modal {
+        padding: 24px 17px 18px;
+        border-radius: 14px;
+    }
+
+    .logout-modal h2 {
+        font-size: 19px;
+    }
+
+    .logout-modal-actions {
+        gap: 8px;
+    }
+
+    .logout-cancel-button,
+    .logout-confirm-button {
+        padding: 9px 7px;
+        font-size: 11px;
+    }
+}
+
+/* Movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    .logout-modal-overlay,
+    .logout-modal {
+        transition: none;
+    }
+}
+
+
+/* ========================================
+   BLOQUEAR SCROLL MIENTRAS EL MODAL ESTÁ ABIERTO
+======================================== */
+
+/* Evita que el panel se desplace detrás del modal */
+html.logout-modal-active,
+body.logout-modal-active {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+}
+
+/* Evita movimientos al bloquear el scroll */
+body.logout-modal-active {
+    position: fixed;
+    left: 0;
+    right: 0;
+    width: 100%;
+}
+
+/* El modal permanece fijo en la pantalla */
+.logout-modal-overlay {
+    position: fixed;
+    inset: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+/* El contenido del modal no provoca desplazamientos */
+.logout-modal {
+    flex-shrink: 0;
+}
+
+/* Ocultar la barra superior únicamente en la página de perfil */
+body:has(#view-perfil) .topbar {
+    display: none !important;
+}
+/* Enlaces del menú lateral con apariencia de botón */
+a.nav-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    box-sizing: border-box;
+
+    color: inherit;
+    text-decoration: none;
+    font: inherit;
+
+    cursor: pointer;
+}
+
+/* Mantener el estilo al pasar el cursor */
+a.nav-item:hover {
+    text-decoration: none;
+}
+
+/* Mantener el color del enlace cuando ya fue visitado */
+a.nav-item:visited {
+    color: inherit;
 }

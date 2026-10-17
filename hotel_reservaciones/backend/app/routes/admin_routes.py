@@ -4,7 +4,7 @@ from flask import (
     session,
     jsonify,
     url_for,
-    request
+    request,
 )
 
 from app.controllers.auth_controller import AuthController
@@ -92,3 +92,12 @@ def cerrar_sesion():
     """Cierra la sesión del administrador."""
 
     return PerfilController.cerrar_sesion()
+
+# ============================================================
+# INICIO: RESUMEN GENERAL DEL ADMINISTRADOR
+# ============================================================
+@admin_bp.route("/inicio", methods=["GET"])
+def admin_inicio_view():
+    """Muestra el resumen general del administrador."""
+
+    return AuthController.render_admin_panel()

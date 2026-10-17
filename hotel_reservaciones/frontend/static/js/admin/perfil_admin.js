@@ -21,7 +21,7 @@ async function inicializarPerfil() {
         const respuesta = await fetch("/admin/perfil/datos", {
             method: "GET",
             headers: {
-                "Accept": "application/json"
+                Accept: "application/json"
             },
             credentials: "same-origin",
             cache: "no-store"
@@ -48,16 +48,34 @@ async function inicializarPerfil() {
 
         const perfil = datos.perfil;
 
-        mostrarDato("profileName", perfil.nombre);
+        // Nombre y apellidos en la cabecera
+        mostrarDato("profileNameHeading", perfil.nombre);
+        mostrarDato("profileLastNameHeading", perfil.apellidos);
+
+        // Iniciales del administrador
+        const avatar = document.getElementById("profileAvatar");
+
+        if (avatar) {
+            const inicialNombre = (perfil.nombre || "").trim().charAt(0);
+            const inicialApellido = (perfil.apellidos || "").trim().charAt(0);
+
+            avatar.textContent =
+                (inicialNombre + inicialApellido).toUpperCase() || "AD";
+        }
+
+        // Correo de la cabecera
+        mostrarDato("profileEmailHeading", perfil.correo);
+
+        // Información personal
         mostrarDato("profileLastName", perfil.apellidos);
-        mostrarDato("profileEmail", perfil.correo);
         mostrarDato("profilePhone", perfil.telefono);
+
+        // Información de la cuenta
         mostrarDato("profileState", perfil.estado);
         mostrarDato("profileLastAccess", perfil.ultimo_acceso);
         mostrarDato("profileCreated", perfil.fecha_creacion);
         mostrarDato("profileUpdated", perfil.fecha_actualizacion);
 
-        estado.textContent = "Perfil cargado correctamente.";
         estado.hidden = true;
 
     } catch (error) {
@@ -65,7 +83,7 @@ async function inicializarPerfil() {
 
         estado.hidden = false;
         estado.textContent =
-            "No se pudo cargar el perfil. " + error.message;
+            "No se pudo cargar la información de tu perfil.";
     }
 }
 
@@ -77,10 +95,12 @@ function mostrarDato(id, valor) {
         return;
     }
 
-    elemento.textContent =
+    const texto =
         valor !== null &&
         valor !== undefined &&
         String(valor).trim() !== ""
             ? String(valor).trim()
             : "No registrado";
+
+    elemento.textContent = texto;
 }

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Habitaciones - Maison Hotel</title>
+    <!-- Puedes enlazar aquí tus archivos CSS principales de static -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <style>
+        /* Estilos básicos para la gestión de habitaciones */
+        .container { padding: 20px; font-family: sans-serif; }
+        .header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn { padding: 10px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-primary { background-color: #8c7355; color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-warning { background-color: #ffc107; color: #212529; }
+        .btn-danger { background-color: #dc3545; color: white; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f4f1ea; }
+        
+        .badge { padding: 4px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; }
+        .badge-disponible { background: #d4edda; color: #155724; }
+        .badge-reservada { background: #cce5ff; color: #004085; }
+        .badge-ocupada { background: #fff3cd; color: #856404; }
+        .badge-limpieza { background: #e2e3e5; color: #383d41; }
+        .badge-mantenimiento { background: #f8d7da; color: #721c24; }
+        .badge-inactiva { background: #e0e0e0; color: #666; }
+
+        /* Estilos Modal */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: white; margin: 5% auto; padding: 20px; border-radius: 8px; width: 500px; max-width: 90%; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+        .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-actions">
+        <h2>Gestión de Habitaciones</h2>
+        <button class="btn btn-primary" onclick="abrirModalCrear()">+ Nueva Habitación</button>
+    </div>
+
+    <!-- Tabla de Habitaciones -->
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Piso</th>
+                <th>Tipo</th>
+                <th>Precio / Noche</th>
+                <th>Estado</th>
+                <th>Descripción / Detalles</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tablaHabitaciones">
+            <tr><td colspan="7" style="text-align:center;">Cargando habitaciones...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Formulario (Crear / Editar) -->
+<div id="modalHabitacion" class="modal">
+    <div class="modal-content">
+        <h3 id="modalTitulo">Nueva Habitación</h3>
+        <form id="formHabitacion" onsubmit="guardarHabitacion(event)">
+            <input type="hidden" id="habitacionId">
+
+            <div class="form-group">
+                <label for="tipoId">Tipo de Habitación *</label>
+                <select id="tipoId" required onchange="actualizarPrecioBase()">
+                    <option value="">Seleccione un tipo...</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="numero">Número / Identificador *</label>
+                <input type="text" id="numero" placeholder="Ej. 101, 202" required>
+            </div>
+
+            <div class="form-group">
+                <label for="piso">Piso / Planta *</label>
+                <input type="number" id="piso" min="1" placeholder="Ej. 1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="precio">Precio por Noche ($) *</label>
+                <input type="number" id="precio" step="0.01" min="0" placeholder="Ej. 850.00" required>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado *</label>
+                <select id="estado" required>
+                    <option value="DISPONIBLE">DISPONIBLE</option>
+                    <option value="RESERVADA">RESERVADA</option>
+                    <option value="OCUPADA">OCUPADA</option>
+                    <option value="LIMPIEZA">LIMPIEZA</option>
+                    <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                    <option value="INACTIVA">INACTIVA (Baja Lógica)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Detalles (Baños, Cama, Vistas, etc.)</label>
+                <textarea id="descripcion" rows="3" placeholder="Ej. 1 baño completo, Cama King Size, vista a la alberca"></textarea>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let tiposHabitacionData = [];
+    let habitacionesData = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarTipos();
+        cargarHabitaciones();
+    });
+
+    // 1. Cargar tipos de habitación para el dropdown
+    async function cargarTipos() {
+        try {
+            const res = await fetch("/admin/habitaciones/tipos");
+            const data = await res.json();
+            if (data.success) {
+                tiposHabitacionData = data.tipos;
+                const select = document.getElementById("tipoId");
+                select.innerHTML = '<option value="">Seleccione un tipo...</option>';
+                data.tipos.forEach(t => {
+                    select.innerHTML += `<option value="${t.id}" data-precio="${t.precio_base}">${t.nombre} (Base: $${t.precio_base})</option>`;
+                });
+            }
+        } catch (err) {
+            console.error("Error al cargar tipos:", err);
+        }
+    }
+
+    // Al seleccionar un tipo, sugerir su precio base en el input de precio
+    function actualizarPrecioBase() {
+        const select = document.getElementById("tipoId");
+        const selectedOption = select.options[select.selectedIndex];
+        const precioBase = selectedOption.getAttribute("data-precio");
+        if (precioBase && !document.getElementById("habitacionId").value) {
+            document.getElementById("precio").value = precioBase;
+        }
+    }
+
+    // 2. Cargar listado de habitaciones
+    async function cargarHabitaciones() {
+        try {
+            const res = await fetch("/admin/habitaciones/api");
+            const data = await res.json();
+            
+            const tbody = document.getElementById("tablaHabitaciones");
+            if (!data.success || data.habitaciones.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No hay habitaciones registradas.</td></tr>';
+                return;
+            }
+
+            habitacionesData = data.habitaciones;
+            tbody.innerHTML = "";
+            data.habitaciones.forEach(h => {
+                const badgeClass = `badge-${h.estado.toLowerCase()}`;
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${h.numero}</strong></td>
+                        <td>${h.piso}</td>
+                        <td>${h.tipo}</td>
+                        <td>$${parseFloat(h.precio).toFixed(2)}</td>
+                        <td><span class="badge ${badgeClass}">${h.estado}</span></td>
+                        <td>${h.descripcion || '-'}</td>
+                        <td>
+                            <button class="btn btn-warning" onclick="prepararEditar(${h.id})">Editar</button>
+                            ${h.estado !== 'INACTIVA' ? `<button class="btn btn-danger" onclick="desactivarHabitacion(${h.id}, '${h.numero}')">Desactivar</button>` : ''}
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.error("Error al cargar habitaciones:", err);
+        }
+    }
+
+    // 3. Modales
+    function abrirModalCrear() {
+        document.getElementById("formHabitacion").reset();
+        document.getElementById("habitacionId").value = "";
+        document.getElementById("modalTitulo").innerText = "Nueva Habitación";
+        document.getElementById("modalHabitacion").style.display = "block";
+    }
+
+    function prepararEditar(id) {
+        const hab = habitacionesData.find(h => h.id === id);
+        if (!hab) return;
+
+        document.getElementById("habitacionId").value = hab.id;
+        document.getElementById("tipoId").value = hab.tipo_id;
+        document.getElementById("numero").value = hab.numero;
+        document.getElementById("piso").value = hab.piso;
+        document.getElementById("precio").value = hab.precio;
+        document.getElementById("estado").value = hab.estado;
+        document.getElementById("descripcion").value = hab.descripcion || "";
+
+        document.getElementById("modalTitulo").innerText = "Editar Habitación " + hab.numero;
+        document.getElementById("modalHabitacion").style.display = "block";
+    }
+
+    function cerrarModal() {
+        document.getElementById("modalHabitacion").style.display = "none";
+    }
+
+    // 4. Guardar (Crear / Actualizar)
+    async function guardarHabitacion(e) {
+        e.preventDefault();
+
+        const id = document.getElementById("habitacionId").value;
+        const payload = {
+            tipo_id: parseInt(document.getElementById("tipoId").value),
+            numero: document.getElementById("numero").value,
+            piso: parseInt(document.getElementById("piso").value),
+            precio: parseFloat(document.getElementById("precio").value),
+            estado: document.getElementById("estado").value,
+            descripcion: document.getElementById("descripcion").value
+        };
+
+        const url = id ? `/admin/habitaciones/api/${id}` : "/admin/habitaciones/api";
+        const method = id ? "PUT" : "POST";
+
+        try {
+            const res = await fetch(url, {
+                method: method,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message);
+                cerrarModal();
+                cargarHabitaciones();
+            } else {
+                alert("Error: " + data.message);
+            }
+        } catch (err) {
+            console.error("Error al guardar:", err);
+            alert("Ocurrió un error al procesar la solicitud.");
+        }
+    }
+
+    // 5. Baja Lógica (Botonera Inactivar)
+    async function desactivarHabitacion(id, numero) {
+        if (!confirm(`¿Estás seguro de desactivar la habitación ${numero}? Quedará en estado INACTIVA sin eliminar su historial.`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/admin/habitaciones/api/${id}/inactivar`, {
+                method: "PATCH"
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert(data.message);
+                cargarHabitaciones();
+            } else {
+                alert("Error: " + data.message);
+            }
+        } catch (err) {
+            console.error("Error al inactivar:", err);
+        }
+    }
+</script>
+
+</body>
+</html>

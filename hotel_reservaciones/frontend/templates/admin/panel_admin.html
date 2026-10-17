@@ -9,6 +9,7 @@
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/admin/panel_admin.css') }}">
+          {% block estilos_pagina %}{% endblock estilos_pagina %}
 </head>
 <body>
 <div class="app-layout">
@@ -20,10 +21,8 @@
 
             <div class="page-heading">
                 <span class="eyebrow">MAISON HOTEL / ADMINISTRACIÓN</span>
-                <h1 id="pageTitle">Panel de control</h1>
-                <p id="pageDescription">
-                    Supervisa la operación de tu hotel desde un solo lugar.
-                </p>
+                <h1 id="pageTitle"> {% block titulo_pagina %}Panel de control{% endblock %} </h1>
+                <p id="pageDescription"> {% block descripcion_pagina %} Supervisa la operación de tu hotel desde un solo lugar. {% endblock %} </p>
             </div>
 
             <div class="topbar-actions">
@@ -121,18 +120,7 @@
             />
         </svg>
         <span>Ver perfil</span>
-        <svg class="profile-action-arrow"
-             viewBox="0 0 24 24"
-             fill="none"
-             aria-hidden="true">
-            <path
-                d="m9 18 6-6-6-6"
-                stroke="currentColor"
-                stroke-width="1.7"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-            />
-        </svg>
+        
     </a>
 
     <!-- Botón Cerrar sesión -->
@@ -173,6 +161,8 @@
 
         <!-- CONTENIDO PRINCIPAL -->
         <div class="main-content-body">
+
+            {% block contenido %}
 
             <!-- INICIO -->
             <section class="view-section active" id="view-inicio">
@@ -327,64 +317,7 @@
 
             </section>
 
-            <!-- MI PERFIL DEL ADMINISTRADOR -->
-            <section class="view-section" id="view-perfil">
-
-                <div class="section-heading">
-                    <div>
-                        <h2>Mi perfil</h2>
-                        <p>Consulta la información de tu cuenta de administrador.</p>
-                    </div>
-                </div>
-
-                <div class="content-card">
-                    <span class="card-kicker">MAISON HOTEL / MI CUENTA</span>
-
-                    <div class="profile-details">
-                        <div class="large-avatar" id="perfilAvatar">AD</div>
-
-                        <div>
-                            <h3 id="perfilNombre">Administrador</h3>
-                            <p id="perfilCorreo">Correo no disponible</p>
-                            <p class="muted" id="perfilRol">
-                                Administrador del sistema
-                            </p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p>
-                            <strong>Nombre:</strong>
-                            <span id="perfilNombreDetalle">Administrador</span>
-                        </p>
-
-                        <p>
-                            <strong>Correo electrónico:</strong>
-                            <span id="perfilCorreoDetalle">No disponible</span>
-                        </p>
-
-                        <p>
-                            <strong>Rol del sistema:</strong>
-                            <span>Administrador</span>
-                        </p>
-
-                        <p>
-                            <strong>Estado de la cuenta:</strong>
-                            <span>Activo</span>
-                        </p>
-                    </div>
-
-                    <button
-                        class="text-button"
-                        id="volverInicioPerfil"
-                        type="button"
-                        data-page="inicio"
-                    >
-                        ← Volver al inicio
-                    </button>
-                </div>
-
-            </section>
+            {% endblock contenido %}
 
         </div>
 
@@ -421,7 +354,7 @@
 
         <nav class="side-nav" aria-label="Navegación principal">
 
-            <button class="nav-item active" type="button" data-page="inicio">
+            <a class="nav-item active" href="{{ url_for('admin.admin_inicio_view') }}">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <rect x="3" y="3" width="7" height="7" rx="1"
                           stroke="currentColor" stroke-width="1.6"/>
@@ -433,7 +366,7 @@
                           stroke="currentColor" stroke-width="1.6"/>
                 </svg>
                 <span>Inicio</span>
-            </button>
+            </a>
 
             <button class="nav-item" type="button" data-page="reservaciones">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -446,19 +379,19 @@
                 <span>Reservaciones</span>
             </button>
 
-            <button class="nav-item" type="button" data-page="habitaciones">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <rect x="3" y="10" width="18" height="10" rx="1.5"
-                          stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M3 15h18M6 10V6h5a3 3 0 0 1 3 3v1"
-                          stroke="currentColor" stroke-width="1.6"
-                          stroke-linejoin="round"/>
-                    <path d="M5 20v2M19 20v2"
-                          stroke="currentColor" stroke-width="1.6"
-                          stroke-linecap="round"/>
-                </svg>
-                <span>Habitaciones</span>
-            </button>
+            <a href="{{ url_for('habitaciones.vista_habitaciones') }}" class="nav-item" style="text-decoration: none; display: flex; align-items: center; color: inherit;">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="20" height="20">
+        <rect x="3" y="10" width="18" height="10" rx="1.5"
+              stroke="currentColor" stroke-width="1.6"/>
+        <path d="M3 15h18M6 10V6h5a3 3 0 0 1 3 3v1"
+              stroke="currentColor" stroke-width="1.6"
+              stroke-linejoin="round"/>
+        <path d="M5 20v2M19 20v2"
+              stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round"/>
+    </svg>
+    <span>Habitaciones</span>
+</a>
 
             <button class="nav-item" type="button" data-page="huespedes">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -532,6 +465,81 @@
     </svg>
 </button>
 
+<!-- MODAL DE CONFIRMACIÓN DE CIERRE DE SESIÓN -->
+<div
+    class="logout-modal-overlay"
+    id="logoutModal"
+    aria-hidden="true"
+    inert
+>
+    <section
+        class="logout-modal"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="logoutModalTitle"
+        aria-describedby="logoutModalDescription"
+        tabindex="-1"
+    >
+        <!-- Icono de salida -->
+        <div class="logout-modal-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path
+                    d="M10 17l5-5-5-5M15 12H3"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+                <path
+                    d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+            </svg>
+        </div>
+
+        <h2 id="logoutModalTitle">¿Cerrar sesión?</h2>
+
+        <p id="logoutModalDescription">
+            Estás a punto de salir de tu cuenta de administrador.
+        </p>
+
+        <div class="logout-modal-actions">
+            <button
+                type="button"
+                class="logout-cancel-button"
+                id="cancelLogout"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="button"
+                class="logout-confirm-button"
+                id="confirmLogout"
+            >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path
+                        d="M10 17l5-5-5-5M15 12H3"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                    <path
+                        d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+                </svg>
+                <span>Cerrar sesión</span>
+            </button>
+        </div>
+    </section>
+</div>
 <script src="{{ url_for('static', filename='js/admin/panel_admin.js') }}"></script>
+{% block scripts_pagina %}{% endblock scripts_pagina %}
 </body>
 </html>
