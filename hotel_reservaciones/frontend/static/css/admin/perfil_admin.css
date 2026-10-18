@@ -1,0 +1,655 @@
+
+/* =========================================================
+   MAISON HOTEL — PERFIL ADMINISTRATIVO
+   Diseño compacto, elegante y adaptable
+   ========================================================= */
+
+.profile-page {
+    --profile-ink: #302a23;
+    --profile-muted: #81786d;
+    --profile-gold: #c4a777;
+    --profile-border: #e8e1d7;
+    --profile-background: #ffffff;
+    --profile-soft: #faf8f4;
+    --profile-dark: #352e25;
+
+    width: 100%;
+    min-width: 0;
+    color: var(--profile-ink);
+    font-family: inherit;
+}
+
+.profile-page *,
+.profile-page *::before,
+.profile-page *::after {
+    box-sizing: border-box;
+}
+
+/* =========================================================
+   ENCABEZADO DE PÁGINA
+   ========================================================= */
+
+.profile-page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.profile-overline {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--profile-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.6px;
+}
+
+.profile-page-heading h2 {
+    margin: 0;
+    color: var(--profile-ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 28px;
+    font-weight: 400;
+    line-height: 1.3;
+}
+
+.profile-page-heading p {
+    margin: 5px 0 0;
+    color: var(--profile-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   ESTADO DE CARGA
+   ========================================================= */
+
+.profile-status {
+    display: flex;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 10px 13px;
+    border: 1px solid var(--profile-border);
+    border-radius: 7px;
+    background: var(--profile-background);
+    color: var(--profile-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.profile-status:empty,
+.profile-status[hidden] {
+    display: none;
+}
+
+.profile-status.is-error {
+    border-color: #e7c9c5;
+    background: #fff7f6;
+    color: #963c35;
+}
+
+.profile-status.is-success {
+    border-color: #d1e2d1;
+    background: #f5faf4;
+    color: #356b40;
+}
+
+/* =========================================================
+   IDENTIDAD DEL ADMINISTRADOR
+   ========================================================= */
+
+.profile-identity-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    min-width: 0;
+    margin-bottom: 20px;
+    padding: 23px 25px;
+    overflow: hidden;
+    border: 1px solid #494035;
+    border-radius: 9px;
+    background:
+        radial-gradient(
+            ellipse at 100% 0%,
+            rgba(196, 167, 119, 0.14),
+            transparent 42%
+        ),
+        linear-gradient(115deg, #352e25, #41382d);
+    box-shadow: 0 4px 12px rgba(43, 34, 24, 0.06);
+}
+
+.profile-identity-card::after {
+    position: absolute;
+    right: -85px;
+    bottom: -160px;
+    width: 270px;
+    height: 270px;
+    border: 1px solid rgba(196, 167, 119, 0.16);
+    border-radius: 50%;
+    content: "";
+    pointer-events: none;
+}
+
+.profile-identity-main {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.profile-identity-mark {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    border: 1px solid rgba(196, 167, 119, 0.55);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.035);
+    color: var(--profile-gold);
+}
+
+.profile-identity-mark svg {
+    width: 24px;
+    height: 24px;
+}
+
+.profile-identity-text {
+    min-width: 0;
+}
+
+.profile-identity-caption {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--profile-gold);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    line-height: 1.5;
+}
+
+.profile-identity-text h3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 6px;
+    margin: 0;
+    color: #fffdf9;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: clamp(22px, 2.5vw, 29px);
+    font-weight: 400;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+}
+
+.profile-identity-email {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    margin: 8px 0 0;
+    color: #d5cbbd;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.profile-identity-email svg {
+    flex: 0 0 15px;
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+    color: var(--profile-gold);
+}
+
+.profile-identity-email span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* MARCA DEL HOTEL */
+
+.profile-identity-brand {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding-left: 12px;
+    color: #d1b487;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: 2.5px;
+}
+
+.profile-identity-brand span:last-of-type {
+    font-size: 9px;
+    letter-spacing: 4px;
+}
+
+.profile-identity-brand i {
+    width: 30px;
+    height: 1px;
+    margin-top: 6px;
+    background: var(--profile-gold);
+}
+
+/* =========================================================
+   SECCIONES
+   ========================================================= */
+
+.profile-section {
+    min-width: 0;
+    margin: 0 0 20px;
+}
+
+.profile-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 9px;
+}
+
+.profile-section-heading-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.profile-section-number {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border: 1px solid #e5d9c7;
+    border-radius: 7px;
+    background: #f8f3eb;
+    color: #856b45;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 13px;
+}
+
+.profile-section-heading h3 {
+    margin: 0;
+    color: var(--profile-ink);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.profile-section-heading p {
+    margin: 3px 0 0;
+    color: var(--profile-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   PANELES DE INFORMACIÓN
+   ========================================================= */
+
+.profile-data-panel {
+    min-width: 0;
+    overflow: hidden;
+    padding: 0 15px;
+    border: 1px solid var(--profile-border);
+    border-radius: 8px;
+    background: var(--profile-background);
+}
+
+/* Filas de información */
+
+.profile-data-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    min-height: 57px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee9e1;
+    transition: background 160ms ease;
+}
+
+.profile-data-row:last-child {
+    border-bottom: 0;
+}
+
+.profile-data-row:hover {
+    background: #fcfaf6;
+}
+
+/* Etiquetas e iconos */
+
+.profile-data-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+    color: #766c60;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.profile-data-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    background: #f5f0e7;
+    color: #8c7049;
+}
+
+.profile-data-icon svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Valores */
+
+.profile-data-row > p {
+    min-width: 0;
+    margin: 0;
+    color: #352f27;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* =========================================================
+   TELÉFONO: FILA COMPACTA
+   No ocupa una columna de valor exageradamente ancha.
+   ========================================================= */
+
+.profile-section[aria-labelledby="personalInfoTitle"]
+.profile-data-row {
+    grid-template-columns: minmax(150px, 190px) minmax(0, 260px);
+    gap: 14px;
+    min-height: 58px;
+    padding: 9px 0;
+}
+
+/* =========================================================
+   ACTIVIDAD DE LA CUENTA: DOS COLUMNAS
+   ========================================================= */
+
+.profile-account-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 25px;
+}
+
+.profile-account-grid .profile-data-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: center;
+    align-items: start;
+    gap: 7px;
+    min-width: 0;
+    min-height: 74px;
+    padding: 12px 0;
+}
+
+.profile-account-grid .profile-data-label {
+    gap: 8px;
+}
+
+.profile-account-grid .profile-data-row > p {
+    padding-left: 38px;
+}
+
+/* =========================================================
+   PIE DE PÁGINA Y BOTÓN
+   ========================================================= */
+
+.profile-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 3px;
+    padding: 14px 0 0;
+    border-top: 1px solid var(--profile-border);
+}
+
+.profile-footer > p {
+    margin: 0;
+    color: var(--profile-muted);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.profile-footer > p span {
+    padding: 0 3px;
+    color: var(--profile-gold);
+}
+
+.profile-back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 13px;
+    border: 1px solid #473c2e;
+    border-radius: 6px;
+    background: #393126;
+    color: #fffdf8;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 180ms ease, border-color 180ms ease;
+}
+
+.profile-back-button:hover {
+    border-color: #796143;
+    background: #594735;
+    color: #fffdf8;
+}
+
+.profile-back-button:focus-visible {
+    outline: 3px solid rgba(149, 118, 76, 0.35);
+    outline-offset: 3px;
+}
+
+.profile-back-button svg {
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
+}
+
+/* =========================================================
+   NAVBAR SUPERIOR
+   Mantiene la navegación visible al desplazarse.
+   ========================================================= */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+/* Si el panel utiliza una barra con otro nombre, puedes
+   añadir aquí su selector real. */
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 760px) {
+    .profile-identity-card {
+        padding: 21px;
+    }
+
+    .profile-identity-brand {
+        display: none;
+    }
+
+    .profile-data-row {
+        gap: 12px;
+    }
+
+    .profile-account-grid {
+        column-gap: 18px;
+    }
+}
+
+/* =========================================================
+   MÓVILES
+   ========================================================= */
+
+@media (max-width: 520px) {
+    .profile-page-heading {
+        margin-bottom: 15px;
+    }
+
+    .profile-page-heading h2 {
+        font-size: 25px;
+    }
+
+    .profile-page-heading p {
+        font-size: 11px;
+    }
+
+    .profile-identity-card {
+        margin-bottom: 18px;
+        padding: 18px 15px;
+    }
+
+    .profile-identity-main {
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .profile-identity-mark {
+        flex-basis: 39px;
+        width: 39px;
+        height: 39px;
+    }
+
+    .profile-identity-mark svg {
+        width: 21px;
+        height: 21px;
+    }
+
+    .profile-identity-caption {
+        margin-bottom: 5px;
+        font-size: 8px;
+        letter-spacing: 1px;
+    }
+
+    .profile-identity-text h3 {
+        font-size: 22px;
+    }
+
+    .profile-identity-email {
+        margin-top: 7px;
+        font-size: 11px;
+    }
+
+    .profile-section {
+        margin-bottom: 17px;
+    }
+
+    .profile-section-heading {
+        margin-bottom: 8px;
+    }
+
+    .profile-section-heading h3 {
+        font-size: 17px;
+    }
+
+    .profile-section-heading p {
+        font-size: 10px;
+    }
+
+    .profile-data-panel {
+        padding: 0 12px;
+    }
+
+    /* En móvil, etiqueta y valor se acomodan verticalmente. */
+    .profile-data-row,
+    .profile-section[aria-labelledby="personalInfoTitle"]
+    .profile-data-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+        min-height: auto;
+        padding: 11px 0;
+    }
+
+    .profile-data-label {
+        gap: 8px;
+        font-size: 11px;
+    }
+
+    .profile-data-icon {
+        flex-basis: 28px;
+        width: 28px;
+        height: 28px;
+    }
+
+    .profile-data-icon svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .profile-data-row > p {
+        padding-left: 36px;
+        font-size: 12px;
+    }
+
+    .profile-account-grid {
+        grid-template-columns: minmax(0, 1fr);
+        column-gap: 0;
+    }
+
+    .profile-account-grid .profile-data-row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 6px;
+        min-height: auto;
+        padding: 11px 0;
+    }
+
+    .profile-account-grid .profile-data-row > p {
+        padding-left: 36px;
+    }
+
+    .profile-footer {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 11px;
+        padding-top: 13px;
+    }
+
+    .profile-back-button {
+        width: 100%;
+        min-height: 40px;
+    }
+}
+
+/* =========================================================
+   ACCESIBILIDAD
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .profile-data-row,
+    .profile-back-button {
+        transition: none;
+    }
+}

@@ -1,0 +1,312 @@
+<!-- =====================================================
+     MODAL DE CREACIÓN Y EDICIÓN
+====================================================== -->
+
+<div
+    id="modalHabitacion"
+    class="hab-modal"
+    aria-hidden="true"
+>
+
+    <section
+        class="hab-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modalTitulo"
+        aria-describedby="modalDescripcion"
+    >
+
+        <!-- CABECERA DEL MODAL -->
+        <header class="hab-modal-header">
+
+            <div class="hab-modal-heading">
+
+                <div class="hab-modal-heading-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <rect
+                            x="3.5"
+                            y="5"
+                            width="17"
+                            height="14"
+                            rx="2"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                        />
+                        <path
+                            d="M3.5 12h17M8 8.5h2"
+                            stroke="currentColor"
+                            stroke-width="1.6"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                </div>
+
+                <div>
+                    <span class="hab-eyebrow">
+                        GESTIÓN DE ALOJAMIENTO
+                    </span>
+
+                    <h3 id="modalTitulo">Nueva habitación</h3>
+
+                    <p id="modalDescripcion">
+                        Completa los datos para registrar la habitación.
+                    </p>
+                </div>
+
+            </div>
+
+            <button
+                class="hab-modal-close"
+                id="btnCerrarModal"
+                type="button"
+                aria-label="Cerrar ventana"
+            >
+                <svg viewBox="0 0 24 24" fill="none"
+                     aria-hidden="true">
+                    <path
+                        d="m6 6 12 12M18 6 6 18"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </button>
+
+        </header>
+
+        <form id="formHabitacion">
+
+            <div class="hab-modal-body">
+
+                <!-- ERROR DE VALIDACIÓN -->
+                <div
+                    id="habErrorFormulario"
+                    class="hab-message hab-message-error"
+                    role="alert"
+                    aria-live="assertive"
+                ></div>
+
+                <input
+                    type="hidden"
+                    id="habitacionId"
+                    name="habitacion_id"
+                >
+
+                <!-- INFORMACIÓN GENERAL -->
+                <div class="hab-form-section">
+
+                    <div class="hab-form-section-heading">
+                        <h4>Información general</h4>
+                        <p>Identifica la habitación dentro del hotel.</p>
+                    </div>
+
+                    <div class="hab-form-grid">
+
+                        <div class="hab-form-group full-width">
+
+                            <label for="tipoId">
+                                Tipo de habitación
+                                <span class="hab-required">*</span>
+                            </label>
+
+                            <select
+                                class="hab-form-control"
+                                id="tipoId"
+                                name="tipo_id"
+                                required
+                            >
+                                <option value="">
+                                    Cargando tipos...
+                                </option>
+                            </select>
+
+                            <span class="hab-form-help">
+                                Selecciona una categoría registrada en el sistema.
+                            </span>
+
+                        </div>
+
+                        <div class="hab-form-group">
+
+                            <label for="numero">
+                                Número o identificador
+                                <span class="hab-required">*</span>
+                            </label>
+
+                            <input
+                                class="hab-form-control"
+                                type="text"
+                                id="numero"
+                                name="numero"
+                                maxlength="30"
+                                placeholder="Ej. 101"
+                                autocomplete="off"
+                                required
+                            >
+
+                        </div>
+
+                        <div class="hab-form-group">
+
+                            <label for="piso">
+                                Piso o planta
+                                <span class="hab-required">*</span>
+                            </label>
+
+                            <input
+                                class="hab-form-control"
+                                type="number"
+                                id="piso"
+                                name="piso"
+                                min="1"
+                                step="1"
+                                placeholder="Ej. 1"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- TARIFA Y DISPONIBILIDAD -->
+                <div class="hab-form-section">
+
+                    <div class="hab-form-section-heading">
+                        <h4>Tarifa y disponibilidad</h4>
+                        <p>Define el precio y el estado de la habitación.</p>
+                    </div>
+
+                    <div class="hab-form-grid">
+
+                        <div class="hab-form-group">
+
+                            <label for="precio">
+                                Precio por noche ($)
+                                <span class="hab-required">*</span>
+                            </label>
+
+                            <div class="hab-input-prefix">
+                                <span aria-hidden="true">$</span>
+
+                                <input
+                                    class="hab-form-control"
+                                    type="number"
+                                    id="precio"
+                                    name="precio"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="850.00"
+                                    required
+                                >
+                            </div>
+
+                            <span class="hab-form-help">
+                                Puedes ajustar el precio sugerido por el tipo.
+                            </span>
+
+                        </div>
+
+                        <div class="hab-form-group">
+
+                            <label for="estado">
+                                Estado de la habitación
+                                <span class="hab-required">*</span>
+                            </label>
+
+                            <select
+                                class="hab-form-control"
+                                id="estado"
+                                name="estado"
+                                required
+                            >
+                                <option value="DISPONIBLE">
+                                    Disponible
+                                </option>
+                                <option value="RESERVADA">
+                                    Reservada
+                                </option>
+                                <option value="OCUPADA">
+                                    Ocupada
+                                </option>
+                                <option value="LIMPIEZA">
+                                    Limpieza
+                                </option>
+                                <option value="MANTENIMIENTO">
+                                    Mantenimiento
+                                </option>
+                                <option value="INACTIVA">
+                                    Inactiva
+                                </option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- DESCRIPCIÓN -->
+                <div class="hab-form-section">
+
+                    <div class="hab-form-section-heading">
+                        <h4>Detalles adicionales</h4>
+                        <p>Agrega características relevantes, si corresponde.</p>
+                    </div>
+
+                    <div class="hab-form-grid">
+
+                        <div class="hab-form-group full-width">
+
+                            <label for="descripcion">
+                                Descripción de la habitación
+                            </label>
+
+                            <textarea
+                                class="hab-form-control"
+                                id="descripcion"
+                                name="descripcion"
+                                rows="3"
+                                maxlength="1000"
+                                placeholder="Ej. Una cama King Size, baño completo, vista a la alberca..."
+                            ></textarea>
+
+                            <span class="hab-form-help">
+                                Campo opcional. Máximo 1000 caracteres.
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ACCIONES DEL FORMULARIO -->
+            <footer class="hab-modal-footer">
+
+                <button
+                    class="hab-btn hab-btn-secondary"
+                    id="btnCancelarModal"
+                    type="button"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    class="hab-btn hab-btn-primary"
+                    id="btnGuardarHabitacion"
+                    type="submit"
+                >
+                    Guardar habitación
+                </button>
+
+            </footer>
+
+        </form>
+
+    </section>
+
+</div>

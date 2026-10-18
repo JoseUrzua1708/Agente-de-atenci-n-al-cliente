@@ -1,0 +1,249 @@
+
+{% extends "admin/panel_admin.html" %}
+
+{% block titulo_pagina %}
+Mi perfil
+{% endblock titulo_pagina %}
+
+{% block descripcion_pagina %}
+Consulta tu información personal y los detalles de tu cuenta administrativa.
+{% endblock descripcion_pagina %}
+
+{% block estilos_pagina %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/admin/perfil_admin.css') }}"
+>
+{% endblock estilos_pagina %}
+
+{% block contenido %}
+
+<section class="profile-page" id="view-perfil">
+
+    <!-- ESTADO DE CARGA -->
+    <div
+        id="profileStatus"
+        class="profile-status"
+        role="status"
+        aria-live="polite"
+    >
+        Consultando información de tu cuenta...
+    </div>
+
+    <!-- CABECERA DEL PERFIL: SE CONSERVA EL DISEÑO -->
+    <article class="profile-identity-card">
+
+        <div class="profile-identity-main">
+
+            <div class="profile-identity-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4"
+                            stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M4 21a8 8 0 0 1 16 0"
+                          stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="profile-identity-text">
+
+                <span class="profile-identity-caption">
+                    CUENTA ADMINISTRATIVA
+                </span>
+
+                <h3 id="profileTitle">
+                    <span id="profileNameHeading">Administrador</span>
+                    <span id="profileLastNameHeading"></span>
+                </h3>
+
+                <p class="profile-identity-email">
+                    <svg viewBox="0 0 24 24" fill="none"
+                         xmlns="http://www.w3.org/2000/svg"
+                         aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="14" rx="2"
+                              stroke="currentColor" stroke-width="1.6"/>
+                        <path d="m4 7 8 6 8-6"
+                              stroke="currentColor" stroke-width="1.6"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"/>
+                    </svg>
+
+                    <span id="profileEmailHeading">
+                        Consultando correo electrónico...
+                    </span>
+                </p>
+
+            </div>
+        </div>
+
+        <div class="profile-identity-brand" aria-hidden="true">
+            <span>MAISON</span>
+            <span>HOTEL</span>
+            <i></i>
+        </div>
+
+    </article>
+
+    <!-- SECCIÓN 1: CONTACTO -->
+    <section class="profile-section"
+             aria-labelledby="personalInfoTitle">
+
+        <div class="profile-section-heading">
+            <div class="profile-section-heading-text">
+                <h3 id="personalInfoTitle">Información de contacto</h3>
+                <p>Datos de contacto registrados en tu cuenta.</p>
+            </div>
+        </div>
+
+        <div class="profile-data-panel">
+
+            <div class="profile-data-row">
+                <div class="profile-data-label">
+                    <span class="profile-data-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M7 3H5a2 2 0 0 0-2 2c0 8.84 7.16 16 16 16a2 2 0 0 0 2-2v-2l-5-2-2 3a14 14 0 0 1-6-6l3-2-2-5H7Z"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>Teléfono</span>
+                </div>
+
+                <p id="profilePhone">—</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECCIÓN 2: ACTIVIDAD DE LA CUENTA -->
+    <section class="profile-section"
+             aria-labelledby="accountInfoTitle">
+
+        <div class="profile-section-heading">
+            <div class="profile-section-heading-text">
+                <h3 id="accountInfoTitle">Actividad de la cuenta</h3>
+                <p>Estado y fechas del registro administrativo.</p>
+            </div>
+        </div>
+
+        <div class="profile-data-panel profile-account-grid">
+
+            <div class="profile-data-row">
+                <div class="profile-data-label">
+                    <span class="profile-data-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9"
+                                    stroke="currentColor" stroke-width="1.6"/>
+                            <path d="m8 12 2.5 2.5L16 9"
+                                  stroke="currentColor" stroke-width="1.6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>Estado de la cuenta</span>
+                </div>
+
+                <p id="profileState">—</p>
+            </div>
+
+            <div class="profile-data-row">
+                <div class="profile-data-label">
+                    <span class="profile-data-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9"
+                                    stroke="currentColor" stroke-width="1.6"/>
+                            <path d="M12 7v5l3 2"
+                                  stroke="currentColor" stroke-width="1.6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>Último acceso</span>
+                </div>
+
+                <p id="profileLastAccess">—</p>
+            </div>
+
+            <div class="profile-data-row">
+                <div class="profile-data-label">
+                    <span class="profile-data-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <rect x="3" y="5" width="18" height="16" rx="2"
+                                  stroke="currentColor" stroke-width="1.6"/>
+                            <path d="M7 3v4M17 3v4M3 10h18"
+                                  stroke="currentColor" stroke-width="1.6"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                    <span>Fecha de creación</span>
+                </div>
+
+                <p id="profileCreated">—</p>
+            </div>
+
+            <div class="profile-data-row">
+                <div class="profile-data-label">
+                    <span class="profile-data-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 7v5h-5M4 17v-5h5"
+                                  stroke="currentColor" stroke-width="1.6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                            <path d="M5.5 9A7 7 0 0 1 17 5l3 7M4 12l3 7a7 7 0 0 0 11.5-4"
+                                  stroke="currentColor" stroke-width="1.6"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span>Última actualización</span>
+                </div>
+
+                <p id="profileUpdated">—</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- REGRESAR AL PANEL -->
+    <footer class="profile-footer">
+
+        <p>Maison Hotel <span>·</span> Perfil administrativo</p>
+
+        <a
+            class="profile-back-button"
+            id="volverInicioPerfil"
+            href="{{ url_for('admin.admin_inicio_view') }}"
+        >
+            <svg viewBox="0 0 24 24" fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+                 aria-hidden="true">
+                <path d="m15 18-6-6 6-6M9 12h12"
+                      stroke="currentColor" stroke-width="1.7"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"/>
+            </svg>
+
+            Volver al inicio
+        </a>
+
+    </footer>
+
+</section>
+
+{% endblock contenido %}
+
+{% block scripts_pagina %}
+<script
+    src="{{ url_for('static', filename='js/admin/perfil_admin.js') }}"
+    defer
+></script>
+{% endblock scripts_pagina %}

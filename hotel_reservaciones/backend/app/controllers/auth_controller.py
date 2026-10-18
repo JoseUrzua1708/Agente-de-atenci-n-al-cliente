@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify, session
+from flask import render_template, request, jsonify, session, make_response
 from app.config.database import db
 import logging
 import time
@@ -109,7 +109,7 @@ class AuthController:
                 return jsonify({
                     "success": True, 
                     "message": "Inicio de sesión exitoso",
-                    "redirect": "/dashboard"
+                    "redirect": "cliente/panel"
                 }), 200
 
         except Exception as e:
@@ -126,5 +126,39 @@ class AuthController:
         """Renderiza el panel de administración validando de forma estricta la sesión y el rol."""
         if 'role_id' not in session or int(session.get('role_id', 0)) != 1:
             logger.warning("Intento de acceso no autorizado mediante URL directa al panel de administración.")
-            return render_template('login.html'), 403
-        return render_template('admin/panel_admin.html')
+            
+            # Agregamos cabeceras anti-caché también al error/login
+            response = make_response(render_template('login.html'), 403)
+            response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
+            return response
+
+        # Creamos la respuesta con la plantilla del panel
+        response = make_response(render_template('admin/panel_admin.html'))
+        
+        # Cabeceras estrictas de anti-caché
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+        
+        return response
+
+@staticmethod
+def logout():
+    """Cierra la sesión del usuario de forma segura."""
+    session.clear()  # Limpia la sesión del servidor
+    
+    # Devuelve una respuesta JSON confirmando el cierre
+    response = jsonify({
+        "success": True,
+        "message": "Sesión cerrada con éxito.",
+        "redirect": "/login"
+    })
+    
+    # Aplicamos cabeceras anti-caché a la respuesta
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    
+    return response, 200

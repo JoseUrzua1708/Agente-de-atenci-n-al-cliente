@@ -1,0 +1,347 @@
+
+{% extends "admin/panel_admin.html" %}
+
+{% block titulo_pagina %}
+Gestión de habitaciones
+{% endblock titulo_pagina %}
+
+{% block descripcion_pagina %}
+Administra las habitaciones, sus tarifas y su disponibilidad.
+{% endblock descripcion_pagina %}
+
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/habitaciones.css') }}" >
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/modales/modal_habitacion.css') }}" >
+{% endblock estilos_pagina %}
+
+{% block contenido %}
+
+<section class="habitaciones-page" id="habitacionesPage">
+
+    <!-- ENCABEZADO Y ACCIONES -->
+    <div class="hab-toolbar">
+
+        <button
+            class="hab-btn hab-btn-primary"
+            id="btnNuevaHabitacion"
+            type="button"
+        >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                    d="M12 5v14M5 12h14"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+            </svg>
+            Nueva habitación
+        </button>
+
+    </div>
+
+    <!-- MENSAJES DEL SISTEMA -->
+    <div
+        id="habMensaje"
+        class="hab-message"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+    <!-- RESUMEN DE HABITACIONES -->
+    <div class="hab-summary">
+
+        <article class="hab-summary-card hab-summary-total">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                        x="3.5"
+                        y="5"
+                        width="17"
+                        height="14"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="M3.5 12h17M8 8.5h2M8 15.5h2"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    Total de habitaciones
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="totalHabitaciones"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Registradas en el sistema
+                </span>
+            </div>
+
+        </article>
+
+        <article class="hab-summary-card hab-summary-available">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8.5"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="m8.5 12 2.3 2.3 4.7-4.8"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    Disponibles
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="habitacionesDisponibles"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Listas para asignación
+                </span>
+            </div>
+
+        </article>
+
+        <article class="hab-summary-card hab-summary-unavailable">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8.5"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="M9 9l6 6m0-6-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    No disponibles o inactivas
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="habitacionesNoDisponibles"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Con otro estado operativo
+                </span>
+            </div>
+
+        </article>
+
+    </div>
+
+    <!-- LISTADO -->
+    <section class="hab-table-card">
+
+        <header class="hab-table-header">
+
+            <div class="hab-table-heading">
+                <h3>Listado de habitaciones</h3>
+            </div>
+
+            <div class="hab-table-tools">
+
+                <label
+                    class="hab-search-wrapper"
+                    for="buscarHabitacion"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                    >
+                        <circle
+                            cx="10.8"
+                            cy="10.8"
+                            r="6.8"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+                        <path
+                            d="m16 16 4.2 4.2"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+
+                    <input
+                        class="hab-search"
+                        id="buscarHabitacion"
+                        type="search"
+                        placeholder="Buscar habitación..."
+                        autocomplete="off"
+                        aria-label="Buscar por número, piso, tipo o estado"
+                    >
+                </label>
+
+            </div>
+
+        </header>
+
+        <div class="hab-table-wrapper">
+
+            <table class="hab-table">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Habitación</th>
+                        <th scope="col">Piso</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Precio / noche</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaHabitaciones">
+
+                    <tr>
+                        <td colspan="7" class="hab-empty">
+                            <span
+                                class="hab-loading-spinner"
+                                aria-hidden="true"
+                            ></span>
+                            <strong>Cargando habitaciones...</strong>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAGINACIÓN -->
+        <footer class="hab-table-footer">
+
+            <div class="hab-table-footer-info">
+                <span
+                    id="contadorHabitaciones"
+                    aria-live="polite"
+                >Cargando registros...</span>
+            </div>
+
+            <div class="hab-pagination">
+
+                <label
+                    class="hab-page-size-label"
+                    for="habRegistrosPorPagina"
+                >
+                    Mostrar
+
+                    <select
+                        id="habRegistrosPorPagina"
+                        class="hab-page-size"
+                        aria-label="Registros por página"
+                    >
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="todos">Todos</option>
+                    </select>
+                </label>
+
+                <div class="hab-page-controls">
+
+                    <button
+                        class="hab-page-btn"
+                        id="habPaginaAnterior"
+                        type="button"
+                        aria-label="Página anterior"
+                        disabled
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path
+                                d="m14.5 18-6-6 6-6"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+
+                    <span
+                        class="hab-page-current"
+                        id="habPaginaActual"
+                        aria-live="polite"
+                    >1 / 1</span>
+
+                    <button
+                        class="hab-page-btn"
+                        id="habPaginaSiguiente"
+                        type="button"
+                        aria-label="Página siguiente"
+                        disabled
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path
+                                d="m9.5 6 6 6-6 6"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </section>
+
+</section>
+
+
+{% include "admin/Modales/modal_habitacion.html" %}
+
+{% endblock contenido %}
+
+{% block scripts_pagina %}
+<script
+    src="{{ url_for('static', filename='js/admin/Menu/habitaciones.js') }}"
+></script>
+{% endblock scripts_pagina %}
