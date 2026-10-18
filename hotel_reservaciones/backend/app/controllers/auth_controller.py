@@ -102,7 +102,7 @@ class AuthController:
                 return jsonify({
                     "success": True, 
                     "message": "Inicio de sesión exitoso",
-                    "redirect": "/dashboard"
+                    "redirect": "cliente/panel"
                 }), 200
 
         except Exception as e:

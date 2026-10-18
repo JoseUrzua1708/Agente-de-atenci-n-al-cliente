@@ -6,6 +6,8 @@ from app.routes.register_routes import register_bp
 from app.routes.recovery_routes import recovery_bp
 from app.routes.perfil_routes import PerfilRoutes
 from app.routes.habitaciones_routes import HabitacionesRoutes
+from app.routes.routes_cliente.cliente_routes import cliente_bp
+
 
 def create_app():
     # Apuntamos la carpeta de templates y estáticos
@@ -45,6 +47,7 @@ def create_app():
     app.register_blueprint(PerfilRoutes().get_blueprint())
     habitaciones_routes = HabitacionesRoutes(url_prefix="/admin")
     app.register_blueprint(habitaciones_routes.get_blueprint())
+    app.register_blueprint(cliente_bp)
 
     # Evitar que el navegador almacene páginas de la aplicación
     @app.after_request

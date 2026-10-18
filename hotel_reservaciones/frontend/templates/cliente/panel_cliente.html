@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MAISON | Mi espacio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/cliente/panel_cliente.css') }}">
+  <script defer src="{{ url_for('static', filename='js/cliente/panel_cliente.js') }}"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="#inicio" aria-label="MAISON inicio">
+        <span class="brand-mark">⌂</span>
+        <span><strong>MAISON</strong><small>HOTEL EXPERIENCE</small></span>
+      </a>
+      <div class="menu-label">MI ESPACIO</div>
+      <nav class="main-nav" aria-label="Menú principal">
+        <a class="nav-link active" href="#inicio" data-section="inicio"><span>⌂</span> Inicio</a>
+        <a class="nav-link" href="#habitaciones" data-section="habitaciones"><span>▣</span> Habitaciones</a>
+        <a class="nav-link" href="#reservaciones" data-section="reservaciones"><span>▦</span> Mis reservaciones</a>
+        <a class="nav-link" href="#perfil" data-section="perfil"><span>♙</span> Mi perfil</a>
+        <a class="nav-link" href="#ayuda" data-section="ayuda"><span>♡</span> Ayuda y contacto</a>
+      </nav>
+      <div class="sidebar-footer">MAISON HOTEL · HOSPITALIDAD CON ESTILO</div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <button class="mobile-menu" id="mobileMenu" aria-label="Abrir menú">☰</button>
+        <div class="breadcrumb">MAISON HOTEL <span>/</span> MI ESPACIO</div>
+        <div class="account">
+          <div class="avatar" id="avatarIniciales">CL</div>
+          <div><strong id="nombreUsuario">Mi cuenta</strong><small>HUÉSPED</small></div>
+        </div>
+      </header>
+
+      <section class="page-section" id="inicio">
+        <div class="page-heading">
+          <div><p class="eyebrow">BIENVENIDO A MAISON</p><h1>Tu estancia, a tu manera.</h1>
+          <p class="muted">Encuentra tu próximo descanso y administra tus reservaciones desde aquí.</p></div>
+          <span class="heading-symbol" aria-hidden="true">⌂</span>
+        </div>
+
+        <div class="welcome-card">
+          <div><p class="eyebrow">UNA EXPERIENCIA PARA RECORDAR</p>
+            <h2>Un lugar para sentirte en casa.</h2>
+            <p>Descubre nuestras habitaciones y encuentra el espacio ideal para tu próxima visita.</p>
+            <a class="button button-dark" href="#habitaciones">Explorar habitaciones <span>→</span></a>
+          </div>
+          <div class="welcome-art" aria-hidden="true"><span>✧</span><div class="art-door"></div></div>
+        </div>
+
+        <div class="section-title"><div><h2>Tu resumen</h2><p class="muted">Consulta rápidamente tu actividad.</p></div></div>
+        <div class="stats-grid">
+          <article class="stat-card"><div class="stat-top"><span>Próximas reservaciones</span><span class="stat-icon">▦</span></div><strong id="totalReservaciones">—</strong><small>Reservaciones activas</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Habitaciones</span><span class="stat-icon">▣</span></div><strong id="totalHabitaciones">—</strong><small>Opciones para explorar</small></article>
+          <article class="stat-card"><div class="stat-top"><span>Tu próxima llegada</span><span class="stat-icon">⌁</span></div><strong class="date-value" id="proximaLlegada">—</strong><small>Fecha de entrada</small></article>
+        </div>
+        <div class="section-title activity-heading"><div><h2>Próxima estancia</h2><p class="muted">Los detalles de tu visita más cercana.</p></div><a href="#reservaciones" class="text-link">Ver mis reservaciones →</a></div>
+        <div id="proximaReserva" class="empty-state"><span class="empty-icon">▦</span><strong>Aún no tienes una próxima estancia</strong><p>Cuando reserves una habitación, aquí encontrarás sus detalles.</p><a href="#habitaciones" class="text-link">Buscar habitaciones</a></div>
+      </section>
+
+      <section class="page-section hidden" id="habitaciones">
+        <div class="section-title page-title"><div><p class="eyebrow">ENCUENTRA TU ESPACIO</p><h1>Nuestras habitaciones</h1><p class="muted">Elige la habitación ideal para tu estancia.</p></div></div>
+        <form id="formBusqueda" class="search-panel">
+          <label>Entrada<input type="date" id="fechaEntrada" required></label>
+          <label>Salida<input type="date" id="fechaSalida" required></label>
+          <label>Huéspedes<select id="huespedes"><option value="1">1 huésped</option><option value="2">2 huéspedes</option><option value="3">3 huéspedes</option><option value="4">4 huéspedes</option></select></label>
+          <button class="button button-dark" type="submit">Buscar disponibilidad</button>
+        </form>
+        <div class="results-heading"><span id="mensajeHabitaciones">Habitaciones disponibles</span><span class="muted" id="contadorHabitaciones"></span></div>
+        <div id="listaHabitaciones" class="rooms-grid"><div class="empty-state"><p>Estamos preparando las habitaciones…</p></div></div>
+      </section>
+
+      <section class="page-section hidden" id="reservaciones">
+        <div class="section-title page-title"><div><p class="eyebrow">TUS VIAJES</p><h1>Mis reservaciones</h1><p class="muted">Consulta las fechas y el estado de tus reservaciones.</p></div></div>
+        <div id="listaReservaciones" class="reservation-list"><div class="empty-state"><p>Cargando tus reservaciones…</p></div></div>
+      </section>
+
+      <section class="page-section hidden" id="perfil">
+        <div class="section-title page-title"><div><p class="eyebrow">TUS DATOS</p><h1>Mi perfil</h1><p class="muted">Información de tu cuenta.</p></div></div>
+        <div class="profile-card"><div class="profile-avatar" id="perfilIniciales">CL</div><div><h2 id="perfilNombre">Mi cuenta</h2><p class="muted" id="perfilEmail">La información del perfil aparecerá aquí cuando se conecte la sesión.</p></div></div>
+        <p class="notice">Por seguridad, tus datos se deben cargar desde la sesión autenticada del servidor.</p>
+      </section>
+
+      <section class="page-section hidden" id="ayuda">
+        <div class="section-title page-title"><div><p class="eyebrow">ESTAMOS PARA AYUDARTE</p><h1>Ayuda y contacto</h1><p class="muted">¿Tienes una pregunta sobre tu estancia?</p></div></div>
+        <div class="help-card"><span class="stat-icon">♡</span><h2>Estamos aquí para ti</h2><p>Consulta las preguntas frecuentes del hotel o contacta a recepción para recibir ayuda.</p><a class="button button-outline" href="mailto:recepcion@maison.example">Contactar recepción</a><p class="muted tiny">Cambia este correo por el correo real del hotel antes de publicar.</p></div>
+      </section>
+
+      <footer class="main-footer">MAISON HOTEL <span>·</span> HOSPITALIDAD CON ESTILO</footer>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <dialog class="booking-dialog" id="dialogReserva">
+    <form id="formReserva" method="dialog">
+      <div class="dialog-header"><div><p class="eyebrow">TU PRÓXIMA ESTANCIA</p><h2>Confirmar reservación</h2></div><button type="button" class="icon-button" id="cerrarDialogo" aria-label="Cerrar">×</button></div>
+      <p id="resumenHabitacion" class="muted"></p>
+      <div class="form-grid"><label>Entrada<input id="reservaEntrada" type="date" required></label><label>Salida<input id="reservaSalida" type="date" required></label><label class="full">Número de huéspedes<select id="reservaHuespedes"><option value="1">1 huésped</option><option value="2">2 huéspedes</option><option value="3">3 huéspedes</option><option value="4">4 huéspedes</option></select></label></div>
+      <div class="total-line"><span>Total estimado</span><strong id="totalEstimado">$0.00</strong></div>
+      <p class="tiny muted">La reservación se confirmará únicamente si el servidor valida disponibilidad y tus datos de sesión.</p>
+      <button class="button button-dark full-button" type="submit">Solicitar reservación</button>
+    </form>
+  </dialog>
+</body>
+</html>

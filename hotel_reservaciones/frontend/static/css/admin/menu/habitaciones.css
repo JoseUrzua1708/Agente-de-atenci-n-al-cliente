@@ -1,0 +1,971 @@
+
+/* =====================================================
+   MAISON HOTEL - GESTIÓN DE HABITACIONES
+   Estilos de la página, listado y paginación
+   El diseño del modal se administra por separado.
+===================================================== */
+
+.habitaciones-page {
+    --hab-bg: #f7f5f0;
+    --hab-surface: #ffffff;
+    --hab-primary: #796448;
+    --hab-primary-dark: #594832;
+    --hab-gold: #c8ad81;
+    --hab-text: #302d28;
+    --hab-muted: #858078;
+    --hab-border: #e8e3da;
+
+    --hab-success-bg: #edf4eb;
+    --hab-success-text: #426a45;
+    --hab-warning-bg: #f7edda;
+    --hab-warning-text: #876528;
+    --hab-danger-bg: #fbefef;
+    --hab-danger-text: #963f3f;
+
+    width: 100%;
+    min-width: 0;
+    color: var(--hab-text);
+    font-family: inherit;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.habitaciones-page *,
+.habitaciones-page *::before,
+.habitaciones-page *::after {
+    box-sizing: border-box;
+}
+
+.habitaciones-page button,
+.habitaciones-page input,
+.habitaciones-page select,
+.habitaciones-page textarea {
+    font-family: inherit;
+}
+
+.habitaciones-page button:focus-visible,
+.habitaciones-page input:focus-visible,
+.habitaciones-page select:focus-visible,
+.habitaciones-page textarea:focus-visible {
+    outline: 3px solid rgba(200, 173, 129, .55);
+    outline-offset: 2px;
+}
+
+/* =====================================================
+   ENCABEZADO
+===================================================== */
+
+.hab-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.hab-toolbar-info {
+    min-width: 0;
+}
+
+.habitaciones-page .hab-eyebrow {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--hab-primary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.3px;
+    line-height: 1.5;
+}
+
+.hab-toolbar h2 {
+    margin: 0 0 5px;
+    color: var(--hab-text);
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -.35px;
+}
+
+.hab-toolbar p {
+    margin: 0;
+    color: var(--hab-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =====================================================
+   BOTONES
+===================================================== */
+
+.habitaciones-page .hab-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    min-height: 40px;
+    padding: 10px 15px;
+
+    border: 1px solid transparent;
+    border-radius: 5px;
+
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.3;
+
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        color .2s ease,
+        box-shadow .2s ease;
+}
+
+.habitaciones-page .hab-btn svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+.habitaciones-page .hab-btn-primary {
+    background: var(--hab-primary);
+    color: #fff;
+    border-color: var(--hab-primary);
+}
+
+.habitaciones-page .hab-btn-primary:hover:not(:disabled) {
+    background: var(--hab-primary-dark);
+    border-color: var(--hab-primary-dark);
+    box-shadow: 0 3px 9px rgba(89, 72, 50, .12);
+}
+
+.habitaciones-page .hab-btn-secondary {
+    background: #fff;
+    color: var(--hab-text);
+    border-color: var(--hab-border);
+}
+
+.habitaciones-page .hab-btn-secondary:hover:not(:disabled) {
+    background: var(--hab-bg);
+    border-color: #d5cbbb;
+}
+
+.habitaciones-page .hab-btn-edit {
+    background: #f3eee5;
+    color: var(--hab-primary-dark);
+    border-color: #e6dccb;
+}
+
+.habitaciones-page .hab-btn-edit:hover:not(:disabled) {
+    background: #e9dfcf;
+    border-color: #d8c9b1;
+}
+
+.habitaciones-page .hab-btn-danger {
+    background: #fff;
+    color: var(--hab-danger-text);
+    border-color: #ead0d0;
+}
+
+.habitaciones-page .hab-btn-danger:hover:not(:disabled) {
+    background: var(--hab-danger-bg);
+    border-color: #dfbcbc;
+}
+
+.habitaciones-page .hab-btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* =====================================================
+   MENSAJES GENERALES
+===================================================== */
+
+#habMensaje {
+    margin-bottom: 0;
+}
+
+#habMensaje.is-visible {
+    margin-bottom: 18px;
+}
+
+.habitaciones-page .hab-message {
+    display: none;
+    width: 100%;
+    padding: 12px 14px;
+
+    border: 1px solid transparent;
+    border-radius: 5px;
+
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.habitaciones-page .hab-message.is-visible {
+    display: block;
+}
+
+.habitaciones-page .hab-message-error {
+    color: var(--hab-danger-text);
+    background: var(--hab-danger-bg);
+    border-color: #ead0d0;
+}
+
+.habitaciones-page .hab-message-success {
+    color: var(--hab-success-text);
+    background: var(--hab-success-bg);
+    border-color: #d5e7d3;
+}
+
+/* =====================================================
+   TARJETAS DE RESUMEN
+===================================================== */
+
+.hab-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.hab-summary-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+
+    min-width: 0;
+    min-height: 126px;
+    padding: 21px;
+
+    background: var(--hab-surface);
+    border: 1px solid var(--hab-border);
+    border-radius: 7px;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.hab-summary-card:hover {
+    border-color: #d8cbb7;
+    box-shadow: 0 5px 18px rgba(48, 45, 40, .035);
+}
+
+.hab-summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 43px;
+    height: 43px;
+    flex: 0 0 43px;
+
+    color: var(--hab-primary);
+    background: #f3eee5;
+    border: 1px solid #ece3d5;
+    border-radius: 6px;
+}
+
+.hab-summary-icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.hab-summary-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.hab-summary-label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--hab-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.hab-summary-value {
+    display: block;
+    color: var(--hab-primary-dark);
+    font-size: 29px;
+    font-weight: 600;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.hab-summary-note {
+    display: block;
+    margin-top: 7px;
+    color: #99938a;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.hab-summary-available .hab-summary-icon {
+    color: #426a45;
+    background: #edf4eb;
+    border-color: #e0eadc;
+}
+
+.hab-summary-unavailable .hab-summary-icon {
+    color: #876528;
+    background: #f7edda;
+    border-color: #eee0c4;
+}
+
+/* =====================================================
+   CONTENEDOR DE LA TABLA
+===================================================== */
+
+.hab-table-card {
+    min-width: 0;
+    overflow: hidden;
+
+    background: #fff;
+    border: 1px solid var(--hab-border);
+    border-radius: 7px;
+}
+
+.hab-table-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+
+    padding: 21px 22px;
+    border-bottom: 1px solid var(--hab-border);
+}
+
+.hab-table-heading {
+    min-width: 0;
+}
+
+.hab-table-heading .hab-eyebrow {
+    margin-bottom: 4px;
+}
+
+.hab-table-header h3 {
+    margin: 0;
+    color: var(--hab-text);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.hab-table-header p {
+    margin: 5px 0 0;
+    color: var(--hab-muted);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.hab-table-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 0 1 310px;
+    min-width: 0;
+}
+
+/* =====================================================
+   BUSCADOR CON ICONO
+===================================================== */
+
+.hab-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+}
+
+.hab-search-wrapper > svg {
+    position: absolute;
+    left: 12px;
+    z-index: 1;
+
+    width: 17px;
+    height: 17px;
+
+    color: #948a7c;
+    pointer-events: none;
+}
+
+.hab-search {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    min-height: 40px;
+
+    padding: 9px 12px 9px 38px;
+
+    color: var(--hab-text);
+    background: #fff;
+    border: 1px solid var(--hab-border);
+    border-radius: 5px;
+    outline: none;
+
+    font-family: inherit;
+    font-size: 12px;
+    line-height: 1.5;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.hab-search::placeholder {
+    color: #a29b91;
+    opacity: 1;
+}
+
+.hab-search:focus {
+    border-color: var(--hab-primary);
+    box-shadow: 0 0 0 3px rgba(121, 100, 72, .10);
+}
+
+.hab-search::-webkit-search-decoration {
+    -webkit-appearance: none;
+}
+
+/* =====================================================
+   TABLA
+===================================================== */
+
+.hab-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #d7cbbb #f7f5f0;
+}
+
+.hab-table-wrapper::-webkit-scrollbar {
+    height: 7px;
+}
+
+.hab-table-wrapper::-webkit-scrollbar-track {
+    background: #f7f5f0;
+}
+
+.hab-table-wrapper::-webkit-scrollbar-thumb {
+    background: #d7cbbb;
+    border-radius: 10px;
+}
+
+.hab-table {
+    width: 100%;
+    min-width: 900px;
+    margin: 0;
+
+    border-collapse: separate;
+    border-spacing: 0;
+
+    color: var(--hab-text);
+    background: #fff;
+
+    font-family: inherit;
+    font-size: 12px;
+}
+
+.hab-table th {
+    padding: 14px 16px;
+
+    color: #746a5c;
+    background: #f8f6f1;
+
+    border-bottom: 1px solid var(--hab-border);
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: .45px;
+    white-space: nowrap;
+}
+
+.hab-table td {
+    padding: 15px 16px;
+
+    color: #575149;
+    border-bottom: 1px solid #f0ede7;
+
+    vertical-align: middle;
+    line-height: 1.55;
+}
+
+.hab-table tbody tr {
+    transition: background-color .15s ease;
+}
+
+.hab-table tbody tr:hover {
+    background: #fcfbf8;
+}
+
+.hab-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.hab-table th:last-child,
+.hab-table td:last-child {
+    padding-right: 18px;
+}
+
+.hab-room-number {
+    display: inline-block;
+    color: var(--hab-primary-dark);
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.hab-price {
+    color: var(--hab-primary-dark) !important;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.hab-room-description {
+    display: -webkit-box;
+    max-width: 230px;
+
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: normal;
+
+    color: var(--hab-muted);
+
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+/* =====================================================
+   ESTADOS DE HABITACIONES
+===================================================== */
+
+.hab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 100%;
+    padding: 5px 9px;
+
+    border: 1px solid transparent;
+    border-radius: 4px;
+
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: .15px;
+    white-space: nowrap;
+}
+
+.hab-badge-disponible {
+    color: #356c43;
+    background: #e9f3e9;
+    border-color: #dcebdc;
+}
+
+.hab-badge-reservada {
+    color: #435d88;
+    background: #e9edf6;
+    border-color: #dce3f0;
+}
+
+.hab-badge-ocupada {
+    color: #876528;
+    background: #f7edda;
+    border-color: #eee0c4;
+}
+
+.hab-badge-limpieza {
+    color: #68645d;
+    background: #efede9;
+    border-color: #e5e2dc;
+}
+
+.hab-badge-mantenimiento {
+    color: #963f3f;
+    background: #f8e7e5;
+    border-color: #efd6d3;
+}
+
+.hab-badge-inactiva {
+    color: #6c6964;
+    background: #e9e7e3;
+    border-color: #dedbd5;
+}
+
+/* =====================================================
+   ACCIONES DE LA TABLA
+===================================================== */
+
+.hab-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.hab-actions .hab-btn {
+    min-height: 32px;
+    gap: 5px;
+    padding: 6px 9px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.hab-actions .hab-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+.hab-actions .hab-icon-btn span {
+    display: inline;
+}
+
+/* =====================================================
+   CARGA Y ESTADOS VACÍOS
+===================================================== */
+
+.hab-empty {
+    padding: 45px 20px !important;
+    color: var(--hab-muted) !important;
+    text-align: center !important;
+    white-space: normal;
+}
+
+.hab-empty strong {
+    display: block;
+    margin: 9px 0 0;
+    color: var(--hab-text);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+}
+
+.hab-loading-spinner {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+
+    border: 2px solid #e8e0d4;
+    border-top-color: var(--hab-primary);
+    border-radius: 50%;
+
+    vertical-align: middle;
+
+    animation: habSpin .75s linear infinite;
+}
+
+@keyframes habSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =====================================================
+   PIE DE TABLA Y PAGINACIÓN
+===================================================== */
+
+.hab-table-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+
+    min-height: 65px;
+    padding: 14px 20px;
+
+    color: var(--hab-muted);
+    background: #fff;
+    border-top: 1px solid var(--hab-border);
+
+    font-size: 11px;
+}
+
+.hab-table-footer-info {
+    min-width: 0;
+    line-height: 1.6;
+}
+
+#contadorHabitaciones {
+    overflow-wrap: anywhere;
+}
+
+.hab-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.hab-page-size-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--hab-muted);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.hab-page-size {
+    min-width: 67px;
+    min-height: 34px;
+    padding: 6px 25px 6px 9px;
+
+    color: var(--hab-text);
+    background-color: #fff;
+    border: 1px solid var(--hab-border);
+    border-radius: 4px;
+
+    outline: none;
+    font-family: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.hab-page-size:focus {
+    border-color: var(--hab-primary);
+    box-shadow: 0 0 0 3px rgba(121, 100, 72, .10);
+}
+
+.hab-page-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hab-page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 33px;
+    height: 33px;
+    padding: 0;
+
+    color: var(--hab-primary-dark);
+    background: #fff;
+    border: 1px solid var(--hab-border);
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    transition:
+        background-color .2s ease,
+        border-color .2s ease;
+}
+
+.hab-page-btn svg {
+    width: 17px;
+    height: 17px;
+}
+
+.hab-page-btn:hover:not(:disabled) {
+    background: #f3eee5;
+    border-color: #d8cbb7;
+}
+
+.hab-page-btn:disabled {
+    color: #b9b2a8;
+    background: #faf9f6;
+    cursor: not-allowed;
+    opacity: .7;
+}
+
+.hab-page-current {
+    min-width: 48px;
+    color: var(--hab-text);
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+/* =====================================================
+   TABLETAS
+===================================================== */
+
+@media (max-width: 1000px) {
+    .hab-summary {
+        gap: 12px;
+    }
+
+    .hab-summary-card {
+        gap: 11px;
+        padding: 16px;
+    }
+
+    .hab-summary-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+    }
+
+    .hab-summary-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .hab-summary-label {
+        font-size: 11px;
+    }
+
+    .hab-summary-value {
+        font-size: 25px;
+    }
+
+    .hab-table-header {
+        padding: 18px;
+    }
+}
+
+/* =====================================================
+   MÓVILES
+===================================================== */
+
+@media (max-width: 700px) {
+    .hab-toolbar {
+        align-items: stretch;
+        gap: 15px;
+        margin-bottom: 19px;
+    }
+
+    .hab-toolbar h2 {
+        font-size: 21px;
+    }
+
+    .hab-toolbar > .hab-btn {
+        width: 100%;
+        min-height: 43px;
+    }
+
+    .hab-summary {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        margin-bottom: 19px;
+    }
+
+    .hab-summary-card {
+        align-items: center;
+        min-height: 94px;
+        padding: 15px;
+    }
+
+    .hab-summary-icon {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+    }
+
+    .hab-summary-label {
+        margin-bottom: 3px;
+        font-size: 12px;
+    }
+
+    .hab-summary-value {
+        font-size: 24px;
+    }
+
+    .hab-summary-note {
+        margin-top: 3px;
+    }
+
+    .hab-table-header {
+        align-items: stretch;
+        gap: 15px;
+        padding: 17px 15px;
+    }
+
+    .hab-table-header h3 {
+        font-size: 15px;
+    }
+
+    .hab-table-tools {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .hab-search {
+        min-height: 42px;
+    }
+
+    .hab-table {
+        min-width: 900px;
+    }
+
+    .hab-table-footer {
+        align-items: flex-start;
+        gap: 13px;
+        padding: 14px 15px;
+    }
+
+    .hab-table-footer-info {
+        width: 100%;
+    }
+
+    .hab-pagination {
+        width: 100%;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .hab-page-size-label {
+        gap: 6px;
+    }
+}
+
+/* =====================================================
+   MÓVILES PEQUEÑOS
+===================================================== */
+
+@media (max-width: 380px) {
+    .hab-toolbar h2 {
+        font-size: 19px;
+    }
+
+    .hab-table-footer {
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .hab-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* =====================================================
+   ACCESIBILIDAD: MOVIMIENTO REDUCIDO
+===================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .habitaciones-page *,
+    .habitaciones-page *::before,
+    .habitaciones-page *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}

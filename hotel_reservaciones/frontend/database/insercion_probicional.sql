@@ -33,7 +33,7 @@ INSERT INTO usuarios (rol_id, nombre, apellidos, email, password_hash, telefono,
     'ACTIVO'
 ),
 (
-    2, 
+    3, 
     'Felipe', 
     'Cliente', 
     'cliente@maisonhotel.com', 
