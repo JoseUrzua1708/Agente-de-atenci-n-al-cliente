@@ -4,6 +4,7 @@ from app.routes.auth_routes import AuthRoutes
 from app.routes.admin_routes import admin_bp
 from app.routes.register_routes import register_bp
 from app.routes.recovery_routes import recovery_bp
+from app.routes.recepcion_routes import recepcion_bp
 from app.routes.perfil_routes import PerfilRoutes
 from app.routes.habitaciones_routes import HabitacionesRoutes
 from app.routes.routes_cliente.cliente_routes import cliente_bp
@@ -44,6 +45,9 @@ def create_app():
     app.register_blueprint(admin_bp)
     app.register_blueprint(register_bp)
     app.register_blueprint(recovery_bp)
+    app.register_blueprint(recepcion_bp)
+    
+    return app
     app.register_blueprint(PerfilRoutes().get_blueprint())
     habitaciones_routes = HabitacionesRoutes(url_prefix="/admin")
     app.register_blueprint(habitaciones_routes.get_blueprint())

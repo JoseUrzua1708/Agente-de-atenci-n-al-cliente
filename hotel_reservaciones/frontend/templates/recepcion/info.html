@@ -1,0 +1,164 @@
+{% extends "recepcion/base.html" %}
+
+{% set consulta = '?' ~ request.query_string.decode() if request.query_string else '' %}
+
+{% block titulo %}Info del hotel{% endblock %}
+{% block encabezado %}Info del hotel{% endblock %}
+{% block descripcion %}Estado de las habitaciones y respuestas rápidas para los huéspedes.{% endblock %}
+
+{% block estilos %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/solicitudes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/recepcion/info.css') }}">
+{% endblock %}
+
+{% block contenido %}
+
+<!-- HABITACIONES -->
+<div class="section-heading">
+    <div>
+        <h2>Estado de habitaciones</h2>
+        <p>Toca una habitación libre para marcarla en limpieza, mantenimiento o disponible.</p>
+    </div>
+</div>
+
+{% for piso, cuartos in habitaciones.items() %}
+<div class="piso">
+    <span class="piso-titulo">Piso {{ piso }}</span>
+    <div class="cuartos">
+        {% for h in cuartos %}
+        {% set editable = h.estado in estados_manuales %}
+        <button class="cuarto cuarto-{{ h.estado | lower }}" type="button"
+                {{ 'disabled' if not editable }}
+                data-accion="{{ url_for('recepcion.info_habitacion_estado', habitacion_id=h.id) }}{{ consulta }}"
+                data-numero="{{ h.numero }}"
+                data-estado="{{ h.estado }}">
+            <strong>{{ h.numero }}</strong>
+            <span>{{ h.tipo }}</span>
+            <span class="etiqueta-cuarto">{{ estados_habitacion[h.estado] }}</span>
+            {% if h.huesped %}<small>{{ h.huesped }} · sale {{ h.fecha_salida.strftime('%d/%m') }}</small>{% endif %}
+        </button>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="content-card empty-state"><p>No hay habitaciones registradas.</p></div>
+{% endfor %}
+
+<!-- RESPUESTAS RÁPIDAS -->
+<div class="section-heading">
+    <div>
+        <h2>Respuestas rápidas</h2>
+        <p>Las mismas que usan los agentes de IA. Las inactivas no se muestran a los huéspedes.</p>
+    </div>
+    <button class="btn-primario" type="button" id="btnNuevaFaq">+ Nueva respuesta</button>
+</div>
+
+<form class="filtros" method="get" action="{{ url_for('recepcion.info_view') }}">
+    <label class="filtro-busqueda">
+        <span>Buscar</span>
+        <input type="search" name="q" value="{{ busqueda }}" placeholder="Ej. desayuno, wifi, taxi">
+    </label>
+    <label>
+        <span>Categoría</span>
+        <select name="categoria">
+            <option value="">Todas</option>
+            {% for c in categorias %}
+            <option value="{{ c }}" {{ 'selected' if categoria == c }}>{{ c | capitalize }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button class="btn-secundario" type="submit">Buscar</button>
+</form>
+
+<div class="faqs">
+    {% for f in faqs %}
+    <details class="content-card faq {{ 'faq-inactiva' if f.estado != 1 }}">
+        <summary>
+            <span class="faq-categoria">{{ f.categoria }}</span>
+            <strong>{{ f.pregunta }}</strong>
+            {% if f.estado != 1 %}<span class="etiqueta estado-cerrada">Inactiva</span>{% endif %}
+        </summary>
+        <p class="faq-respuesta">{{ f.respuesta }}</p>
+        <div class="faq-pie">
+            <small class="texto-tenue">{{ f.palabras_clave or '' }}</small>
+            <button class="text-button btn-editar-faq" type="button"
+                    data-accion="{{ url_for('recepcion.info_faq_actualizar', faq_id=f.id) }}{{ consulta }}"
+                    data-pregunta="{{ f.pregunta }}"
+                    data-respuesta="{{ f.respuesta }}"
+                    data-categoria="{{ f.categoria }}"
+                    data-palabras="{{ f.palabras_clave or '' }}"
+                    data-activa="{{ 1 if f.estado == 1 else 0 }}">
+                Editar
+            </button>
+        </div>
+    </details>
+    {% else %}
+    <div class="content-card empty-state"><p>No hay respuestas con esa búsqueda.</p></div>
+    {% endfor %}
+</div>
+
+<!-- DIÁLOGO: ESTADO DE HABITACIÓN -->
+<dialog class="dialogo" id="dlgCuarto">
+    <form method="post" id="frmCuarto">
+        <h2 id="cuartoTitulo"></h2>
+        <label class="campo">
+            <span>Nuevo estado</span>
+            <select name="estado" id="cuartoEstado">
+                {% for clave in estados_manuales %}
+                <option value="{{ clave }}">{{ estados_habitacion[clave] }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <div class="dialogo-acciones">
+            <button class="btn-secundario" type="button" data-cerrar>Cancelar</button>
+            <button class="btn-primario" type="submit">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+<!-- DIÁLOGO: CREAR / EDITAR RESPUESTA (el JS cambia acción y valores) -->
+<dialog class="dialogo" id="dlgFaq">
+    <form method="post" id="frmFaq" data-nueva="{{ url_for('recepcion.info_faq_crear') }}{{ consulta }}">
+        <h2 id="faqTitulo">Nueva respuesta</h2>
+
+        <label class="campo">
+            <span>Pregunta *</span>
+            <input name="pregunta" id="faqPregunta" maxlength="500" required>
+        </label>
+
+        <label class="campo">
+            <span>Respuesta *</span>
+            <textarea name="respuesta" id="faqRespuesta" rows="4" required></textarea>
+        </label>
+
+        <div class="campos-fila">
+            <label class="campo">
+                <span>Categoría *</span>
+                <input name="categoria" id="faqCategoria" maxlength="80" list="listaCategorias" required>
+                <datalist id="listaCategorias">
+                    {% for c in categorias %}<option value="{{ c }}">{% endfor %}
+                </datalist>
+            </label>
+            <label class="campo">
+                <span>Palabras clave</span>
+                <input name="palabras_clave" id="faqPalabras" maxlength="500" placeholder="separadas por coma">
+            </label>
+        </div>
+
+        <label class="campo-check">
+            <input type="checkbox" name="activa" id="faqActiva" checked>
+            <span>Activa (visible para huéspedes y bots)</span>
+        </label>
+
+        <div class="dialogo-acciones">
+            <button class="btn-secundario" type="button" data-cerrar>Cancelar</button>
+            <button class="btn-primario" type="submit">Guardar</button>
+        </div>
+    </form>
+</dialog>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/recepcion/info.js') }}"></script>
+{% endblock %}
