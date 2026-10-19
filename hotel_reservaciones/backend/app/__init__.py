@@ -11,7 +11,6 @@ from app.routes.routes_cliente.cliente_routes import cliente_bp
 from app.routes.usuarios_routes import UsuariosRoutes
 
 
-
 def create_app():
     # Apuntamos la carpeta de templates y estáticos
     template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../frontend/templates'))
