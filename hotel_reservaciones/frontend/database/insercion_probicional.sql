@@ -20,7 +20,7 @@ INSERT INTO usuarios (rol_id, nombre, apellidos, email, password_hash, telefono,
     'General', 
     'admin@maisonhotel.com', 
     'Admin1234*', 
-    '+527441234567', 
+    '+527441234567',  
     'ACTIVO'
 ),
 (
@@ -62,7 +62,7 @@ ON DUPLICATE KEY UPDATE precio = VALUES(precio);
 -- 5. CLIENTE DE PRUEBA
 INSERT INTO clientes (usuario_id, nombre, apellidos, email, telefono, documento_tipo, documento_numero, nacionalidad, idioma_preferido) VALUES
 (
-    NULL, 
+    3, 
     'Juan', 
     'Pérez Gómez', 
     'juan.perez@example.com', 

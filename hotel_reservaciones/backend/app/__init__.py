@@ -8,6 +8,8 @@ from app.routes.recepcion_routes import recepcion_bp
 from app.routes.perfil_routes import PerfilRoutes
 from app.routes.habitaciones_routes import HabitacionesRoutes
 from app.routes.routes_cliente.cliente_routes import cliente_bp
+from app.routes.usuarios_routes import UsuariosRoutes
+
 
 
 def create_app():
@@ -47,11 +49,16 @@ def create_app():
     app.register_blueprint(recovery_bp)
     app.register_blueprint(recepcion_bp)
     
-    return app
+
     app.register_blueprint(PerfilRoutes().get_blueprint())
     habitaciones_routes = HabitacionesRoutes(url_prefix="/admin")
     app.register_blueprint(habitaciones_routes.get_blueprint())
     app.register_blueprint(cliente_bp)
+
+    
+    usuarios_routes = UsuariosRoutes()
+    app.register_blueprint(usuarios_routes.get_blueprint())
+
 
     # Evitar que el navegador almacene páginas de la aplicación
     @app.after_request

@@ -104,13 +104,14 @@ class AuthController:
                     "message": "Acceso de recepción autorizado",
                     "redirect": "/recepcion/inicio"
                 }), 200
-            else:
+            elif user_rol == 3:
                 logger.info(f"Acceso de usuario estándar autorizado con éxito: {email}")
                 return jsonify({
                     "success": True, 
                     "message": "Inicio de sesión exitoso",
-                    "redirect": "cliente/panel"
+                    "redirect": "/cliente/panel"
                 }), 200
+            
 
         except Exception as e:
             # Imprime la traza completa del error directamente en tu consola/terminal de Flask
