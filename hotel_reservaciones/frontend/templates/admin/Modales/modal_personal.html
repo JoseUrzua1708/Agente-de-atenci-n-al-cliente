@@ -1,0 +1,313 @@
+
+<!-- templates/admin/Modales/modal_personal.html -->
+
+<div
+    class="pm-modal"
+    id="modalPersonal"
+    aria-hidden="true"
+    data-url-admin="/administradores"
+    data-url-recepcion="/recepcionistas"
+>
+    <div class="pm-modal__fondo" data-modal-fondo></div>
+
+    <section
+        class="pm-modal__ventana"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pmTitulo"
+        aria-describedby="pmDescripcion"
+        tabindex="-1"
+    >
+        <header class="pm-modal__cabecera">
+            <div class="pm-modal__icono-principal" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                          stroke="currentColor" stroke-width="1.7"
+                          stroke-linecap="round"/>
+                    <circle cx="10" cy="7" r="4"
+                            stroke="currentColor" stroke-width="1.7"/>
+                    <path d="M19 8v6m-3-3h6"
+                          stroke="currentColor" stroke-width="1.7"
+                          stroke-linecap="round"/>
+                </svg>
+            </div>
+
+            <div class="pm-modal__titulos">
+                <span class="pm-modal__etiqueta">GESTIÓN DE ACCESOS</span>
+                <h2 id="pmTitulo">Crear nuevo usuario</h2>
+                <p id="pmDescripcion">
+                    Registra una cuenta para el personal del hotel.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="pm-modal__cerrar"
+                data-modal-cerrar
+                aria-label="Cerrar ventana"
+            >
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="m18 6-12 12M6 6l12 12"
+                          stroke="currentColor" stroke-width="1.8"
+                          stroke-linecap="round"/>
+                </svg>
+            </button>
+        </header>
+
+        <div class="pm-modal__contenido">
+            <form id="formCrearPersonal" novalidate>
+                <div class="pm-campo pm-campo--completo">
+                    <label for="pmRol">Tipo de cuenta <span>*</span></label>
+
+                    <div class="pm-control pm-control--select">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"
+                                  stroke="currentColor" stroke-width="1.7"/>
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 2.94-.09-.02a1.7 1.7 0 0 0-1.75.55l-.05.07h-3.4l-.04-.08a1.7 1.7 0 0 0-1.52-.94 1.7 1.7 0 0 0-.4.05l-.09.02-1.7-2.94.06-.06A1.7 1.7 0 0 0 8.8 15l-.09-.04v-3.4l.09-.04a1.7 1.7 0 0 0 .33-1.88l-.06-.06 1.7-2.94.09.02a1.7 1.7 0 0 0 1.75-.55l.05-.07h3.4l.04.08a1.7 1.7 0 0 0 1.92.89l.09-.02 1.7 2.94-.06.06A1.7 1.7 0 0 0 19.4 12l.09.04v3.4l-.09-.44Z"
+                                  stroke="currentColor" stroke-width="1.2"
+                                  stroke-linejoin="round" opacity=".75"/>
+                        </svg>
+
+                        <select id="pmRol" name="rol_id" required>
+                            <option value="2">Personal de recepción</option>
+                            <option value="1">Administrador</option>
+                        </select>
+                    </div>
+
+                    <small class="pm-ayuda">
+                        El rol determina el tipo de cuenta que se creará.
+                    </small>
+                </div>
+
+                <div class="pm-separador">
+                    <span>Información personal</span>
+                </div>
+
+                <div class="pm-formulario">
+                    <div class="pm-campo">
+                        <label for="pmNombre">Nombre <span>*</span></label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"
+                                        stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M4.5 21a7.5 7.5 0 0 1 15 0"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                id="pmNombre"
+                                name="nombre"
+                                type="text"
+                                maxlength="100"
+                                autocomplete="given-name"
+                                placeholder="Nombre"
+                                required
+                            >
+                        </div>
+                        <small class="pm-error-campo" data-error="nombre"></small>
+                    </div>
+
+                    <div class="pm-campo">
+                        <label for="pmApellidos">Apellidos</label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                                <circle cx="10" cy="7" r="4"
+                                        stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M20 8v6m-3-3h6"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                id="pmApellidos"
+                                name="apellidos"
+                                type="text"
+                                maxlength="150"
+                                autocomplete="family-name"
+                                placeholder="Apellidos"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="pm-campo pm-campo--completo">
+                        <label for="pmEmail">Correo electrónico <span>*</span></label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect x="3" y="5" width="18" height="14" rx="2"
+                                      stroke="currentColor" stroke-width="1.7"/>
+                                <path d="m4 7 8 6 8-6"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <input
+                                id="pmEmail"
+                                name="email"
+                                type="email"
+                                maxlength="150"
+                                autocomplete="email"
+                                placeholder="correo@hotel.com"
+                                required
+                            >
+                        </div>
+                        <small class="pm-error-campo" data-error="email"></small>
+                    </div>
+
+                    <div class="pm-campo pm-campo--completo">
+                        <label for="pmTelefono">Teléfono</label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"
+                                      stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M10 18h4"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                id="pmTelefono"
+                                name="telefono"
+                                type="tel"
+                                maxlength="25"
+                                autocomplete="tel"
+                                placeholder="Número de teléfono"
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pm-separador">
+                    <span>Seguridad de la cuenta</span>
+                </div>
+
+                <div class="pm-formulario">
+                    <div class="pm-campo">
+                        <label for="pmPassword">Contraseña <span>*</span></label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect x="4" y="10" width="16" height="11" rx="2"
+                                      stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                id="pmPassword"
+                                name="password"
+                                type="password"
+                                minlength="8"
+                                autocomplete="new-password"
+                                placeholder="Mínimo 8 caracteres"
+                                required
+                            >
+                            <button
+                                type="button"
+                                class="pm-ver-password"
+                                data-ver-password="pmPassword"
+                                aria-label="Mostrar contraseña"
+                                aria-pressed="false"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                                          stroke="currentColor" stroke-width="1.7"/>
+                                    <circle cx="12" cy="12" r="3"
+                                            stroke="currentColor" stroke-width="1.7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <small class="pm-ayuda">Utiliza al menos 8 caracteres.</small>
+                        <small class="pm-error-campo" data-error="password"></small>
+                    </div>
+
+                    <div class="pm-campo">
+                        <label for="pmConfirmarPassword">
+                            Confirmar contraseña <span>*</span>
+                        </label>
+                        <div class="pm-control">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect x="4" y="10" width="16" height="11" rx="2"
+                                      stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                id="pmConfirmarPassword"
+                                name="confirmar_password"
+                                type="password"
+                                autocomplete="new-password"
+                                placeholder="Repite la contraseña"
+                                required
+                            >
+                            <button
+                                type="button"
+                                class="pm-ver-password"
+                                data-ver-password="pmConfirmarPassword"
+                                aria-label="Mostrar confirmación de contraseña"
+                                aria-pressed="false"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"
+                                          stroke="currentColor" stroke-width="1.7"/>
+                                    <circle cx="12" cy="12" r="3"
+                                            stroke="currentColor" stroke-width="1.7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <small class="pm-error-campo" data-error="confirmar_password"></small>
+                    </div>
+                </div>
+
+                <div class="pm-nota-seguridad">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 3 20 6v5c0 5-3.4 8.2-8 10-4.6-1.8-8-5-8-10V6l8-3Z"
+                              stroke="currentColor" stroke-width="1.7"
+                              stroke-linejoin="round"/>
+                        <path d="m9 12 2 2 4-4"
+                              stroke="currentColor" stroke-width="1.7"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <p>La contraseña se almacenará mediante un hash seguro.</p>
+                </div>
+
+                <div
+                    class="pm-mensaje-formulario"
+                    id="pmMensajeFormulario"
+                    role="alert"
+                    hidden
+                ></div>
+
+                <footer class="pm-modal__acciones">
+                    <button
+                        type="button"
+                        class="pm-btn pm-btn--secundario"
+                        data-modal-cerrar
+                    >
+                        Cancelar
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="pm-btn pm-btn--principal"
+                        id="pmBtnGuardar"
+                    >
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M12 5v14m-7-7h14"
+                                  stroke="currentColor" stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                        </svg>
+                        <span>Crear cuenta</span>
+                    </button>
+                </footer>
+            </form>
+        </div>
+    </section>
+</div>
+
+<!-- Notificaciones independientes del modal -->
+<div
+    class="pm-toast-region"
+    id="pmToastRegion"
+    aria-live="polite"
+    aria-atomic="true"
+></div>

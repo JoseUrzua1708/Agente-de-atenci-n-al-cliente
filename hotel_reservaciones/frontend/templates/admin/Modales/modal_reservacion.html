@@ -1,0 +1,125 @@
+<!-- MODAL: CREAR / EDITAR RESERVACIÓN -->
+<div
+    class="res-modal"
+    id="modalReservacion"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="resModalTitulo"
+    aria-hidden="true"
+>
+    <div class="res-modal__dialog">
+
+        <header class="res-modal__header">
+            <div>
+                <span class="res-modal__eyebrow">Maison Hotel / Reservaciones</span>
+                <h3 id="resModalTitulo">Nueva reservación</h3>
+            </div>
+
+            <button
+                type="button"
+                class="res-modal__close"
+                id="btnCerrarModalRes"
+                aria-label="Cerrar"
+            >&times;</button>
+        </header>
+
+        <form id="formReservacion">
+
+            <input type="hidden" id="resId">
+
+            <div
+                class="res-form-error"
+                id="resErrorFormulario"
+                role="alert"
+            ></div>
+
+            <div class="res-grid">
+
+                <div class="res-field res-field--full">
+                    <label for="resCliente">Huésped</label>
+                    <select id="resCliente" required>
+                        <option value="">Cargando huéspedes...</option>
+                    </select>
+                </div>
+
+                <div class="res-field">
+                    <label for="resEntrada">Fecha de entrada</label>
+                    <input type="date" id="resEntrada" required>
+                </div>
+
+                <div class="res-field">
+                    <label for="resSalida">Fecha de salida</label>
+                    <input type="date" id="resSalida" required>
+                </div>
+
+                <div class="res-field res-field--full">
+                    <label for="resHabitacion">Habitación disponible</label>
+                    <select id="resHabitacion" required disabled>
+                        <option value="">Selecciona primero las fechas</option>
+                    </select>
+                </div>
+
+                <div class="res-field">
+                    <label for="resAdultos">Adultos</label>
+                    <input type="number" id="resAdultos" min="1" max="20" value="1" required>
+                </div>
+
+                <div class="res-field">
+                    <label for="resNinos">Niños</label>
+                    <input type="number" id="resNinos" min="0" max="20" value="0">
+                </div>
+
+                <div class="res-field">
+                    <label for="resDescuento">Descuento (MXN)</label>
+                    <input type="number" id="resDescuento" min="0" step="0.01" value="0">
+                </div>
+
+                <div class="res-field">
+                    <label for="resEstado">Estado</label>
+                    <select id="resEstado" required></select>
+                </div>
+
+                <div class="res-field res-field--full">
+                    <label for="resOrigen">Origen</label>
+                    <select id="resOrigen">
+                        <option value="RECEPCION">Recepción</option>
+                        <option value="TELEFONO">Teléfono</option>
+                        <option value="WEB">Web</option>
+                        <option value="CHATBOT">Chatbot</option>
+                    </select>
+                </div>
+
+                <div class="res-field res-field--full">
+                    <label for="resComentarios">Comentarios</label>
+                    <textarea
+                        id="resComentarios"
+                        maxlength="500"
+                        placeholder="Peticiones especiales, notas internas..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+            <div class="res-summary" id="resResumen">
+                Selecciona fechas y habitación para ver el total estimado.
+            </div>
+
+            <footer class="res-modal__footer">
+                <button
+                    type="button"
+                    class="res-btn res-btn-secondary"
+                    id="btnCancelarModalRes"
+                >Cancelar</button>
+
+                <button
+                    type="submit"
+                    class="res-btn res-btn-primary"
+                    id="btnGuardarReservacion"
+                >Guardar reservación</button>
+            </footer>
+
+        </form>
+
+    </div>
+</div>
+

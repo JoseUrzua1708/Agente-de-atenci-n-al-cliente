@@ -1,0 +1,110 @@
+{% extends "admin/panel_admin.html" %}
+
+{% block titulo_pagina %}
+Gestión de usuarios
+{% endblock titulo_pagina %}
+
+{% block descripcion_pagina %}
+Administra las cuentas, revisa sus datos y consulta su estado.
+{% endblock descripcion_pagina %}
+
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/menu/personal.css') }}" >
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/admin/modales/modal_personal.css') }}"
+>
+{% endblock estilos_pagina %}
+
+{% block contenido %}
+
+
+
+<div class="usuarios-panel" id="usuariosPanel">
+    
+<div class="u-acciones-superiores">
+    <button
+        type="button"
+        class="u-btn-insertar"
+        id="btnInsertarPersonal"
+        aria-haspopup="dialog"
+        aria-controls="modalPersonal"
+    >
+        <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            aria-hidden="true"
+        >
+            <path
+                d="M12 5v14m-7-7h14"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+            />
+        </svg>
+        <span>Nuevo usuario</span>
+    </button>
+</div>
+
+
+    <section class="u-resumen" aria-label="Resumen de usuarios">
+
+        <article class="u-resumen-card" style="--u-accent:#ead9c7">
+            <span class="u-resumen-icono" style="--u-accent:#ead9c7">♙</span>
+            <span class="u-resumen-label">Administradores activos</span>
+            <strong class="u-resumen-numero" id="totalAdmins">—</strong>
+        </article>
+
+        <article class="u-resumen-card" style="--u-accent:#dcebe1">
+            <span class="u-resumen-icono" style="--u-accent:#dcebe1">♧</span>
+            <span class="u-resumen-label">Personal de recepción activo</span>
+            <strong class="u-resumen-numero" id="totalRecepcion">—</strong>
+        </article>
+
+        <article class="u-resumen-card" style="--u-accent:#f2dedd">
+            <span class="u-resumen-icono" style="--u-accent:#f2dedd">⊘</span>
+            <span class="u-resumen-label">Cuentas inactivas</span>
+            <strong class="u-resumen-numero" id="totalInactivos">—</strong>
+        </article>
+
+    </section>
+
+    <section class="u-herramientas">
+        <label class="u-buscador">
+            <span aria-hidden="true">⌕</span>
+            <input
+                type="search"
+                id="buscarUsuario"
+                placeholder="Buscar por nombre, correo o teléfono..."
+                autocomplete="off"
+                aria-label="Buscar usuarios"
+            >
+        </label>
+
+        <span class="u-resultados" id="contadorResultados">
+            Cargando usuarios...
+        </span>
+    </section>
+
+    <div id="mensajeError" hidden class="u-error" role="alert"></div>
+
+    <section class="u-carpetas" id="carpetasUsuarios" aria-live="polite">
+        <div class="u-cargando">
+            <span class="u-vacio-icono">◌</span>
+            Cargando directorio de usuarios...
+        </div>
+    </section>
+
+</div>
+
+{% include "admin/Modales/modal_personal.html" %}
+
+{% endblock contenido %}
+
+
+{% block scripts_pagina %}
+<script src="{{ url_for('static', filename='js/admin/menu/personal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/modales/modal_personal.js') }}"></script>
+{% endblock scripts_pagina %}

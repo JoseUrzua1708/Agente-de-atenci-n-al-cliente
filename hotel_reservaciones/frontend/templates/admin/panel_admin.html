@@ -153,9 +153,6 @@
 </div>
 
 </div>
-
-
-
             </div>
         </header>
 
@@ -291,9 +288,9 @@
                         <h2>Actividad reciente</h2>
                         <p>Consulta los movimientos de la operación hotelera.</p>
                     </div>
-                    <button class="text-button" type="button" data-page="reservaciones">
+                    < class="text-button" type="button" data-page="reservaciones">
                         Ver reservaciones
-                    </button>
+                    </a>
                 </div>
 
                 <div class="activity-card">
@@ -354,7 +351,8 @@
 
         <nav class="side-nav" aria-label="Navegación principal">
 
-            <a class="nav-item active" href="{{ url_for('admin.admin_inicio_view') }}">
+            <a class="nav-item {% if request.endpoint == 'admin.admin_inicio_view' %}active{% endif %}"
+   href="{{ url_for('admin.admin_inicio_view') }}">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <rect x="3" y="3" width="7" height="7" rx="1"
                           stroke="currentColor" stroke-width="1.6"/>
@@ -368,18 +366,20 @@
                 <span>Inicio</span>
             </a>
 
-            <button class="nav-item" type="button" data-page="reservaciones">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <rect x="3" y="5" width="18" height="16" rx="2"
-                          stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M7 3v4M17 3v4M3 10h18M8 14h3"
-                          stroke="currentColor" stroke-width="1.6"
-                          stroke-linecap="round"/>
-                </svg>
-                <span>Reservaciones</span>
-            </button>
+            <a class="nav-item {% if request.endpoint == 'reservaciones.vista_reservaciones' %}active{% endif %}"
+   href="{{ url_for('reservaciones.vista_reservaciones') }}">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="16" rx="2"
+              stroke="currentColor" stroke-width="1.6"/>
+        <path d="M7 3v4M17 3v4M3 10h18M8 14h3"
+              stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round"/>
+    </svg>
+    <span>Reservaciones</span>
+</a>
 
-            <a href="{{ url_for('habitaciones.vista_habitaciones') }}" class="nav-item" style="text-decoration: none; display: flex; align-items: center; color: inherit;">
+            <a class="nav-item {% if request.endpoint == 'habitaciones.vista_habitaciones' %}active{% endif %}"
+   href="{{ url_for('habitaciones.vista_habitaciones') }}">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="20" height="20">
         <rect x="3" y="10" width="18" height="10" rx="1.5"
               stroke="currentColor" stroke-width="1.6"/>
@@ -406,16 +406,19 @@
                 <span>Huéspedes</span>
             </button>
 
-            <button class="nav-item" type="button" data-page="personal">
-                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                    <circle cx="12" cy="8" r="4"
-                            stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M4 21a8 8 0 0 1 16 0"
-                          stroke="currentColor" stroke-width="1.6"
-                          stroke-linecap="round"/>
-                </svg>
-                <span>Personal</span>
-            </button>
+            
+<a class="nav-item {% if request.endpoint == 'usuarios.vista_personal' %}active{% endif %}"
+   href="{{ url_for('usuarios.vista_personal') }}">
+    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="8" r="4"
+                stroke="currentColor" stroke-width="1.6"/>
+        <path d="M4 21a8 8 0 0 1 16 0"
+              stroke="currentColor" stroke-width="1.6"
+              stroke-linecap="round"/>
+    </svg>
+    <span>Personal</span>
+</a>
+
 
             <button class="nav-item" type="button" data-page="reportes">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">

@@ -1,0 +1,362 @@
+{% extends "admin/panel_admin.html" %}
+
+{% block titulo_pagina %}
+Gestión de reservaciones
+{% endblock titulo_pagina %}
+
+{% block descripcion_pagina %}
+Consulta y administra las reservaciones del hotel.
+{% endblock descripcion_pagina %}
+
+{% block estilos_pagina %}
+{# Se reutiliza el CSS de habitaciones para conservar el mismo diseño #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/habitaciones.css') }}" >
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/reservaciones.css') }}" >
+{% endblock estilos_pagina %}
+
+{% block contenido %}
+
+<section class="habitaciones-page" id="reservacionesPage">
+
+    <!-- ENCABEZADO Y ACCIONES -->
+    <div class="hab-toolbar">
+
+        <button
+            class="hab-btn hab-btn-primary"
+            id="btnNuevaReservacion"
+            type="button"
+        >
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                    d="M12 5v14M5 12h14"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                />
+            </svg>
+            Nueva reservación
+        </button>
+
+    </div>
+
+    <!-- MENSAJES DEL SISTEMA -->
+    <div
+        id="resMensaje"
+        class="hab-message"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+    <!-- RESUMEN DE RESERVACIONES -->
+    <div class="hab-summary">
+
+        <article class="hab-summary-card hab-summary-total">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <rect
+                        x="3.5"
+                        y="5"
+                        width="17"
+                        height="14"
+                        rx="2"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="M3.5 12h17M8 8.5h2M8 15.5h2"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    Total de reservaciones
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="totalReservaciones"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Registradas en el sistema
+                </span>
+            </div>
+
+        </article>
+
+        <article class="hab-summary-card hab-summary-available">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8.5"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="m8.5 12 2.3 2.3 4.7-4.8"
+                        stroke="currentColor"
+                        stroke-width="1.7"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    Activas
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="reservacionesActivas"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Pendientes o confirmadas
+                </span>
+            </div>
+
+        </article>
+
+        <article class="hab-summary-card hab-summary-unavailable">
+
+            <div class="hab-summary-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="8.5"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                    />
+                    <path
+                        d="M9 9l6 6m0-6-6 6"
+                        stroke="currentColor"
+                        stroke-width="1.6"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </div>
+
+            <div class="hab-summary-content">
+                <span class="hab-summary-label">
+                    Canceladas
+                </span>
+
+                <strong
+                    class="hab-summary-value"
+                    id="reservacionesCanceladas"
+                >—</strong>
+
+                <span class="hab-summary-note">
+                    Reservaciones canceladas
+                </span>
+            </div>
+
+        </article>
+
+    </div>
+
+    <!-- LISTADO -->
+    <section class="hab-table-card">
+
+        <header class="hab-table-header">
+
+            <div class="hab-table-heading">
+                <h3>Listado de reservaciones</h3>
+            </div>
+
+            <div class="hab-table-tools">
+
+                <select
+                    id="filtroEstadoReservacion"
+                    class="hab-page-size"
+                    aria-label="Filtrar por estado"
+                >
+                    <option value="">Todos los estados</option>
+                    <option value="PENDIENTE">Pendiente</option>
+                    <option value="CONFIRMADA">Confirmada</option>
+                    <option value="CHECK_IN">Check-in</option>
+                    <option value="CHECK_OUT">Check-out</option>
+                    <option value="CANCELADA">Cancelada</option>
+                    <option value="NO_SHOW">No show</option>
+                </select>
+
+                <label
+                    class="hab-search-wrapper"
+                    for="buscarReservacion"
+                >
+                    <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        aria-hidden="true"
+                    >
+                        <circle
+                            cx="10.8"
+                            cy="10.8"
+                            r="6.8"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+                        <path
+                            d="m16 16 4.2 4.2"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+
+                    <input
+                        class="hab-search"
+                        id="buscarReservacion"
+                        type="search"
+                        placeholder="Buscar reservación..."
+                        autocomplete="off"
+                        aria-label="Buscar por folio, huésped, habitación o estado"
+                    >
+                </label>
+
+            </div>
+
+        </header>
+
+        <div class="hab-table-wrapper">
+
+            <table class="hab-table">
+
+                <thead>
+                    <tr>
+                        <th scope="col">Folio</th>
+                        <th scope="col">Huésped</th>
+                        <th scope="col">Habitación</th>
+                        <th scope="col">Entrada</th>
+                        <th scope="col">Salida</th>
+                        <th scope="col">Total</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablaReservaciones">
+
+                    <tr>
+                        <td colspan="8" class="hab-empty">
+                            <span
+                                class="hab-loading-spinner"
+                                aria-hidden="true"
+                            ></span>
+                            <strong>Cargando reservaciones...</strong>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- PAGINACIÓN -->
+        <footer class="hab-table-footer">
+
+            <div class="hab-table-footer-info">
+                <span
+                    id="contadorReservaciones"
+                    aria-live="polite"
+                >Cargando registros...</span>
+            </div>
+
+            <div class="hab-pagination">
+
+                <label
+                    class="hab-page-size-label"
+                    for="resRegistrosPorPagina"
+                >
+                    Mostrar
+
+                    <select
+                        id="resRegistrosPorPagina"
+                        class="hab-page-size"
+                        aria-label="Registros por página"
+                    >
+                        <option value="5">5</option>
+                        <option value="10" selected>10</option>
+                        <option value="20">20</option>
+                        <option value="todos">Todos</option>
+                    </select>
+                </label>
+
+                <div class="hab-page-controls">
+
+                    <button
+                        class="hab-page-btn"
+                        id="resPaginaAnterior"
+                        type="button"
+                        aria-label="Página anterior"
+                        disabled
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path
+                                d="m14.5 18-6-6 6-6"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+
+                    <span
+                        class="hab-page-current"
+                        id="resPaginaActual"
+                        aria-live="polite"
+                    >1 / 1</span>
+
+                    <button
+                        class="hab-page-btn"
+                        id="resPaginaSiguiente"
+                        type="button"
+                        aria-label="Página siguiente"
+                        disabled
+                    >
+                        <svg viewBox="0 0 24 24" fill="none"
+                             aria-hidden="true">
+                            <path
+                                d="m9.5 6 6 6-6 6"
+                                stroke="currentColor"
+                                stroke-width="1.7"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            />
+                        </svg>
+                    </button>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </section>
+
+</section>
+
+{% include "admin/Modales/modal_reservacion.html" %}
+
+{% endblock contenido %}
+
+{% block scripts_pagina %}
+<script
+    src="{{ url_for('static', filename='js/admin/Menu/reservaciones.js') }}"
+></script>
+{% endblock scripts_pagina %}
+

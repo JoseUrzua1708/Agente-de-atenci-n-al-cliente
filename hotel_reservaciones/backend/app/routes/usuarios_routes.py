@@ -1,4 +1,4 @@
-from flask import Blueprint, session, jsonify
+from flask import Blueprint, session, jsonify, render_template
 
 from app.config.database import db
 from app.controllers.usuarios_controller import UsuariosController
@@ -16,6 +16,11 @@ class UsuariosRoutes:
         self._registrar_rutas()
 
     def _registrar_rutas(self):
+
+        # Página HTML de administración de personal.
+        @self.blueprint.route("/", methods=["GET"], endpoint="vista_personal")
+        def vista_personal():
+            return render_template("admin/Menu/personal.html")
 
         @self.blueprint.before_request
         def verificar_administrador():
