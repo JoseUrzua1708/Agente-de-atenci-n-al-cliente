@@ -13,6 +13,16 @@
     </div>
 </div>
 
+<div class="reception-booking-toolbar">
+    <p id="mensajeReservacionRecepcion" class="alerta" role="status" aria-live="polite" hidden></p>
+    <button class="reception-booking-open" id="btnNuevaReservacionRecepcion" type="button">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        Registrar reservación
+    </button>
+</div>
+
 <!-- INDICADORES DEL DÍA ('--' si la BD no responde) -->
 <div class="section-heading">
     <div>
@@ -84,4 +94,56 @@
     {% endif %}
     {% endfor %}
 </div>
+
+<dialog class="reception-booking-dialog" id="dlgReservacionRecepcion" aria-labelledby="tituloReservacionRecepcion">
+    <form id="formReservacionRecepcion">
+        <header class="reception-booking-dialog__header">
+            <h2 id="tituloReservacionRecepcion">Registrar reservación</h2>
+            <button class="reception-booking-dialog__close" id="cerrarReservacionRecepcion" type="button" aria-label="Cerrar">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </header>
+        <div class="reception-booking-grid">
+            <label class="reception-booking-field reception-booking-field--wide">
+                Huésped
+                <select id="clienteReservacionRecepcion" required>
+                    <option value="">Cargando huéspedes...</option>
+                </select>
+            </label>
+            <label class="reception-booking-field">
+                Entrada
+                <input id="entradaReservacionRecepcion" type="date" required>
+            </label>
+            <label class="reception-booking-field">
+                Salida
+                <input id="salidaReservacionRecepcion" type="date" required>
+            </label>
+            <label class="reception-booking-field reception-booking-field--wide">
+                Habitación disponible
+                <select id="habitacionReservacionRecepcion" required disabled>
+                    <option value="">Selecciona las fechas primero</option>
+                </select>
+            </label>
+            <label class="reception-booking-field">
+                Adultos
+                <input id="adultosReservacionRecepcion" type="number" min="1" max="20" value="1" required>
+            </label>
+            <label class="reception-booking-field">
+                Niños
+                <input id="ninosReservacionRecepcion" type="number" min="0" max="20" value="0" required>
+            </label>
+            <label class="reception-booking-field reception-booking-field--wide">
+                Comentarios
+                <textarea id="comentariosReservacionRecepcion" rows="3" maxlength="2000"></textarea>
+            </label>
+        </div>
+        <p class="reception-booking-error" id="errorReservacionRecepcion" role="alert" aria-live="polite"></p>
+        <footer class="reception-booking-dialog__actions">
+            <button class="reception-booking-cancel" id="cancelarReservacionRecepcion" type="button">Cancelar</button>
+            <button class="reception-booking-submit" id="guardarReservacionRecepcion" type="submit">Guardar reservación</button>
+        </footer>
+    </form>
+</dialog>
 {% endblock %}

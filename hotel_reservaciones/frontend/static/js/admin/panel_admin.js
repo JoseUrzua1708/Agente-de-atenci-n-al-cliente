@@ -9,7 +9,181 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarMenuPerfil();
     inicializarModalCerrarSesion();
     cargarPerfilUsuario();
+    inicializarNotificaciones();
 });
+
+
+function inicializarNotificaciones() {
+    const boton = document.getElementById("notificationButton");
+    const menu = document.getElementById("notificationMenu");
+    const lista = document.getElementById("notificationList");
+    const contador = document.getElementById("notificationCount");
+    const marcarTodas = document.getElementById("notificationReadAll");
+
+    if (!boton || !menu || !lista || !contador || !marcarTodas) return;
+
+    function actualizarContador(cantidad) {
+        const pendientes = Number(cantidad) || 0;
+        contador.textContent = pendientes > 99 ? "99+" : String(pendientes);
+        contador.classList.toggle("has-unread", pendientes > 0);
+        boton.setAttribute(
+            "aria-label",
+            pendientes ? `Notificaciones, ${pendientes} pendientes` : "Notificaciones"
+        );
+        marcarTodas.disabled = pendientes === 0;
+    }
+
+    function renderizar(items) {
+        if (!items.length) {
+            lista.innerHTML = '<p class="notification-menu__empty">No hay notificaciones.</p>';
+            return;
+        }
+
+        lista.replaceChildren(...items.map(item => {
+            const articulo = document.createElement("article");
+            articulo.className = `notification-item${item.estado === "LEIDA" ? "" : " is-unread"}`;
+
+            const enlace = document.createElement("a");
+            enlace.className = "notification-item__link";
+            enlace.href = item.reservacion_id
+                ? `/admin/menu/reservaciones?reservacion_id=${encodeURIComponent(item.reservacion_id)}`
+                : "/admin/menu/reservaciones";
+            enlace.dataset.notificationLink = String(item.id);
+
+            const asunto = document.createElement("strong");
+            asunto.textContent = item.asunto || "Notificación";
+            const mensaje = document.createElement("span");
+            mensaje.textContent = item.mensaje || "";
+            const fecha = document.createElement("time");
+            fecha.textContent = item.fecha_creacion || "";
+            enlace.append(asunto, mensaje, fecha);
+            articulo.append(enlace);
+
+            if (item.estado !== "LEIDA") {
+                const leer = document.createElement("button");
+                leer.className = "notification-item__read";
+                leer.type = "button";
+                leer.textContent = "Marcar leída";
+                leer.dataset.notificationRead = String(item.id);
+                leer.setAttribute("aria-label", `Marcar como leída: ${item.asunto || "notificación"}`);
+                articulo.append(leer);
+            }
+
+            return articulo;
+        }));
+    }
+
+    async function cargar() {
+        try {
+            const respuesta = await fetch("/admin/notificaciones/api", {
+                credentials: "same-origin",
+                headers: { Accept: "application/json" }
+            });
+            const datos = await respuesta.json().catch(() => ({}));
+            if (respuesta.status === 401 && datos.redirect) {
+                window.location.assign(datos.redirect);
+                return;
+            }
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "No fue posible cargar las notificaciones.");
+            }
+            actualizarContador(datos.pendientes);
+            renderizar(Array.isArray(datos.notificaciones) ? datos.notificaciones : []);
+        } catch (error) {
+            const mensaje = document.createElement("p");
+            mensaje.className = "notification-menu__empty";
+            mensaje.textContent = error.message;
+            lista.replaceChildren(mensaje);
+        }
+    }
+
+    async function marcarLeida(id) {
+        const respuesta = await fetch(`/admin/notificaciones/api/${encodeURIComponent(id)}/leer`, {
+            method: "PATCH",
+            credentials: "same-origin",
+            headers: { Accept: "application/json" }
+        });
+        const datos = await respuesta.json().catch(() => ({}));
+        if (!respuesta.ok || !datos.success) {
+            throw new Error(datos.message || "No fue posible actualizar la notificación.");
+        }
+    }
+
+    boton.addEventListener("click", evento => {
+        evento.stopPropagation();
+        const abierto = boton.getAttribute("aria-expanded") === "true";
+        boton.setAttribute("aria-expanded", String(!abierto));
+        menu.hidden = abierto;
+        if (!abierto) cargar();
+    });
+
+    menu.addEventListener("click", async evento => {
+        const leer = evento.target.closest("[data-notification-read]");
+        if (leer) {
+            leer.disabled = true;
+            try {
+                await marcarLeida(leer.dataset.notificationRead);
+                await cargar();
+            } catch (error) {
+                leer.disabled = false;
+                lista.querySelector(".notification-menu__empty")?.remove();
+                const mensaje = document.createElement("p");
+                mensaje.className = "notification-menu__empty";
+                mensaje.textContent = error.message;
+                lista.prepend(mensaje);
+            }
+            return;
+        }
+
+        const enlace = evento.target.closest("[data-notification-link]");
+        if (!enlace) return;
+        evento.preventDefault();
+        try {
+            await marcarLeida(enlace.dataset.notificationLink);
+        } catch (error) {
+            console.error("No se pudo marcar la notificación como leída:", error);
+        }
+        window.location.assign(enlace.href);
+    });
+
+    marcarTodas.addEventListener("click", async () => {
+        marcarTodas.disabled = true;
+        try {
+            const respuesta = await fetch("/admin/notificaciones/api/leer-todas", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { Accept: "application/json" }
+            });
+            const datos = await respuesta.json().catch(() => ({}));
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "No fue posible actualizar las notificaciones.");
+            }
+            await cargar();
+        } catch (error) {
+            marcarTodas.disabled = false;
+            console.error(error);
+        }
+    });
+
+    document.addEventListener("click", evento => {
+        if (!menu.contains(evento.target) && !boton.contains(evento.target)) {
+            menu.hidden = true;
+            boton.setAttribute("aria-expanded", "false");
+        }
+    });
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape") {
+            menu.hidden = true;
+            boton.setAttribute("aria-expanded", "false");
+        }
+    });
+
+    window.setInterval(() => {
+        if (!document.hidden) cargar();
+    }, 30000);
+
+    cargar();
+}
 
 
 /* ========================================
@@ -466,3 +640,33 @@ function inicializarModalCerrarSesion() {
         }
     });
 }
+document.addEventListener("DOMContentLoaded", function () {
+    const elementos = Array.from(document.body.querySelectorAll("*"));
+
+    const modales = elementos.filter(function (elemento) {
+        const nombre = (
+            (typeof elemento.className === "string" ? elemento.className : "") +
+            " " +
+            (elemento.id || "")
+        ).toLowerCase();
+
+        const estilo = window.getComputedStyle(elemento);
+
+        return (
+            (nombre.includes("modal") || nombre.includes("overlay")) &&
+            estilo.position === "fixed" &&
+            !elemento.closest("svg")
+        );
+    });
+
+    modales.forEach(function (modal) {
+        const otroModalPadre = modales.some(function (posiblePadre) {
+            return posiblePadre !== modal &&
+                   posiblePadre.contains(modal);
+        });
+
+        if (!otroModalPadre && modal.parentElement !== document.body) {
+            document.body.appendChild(modal);
+        }
+    });
+});

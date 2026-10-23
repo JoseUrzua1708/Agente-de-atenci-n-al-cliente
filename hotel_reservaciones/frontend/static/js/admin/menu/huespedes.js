@@ -46,7 +46,7 @@
     function mostrarEstadoTabla(texto, tipo = "info") {
         elementos.tabla.innerHTML = `
             <tr>
-                <td colspan="7" class="hab-empty huespedes-empty huespedes-empty--${tipo}">
+                <td colspan="8" class="hab-empty huespedes-empty huespedes-empty--${tipo}">
                     <strong>${escaparHTML(texto)}</strong>
                 </td>
             </tr>
@@ -70,7 +70,9 @@
                 huesped.nombre,
                 huesped.apellidos,
                 huesped.email,
-                huesped.telefono
+                huesped.telefono,
+                huesped.numero_habitacion,
+                huesped.tipo_habitacion
             ].join(" ").toLocaleLowerCase("es-MX");
             return texto.includes(termino);
         });
@@ -107,6 +109,10 @@
                     <td><strong class="huesped-name">${escaparHTML(nombre || "Sin nombre")}</strong></td>
                     <td>${escaparHTML(huesped.email || "No disponible")}</td>
                     <td>${escaparHTML(huesped.telefono || "No disponible")}</td>
+                    <td>
+                        <strong class="huesped-room-number">${escaparHTML(huesped.numero_habitacion || "Sin habitación asignada")}</strong>
+                        ${huesped.tipo_habitacion ? `<span class="huesped-room-type">${escaparHTML(huesped.tipo_habitacion)}</span>` : ""}
+                    </td>
                     <td>${escaparHTML(formatearFecha(huesped.fecha_registro))}</td>
                     <td><span class="huesped-status">Activo</span></td>
                     <td>
@@ -221,6 +227,12 @@
             agregarDato("Nombre completo", nombre);
             agregarDato("Correo electrónico", huesped.email);
             agregarDato("Teléfono", huesped.telefono);
+            agregarDato(
+                "Habitación",
+                huesped.numero_habitacion
+                    ? `${huesped.numero_habitacion} · ${huesped.tipo_habitacion || "Tipo no disponible"}`
+                    : "Sin habitación asignada"
+            );
             agregarDato("Fecha de registro", formatearFecha(huesped.fecha_registro));
             agregarDato("Estado", "Activo");
         } catch (error) {

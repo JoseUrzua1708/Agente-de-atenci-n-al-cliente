@@ -1,3 +1,8 @@
+.res-notification-target {
+    outline: 2px solid #b99b70;
+    outline-offset: -2px;
+    background: #f8f5ef;
+}
 /* ============================================================
    RESERVACIONES (ADMIN)
    Se usa junto con habitaciones.css (tarjetas, tabla, botones).

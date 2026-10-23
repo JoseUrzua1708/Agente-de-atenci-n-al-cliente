@@ -196,15 +196,138 @@ svg {
 
 .notification-dot {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: -4px;
+    right: -5px;
+    display: none;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    place-items: center;
+    border: 2px solid var(--surface);
+    border-radius: 10px;
+    background: #a63d35;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+}
 
-    width: 6px;
-    height: 6px;
+.notification-dot.has-unread {
+    display: grid;
+}
 
-    border: 1px solid white;
-    border-radius: 50%;
-    background: var(--primary);
+.notification-menu {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 12px);
+    right: 160px;
+    width: min(360px, calc(100vw - 32px));
+    max-height: min(480px, calc(100vh - 110px));
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    box-shadow: 0 14px 36px rgb(35 30 24 / 16%);
+}
+
+.notification-menu[hidden] {
+    display: none;
+}
+
+.notification-menu__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.notification-menu__header h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.notification-menu__read-all,
+.notification-item__read {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--primary);
+    font: inherit;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.notification-menu__list {
+    max-height: 390px;
+    overflow-y: auto;
+}
+
+.notification-menu__empty {
+    margin: 0;
+    padding: 24px 16px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+.notification-item {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 12px;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.notification-item:last-child {
+    border-bottom: 0;
+}
+
+.notification-item.is-unread {
+    background: #f8f5ef;
+}
+
+.notification-item__link {
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+}
+
+.notification-item__link strong,
+.notification-item__link span,
+.notification-item__link time {
+    display: block;
+}
+
+.notification-item__link strong {
+    color: var(--text);
+    font-size: 12px;
+}
+
+.notification-item__link span {
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.notification-item__link time {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 10px;
+}
+
+.notification-item__read {
+    align-self: start;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+    .notification-menu {
+        right: 0;
+    }
 }
 
 .top-profile {
@@ -1763,4 +1886,52 @@ a.nav-item:hover {
 /* Mantener el color del enlace cuando ya fue visitado */
 a.nav-item:visited {
     color: inherit;
+}
+
+/* MODALES POR ENCIMA DE TODO EL PANEL */
+body > .pm-modal,
+body > .logout-modal-overlay,
+body > [class*="modal"],
+body > [id*="modal"],
+body > [class*="overlay"] {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    box-sizing: border-box !important;
+    z-index: 2147483647 !important;
+}
+
+/* Fondo borroso para los modales de personal */
+body > .pm-modal .pm-modal__fondo {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+}
+
+/* El contenido del modal queda centrado */
+body > .pm-modal {
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 20px !important;
+}
+
+body > .pm-modal .pm-modal__ventana {
+    position: relative;
+    z-index: 1;
+    margin: auto;
+    max-height: 90vh;
+    max-height: 90dvh;
+    overflow-y: auto;
+}
+
+/* Evitar desplazamiento de la página */
+html:has(body.pm-modal-bloqueado),
+body.pm-modal-bloqueado,
+html:has(body.logout-modal-active),
+body.logout-modal-active {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
 }

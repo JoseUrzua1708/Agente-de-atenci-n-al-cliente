@@ -1,4 +1,5 @@
 from app.config.database import db
+from app.controllers.reservaciones_controller import ReservacionesController
 from datetime import date
 from flask import jsonify, request, session
 
@@ -120,21 +121,4 @@ def crear_reservacion():
     if not usuario_id:
         return jsonify({"error": "Inicia sesión para realizar una reservación."}), 401
     data = request.get_json(silent=True) or {}
-    try:
-        habitacion_id = int(data.get("habitacion_id", 0))
-        entrada = date.fromisoformat(data.get("fecha_entrada", ""))
-        salida = date.fromisoformat(data.get("fecha_salida", ""))
-        huespedes = int(data.get("numero_huespedes", 1))
-        adultos = int(data.get("adultos", huespedes))
-        ninos = int(data.get("ninos", 0))
-    except (TypeError, ValueError):
-        return jsonify({"error": "Revisa los datos de la reservación."}), 400
-    if habitacion_id < 1 or salida <= entrada or adultos < 1 or ninos < 0 or adultos + ninos != huespedes:
-        return jsonify({"error": "Los datos de la reservación no son válidos."}), 400
-
-    # La creación debe hacerse en una transacción y comprobar de nuevo el cruce de fechas.
-    # Este bloque queda intencionalmente sin INSERT hasta conectar la configuración real,
-    # la generación del código y las reglas de precio/impuestos de su equipo.
-    return jsonify({
-        "error": "La ruta está preparada, pero falta integrar la transacción de reservación con la conexión MySQL del proyecto."
-    }), 501
+    return ReservacionesController.crear_reservacion(data, origen_forzado="WEB")

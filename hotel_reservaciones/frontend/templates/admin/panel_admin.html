@@ -34,6 +34,8 @@
                     type="button"
                     aria-label="Notificaciones"
                     title="Notificaciones"
+                    aria-expanded="false"
+                    aria-controls="notificationMenu"
                 >
                     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                         <path
@@ -50,8 +52,20 @@
                             stroke-linecap="round"
                         />
                     </svg>
-                    <span class="notification-dot"></span>
+                    <span class="notification-dot" id="notificationCount" aria-hidden="true"></span>
                 </button>
+
+                <section class="notification-menu" id="notificationMenu" aria-label="Notificaciones recientes" hidden>
+                    <header class="notification-menu__header">
+                        <h2>Notificaciones</h2>
+                        <button class="notification-menu__read-all" id="notificationReadAll" type="button">
+                            Marcar todas como leídas
+                        </button>
+                    </header>
+                    <div class="notification-menu__list" id="notificationList" aria-live="polite">
+                        <p class="notification-menu__empty">Cargando notificaciones...</p>
+                    </div>
+                </section>
 
                 <!-- PERFIL DEL ADMINISTRADOR -->
 <div class="profile-menu" id="profileMenu">

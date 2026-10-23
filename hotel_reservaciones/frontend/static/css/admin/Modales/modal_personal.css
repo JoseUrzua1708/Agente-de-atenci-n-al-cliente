@@ -1,14 +1,18 @@
 
-/* static/css/admin/modales/modal_personal.css */
+/* =========================================
+   MODAL DE CREACIÓN DE PERSONAL
+========================================= */
 
-.pm-modal {
-    --pm-bg: #ffffff;
-    --pm-text: #352d27;
-    --pm-muted: #82766b;
-    --pm-line: #e9e0d6;
-    --pm-primary: #80634d;
-    --pm-primary-dark: #634b39;
-    --pm-danger: #b54747;
+#modalPersonal {
+    --pm-fondo: #f7f5f0;
+    --pm-blanco: #ffffff;
+    --pm-texto: #352d27;
+    --pm-secundario: #82766b;
+    --pm-borde: #e6ded4;
+    --pm-principal: #80634d;
+    --pm-principal-hover: #634b39;
+    --pm-error: #b42318;
+    --pm-exito: #18794e;
 
     position: fixed;
     inset: 0;
@@ -16,435 +20,401 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 22px;
-    opacity: 0;
+    padding: 20px;
     visibility: hidden;
+    opacity: 0;
     pointer-events: none;
-    transition: opacity .24s ease, visibility .24s ease;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
 }
 
-.pm-modal.pm-modal--abierto {
-    opacity: 1;
+#modalPersonal[aria-hidden="false"] {
     visibility: visible;
+    opacity: 1;
     pointer-events: auto;
 }
 
-.pm-modal__fondo {
+#modalPersonal .pm-modal__fondo {
     position: absolute;
     inset: 0;
-    background: rgba(31, 25, 20, .48);
-    backdrop-filter: blur(9px);
-    -webkit-backdrop-filter: blur(9px);
+    background: rgb(35 29 24 / 55%);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
 }
 
-.pm-modal__ventana {
+#modalPersonal .pm-modal__ventana {
     position: relative;
     z-index: 1;
-    display: flex;
-    flex-direction: column;
-    width: min(100%, 690px);
-    max-height: min(90dvh, 850px);
-    background: var(--pm-bg);
-    color: var(--pm-text);
-    border: 1px solid rgba(255,255,255,.7);
+    width: min(100%, 560px);
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--pm-fondo);
+    border: 1px solid rgb(255 255 255 / 65%);
     border-radius: 22px;
-    box-shadow: 0 28px 90px rgba(35, 25, 17, .24);
-    overflow: hidden;
-    outline: none;
-
-    opacity: 0;
-    transform: translateY(16px) scale(.975);
-    transition:
-        transform .28s cubic-bezier(.2,.75,.25,1),
-        opacity .24s ease;
+    box-shadow: 0 24px 80px rgb(30 23 17 / 25%);
+    transform: translateY(14px) scale(0.98);
+    transition: transform 0.25s ease;
 }
 
-.pm-modal--abierto .pm-modal__ventana {
-    opacity: 1;
+#modalPersonal[aria-hidden="false"] .pm-modal__ventana {
     transform: translateY(0) scale(1);
 }
 
-.pm-modal.pm-modal--saliendo {
-    opacity: 0;
-    pointer-events: none;
+/* =========================================
+   ENCABEZADO
+========================================= */
+
+#modalPersonal .pm-modal__encabezado {
+    padding: 26px 30px 20px;
+    text-align: center;
+    background: var(--pm-blanco);
+    border-bottom: 1px solid var(--pm-borde);
+    border-radius: 22px 22px 0 0;
 }
 
-.pm-modal--saliendo .pm-modal__ventana {
-    opacity: 0;
-    transform: translateY(10px) scale(.985);
-}
-
-body.pm-modal-bloqueado {
-    overflow: hidden !important;
-    overscroll-behavior: none;
-}
-
-.pm-modal__cabecera {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: flex-start;
-    gap: 15px;
-    padding: 25px 26px 22px;
-    border-bottom: 1px solid var(--pm-line);
-    background: linear-gradient(135deg, #fff 65%, #faf6f1);
-}
-
-.pm-modal__icono-principal {
-    display: grid;
-    place-items: center;
-    flex: 0 0 48px;
-    width: 48px;
-    height: 48px;
-    color: var(--pm-primary);
-    background: #f2e9df;
-    border: 1px solid #eadbca;
-    border-radius: 15px;
-}
-
-.pm-modal__icono-principal svg {
-    width: 25px;
-    height: 25px;
-}
-
-.pm-modal__titulos {
-    flex: 1;
-    min-width: 0;
-}
-
-.pm-modal__etiqueta {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--pm-primary);
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 1.5px;
-}
-
-.pm-modal__titulos h2 {
-    margin: 0;
-    font-size: clamp(20px, 3vw, 25px);
-    font-weight: 750;
-    letter-spacing: -.7px;
-    line-height: 1.3;
-}
-
-.pm-modal__titulos p {
-    margin: 6px 0 0;
-    color: var(--pm-muted);
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.pm-modal__cerrar {
-    display: grid;
-    place-items: center;
-    flex: 0 0 36px;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    color: #786e64;
-    background: #f7f4f0;
-    border: 1px solid #eee7df;
-    border-radius: 11px;
-    cursor: pointer;
-    transition: color .18s ease, background .18s ease;
-}
-
-.pm-modal__cerrar:hover {
-    color: var(--pm-danger);
-    background: #f8eae8;
-}
-
-.pm-modal__cerrar svg {
-    width: 19px;
-    height: 19px;
-}
-
-.pm-modal__contenido {
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    scrollbar-width: thin;
-    scrollbar-color: #cbb9a8 transparent;
-}
-
-.pm-modal__contenido::-webkit-scrollbar {
-    width: 7px;
-}
-
-.pm-modal__contenido::-webkit-scrollbar-thumb {
-    background: #cbb9a8;
-    border-radius: 20px;
-}
-
-#formCrearPersonal {
-    padding: 23px 26px 25px;
-}
-
-.pm-campo {
-    min-width: 0;
-}
-
-.pm-campo--completo {
-    margin-bottom: 18px;
-}
-
-.pm-campo label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--pm-text);
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.pm-campo label span {
-    color: #b44c43;
-}
-
-.pm-control {
+#modalPersonal .pm-modal__icono {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    color: var(--pm-principal);
+    background: #f0e8de;
+    border-radius: 15px;
+    font-size: 25px;
+}
+
+#modalPersonal .pm-modal__encabezado h2 {
+    margin: 0;
+    color: var(--pm-texto);
+    font-size: 23px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+#modalPersonal .pm-modal__encabezado p {
+    max-width: 350px;
+    margin: 8px auto 0;
+    color: var(--pm-secundario);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* =========================================
+   FORMULARIO
+========================================= */
+
+#modalPersonal .pm-modal__contenido {
+    padding: 24px 30px 28px;
+}
+
+#modalPersonal #formCrearPersonal {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+#modalPersonal .pm-campo {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
-    min-height: 46px;
-    padding: 0 12px;
-    background: #fff;
-    border: 1px solid #e4ddd5;
-    border-radius: 11px;
-    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    gap: 7px;
 }
 
-.pm-control:focus-within {
-    border-color: #a88a70;
-    box-shadow: 0 0 0 3px rgba(128, 99, 77, .10);
-    background: #fffdfa;
+#modalPersonal .pm-campo label {
+    color: var(--pm-texto);
+    font-size: 13px;
+    font-weight: 650;
 }
 
-.pm-control > svg {
-    flex: 0 0 18px;
-    width: 18px;
-    height: 18px;
-    color: #968679;
-}
-
-.pm-control input,
-.pm-control select {
+#modalPersonal .pm-campo input,
+#modalPersonal .pm-campo select {
+    box-sizing: border-box;
     width: 100%;
     min-width: 0;
-    min-height: 44px;
-    padding: 0;
-    color: var(--pm-text);
-    background: transparent;
-    border: 0;
+    height: 46px;
+    padding: 0 13px;
+    color: var(--pm-texto);
+    background: var(--pm-blanco);
+    border: 1px solid var(--pm-borde);
+    border-radius: 11px;
     outline: none;
-    box-shadow: none;
     font: inherit;
     font-size: 13px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
 
-.pm-control input::placeholder {
-    color: #b0a69c;
+#modalPersonal .pm-campo input::placeholder {
+    color: #aaa096;
 }
 
-.pm-control select {
-    appearance: none;
-    cursor: pointer;
+#modalPersonal .pm-campo input:hover,
+#modalPersonal .pm-campo select:hover {
+    border-color: #c9b6a2;
 }
 
-.pm-control--select {
+#modalPersonal .pm-campo input:focus,
+#modalPersonal .pm-campo select:focus {
+    border-color: var(--pm-principal);
+    box-shadow: 0 0 0 3px rgb(128 99 77 / 13%);
+}
+
+#modalPersonal .pm-campo input:disabled,
+#modalPersonal .pm-campo select:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+    background: #f1ede7;
+}
+
+#modalPersonal .pm-campos-dobles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+/* =========================================
+   SELECTOR DE TIPO DE CUENTA
+========================================= */
+
+#modalPersonal .pm-select-contenedor {
     position: relative;
 }
 
-.pm-control--select::after {
-    content: "";
+#modalPersonal .pm-select-icono {
     position: absolute;
-    right: 15px;
-    width: 8px;
-    height: 8px;
-    border-right: 1.5px solid #82766b;
-    border-bottom: 1.5px solid #82766b;
-    transform: translateY(-2px) rotate(45deg);
+    z-index: 1;
+    top: 50%;
+    left: 13px;
+    color: var(--pm-principal);
+    font-size: 17px;
     pointer-events: none;
+    transform: translateY(-50%);
 }
 
-.pm-control--select select {
-    padding-right: 22px;
+#modalPersonal .pm-campo select {
+    padding-left: 41px;
+    padding-right: 38px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2380634d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    background-size: 16px;
 }
 
-.pm-ver-password {
-    display: grid;
-    place-items: center;
-    flex: 0 0 30px;
-    width: 30px;
-    height: 30px;
+#modalPersonal .pm-campo select option {
+    color: var(--pm-texto);
+    background: var(--pm-blanco);
+}
+
+/* =========================================
+   CONTRASEÑAS Y BOTÓN PARA MOSTRAR
+========================================= */
+
+#modalPersonal .pm-password-contenedor {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#modalPersonal .pm-password-contenedor input {
+    padding-right: 52px;
+}
+
+#modalPersonal .pm-ver-password {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
     padding: 0;
-    color: #938578;
+    color: var(--pm-secundario);
     background: transparent;
     border: 0;
-    border-radius: 7px;
+    border-radius: 9px;
     cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        transform 0.2s ease;
 }
 
-.pm-ver-password:hover {
-    color: var(--pm-primary);
-    background: #f4eee8;
+#modalPersonal .pm-ver-password:hover {
+    color: var(--pm-principal);
+    background: #f0e8de;
 }
 
-.pm-ver-password svg {
-    width: 18px;
-    height: 18px;
+#modalPersonal .pm-ver-password:active {
+    transform: translateY(-50%) scale(0.9);
 }
 
-.pm-formulario {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px 15px;
+#modalPersonal .pm-ver-password span {
+    display: inline-block;
+    font-size: 19px;
+    transition: transform 0.2s ease;
 }
 
-.pm-ayuda {
-    display: block;
-    margin-top: 7px;
-    color: var(--pm-muted);
-    font-size: 10px;
-    line-height: 1.5;
+#modalPersonal .pm-ver-password[aria-pressed="true"] span {
+    transform: rotate(-12deg) scale(1.12);
+    color: var(--pm-principal);
 }
 
-.pm-error-campo {
-    display: block;
-    min-height: 0;
-    margin-top: 5px;
-    color: var(--pm-danger);
-    font-size: 11px;
-    line-height: 1.4;
-}
-
-.pm-error-campo:empty {
-    display: none;
-}
-
-.pm-campo.pm-campo--error .pm-control {
-    border-color: #cb7770;
-    background: #fffafa;
-}
-
-.pm-campo.pm-campo--error .pm-control:focus-within {
-    box-shadow: 0 0 0 3px rgba(181, 71, 71, .09);
-}
-
-.pm-separador {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 24px 0 18px;
-    color: #7f7063;
-    font-size: 11px;
-    font-weight: 750;
-}
-
-.pm-separador::after {
-    content: "";
-    height: 1px;
-    flex: 1;
-    background: var(--pm-line);
-}
-
-.pm-nota-seguridad {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 22px;
-    padding: 12px 14px;
-    color: #5d7865;
-    background: #f0f6f0;
-    border: 1px solid #dfeadf;
-    border-radius: 11px;
-}
-
-.pm-nota-seguridad svg {
-    flex: 0 0 19px;
-    width: 19px;
-    height: 19px;
-}
-
-.pm-nota-seguridad p {
+#modalPersonal .pm-ayuda {
     margin: 0;
+    color: var(--pm-secundario);
     font-size: 11px;
     line-height: 1.5;
 }
 
-.pm-mensaje-formulario {
-    margin-top: 16px;
+/* Indicador visual de seguridad */
+
+#modalPersonal .pm-seguridad-password {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
+}
+
+#modalPersonal .pm-seguridad-password span {
+    height: 4px;
+    background: #e5ded6;
+    border-radius: 10px;
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+#modalPersonal .pm-seguridad-password[data-nivel="1"] span:nth-child(-n+1) {
+    background: #d94841;
+}
+
+#modalPersonal .pm-seguridad-password[data-nivel="2"] span:nth-child(-n+2) {
+    background: #e39a35;
+}
+
+#modalPersonal .pm-seguridad-password[data-nivel="3"] span:nth-child(-n+3) {
+    background: #7e9b4a;
+}
+
+#modalPersonal .pm-seguridad-password[data-nivel="4"] span:nth-child(-n+4) {
+    background: #24875a;
+}
+
+/* =========================================
+   MENSAJES DE VALIDACIÓN
+========================================= */
+
+#modalPersonal .pm-mensaje-formulario {
     padding: 12px 14px;
-    color: #913e38;
+    color: var(--pm-error);
     background: #fff0ee;
-    border: 1px solid #f0d2cf;
+    border: 1px solid #f1cbc6;
     border-radius: 10px;
     font-size: 12px;
     line-height: 1.5;
+    animation: pm-aparecer 0.22s ease both;
 }
 
-.pm-modal__acciones {
+#modalPersonal .pm-mensaje-formulario[hidden] {
+    display: none !important;
+}
+
+#modalPersonal .pm-mensaje-formulario.pm-mensaje--exito {
+    color: var(--pm-exito);
+    background: #eaf7ef;
+    border-color: #c7e8d2;
+}
+
+#modalPersonal .pm-campo input.pm-invalido,
+#modalPersonal .pm-campo select.pm-invalido {
+    border-color: var(--pm-error);
+    box-shadow: 0 0 0 3px rgb(180 35 24 / 9%);
+}
+
+/* =========================================
+   BOTONES CENTRADOS
+========================================= */
+
+#modalPersonal .pm-modal__acciones {
     display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 24px;
-    padding-top: 19px;
-    border-top: 1px solid var(--pm-line);
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 8px;
 }
 
-.pm-btn {
+#modalPersonal .pm-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    min-height: 43px;
-    padding: 0 18px;
-    border-radius: 10px;
+    gap: 9px;
+    min-width: 145px;
+    min-height: 44px;
+    padding: 0 20px;
+    border: 1px solid transparent;
+    border-radius: 11px;
     font: inherit;
-    font-size: 12px;
-    font-weight: 750;
+    font-size: 13px;
+    font-weight: 700;
     cursor: pointer;
-    transition: background .18s ease, transform .18s ease, box-shadow .18s ease;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        opacity 0.2s ease;
 }
 
-.pm-btn:active:not(:disabled) {
-    transform: scale(.98);
+#modalPersonal .pm-btn:active:not(:disabled) {
+    transform: scale(0.97);
 }
 
-.pm-btn:disabled {
-    opacity: .65;
-    cursor: wait;
+#modalPersonal .pm-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
-.pm-btn svg {
-    width: 17px;
-    height: 17px;
+#modalPersonal .pm-btn--cancelar {
+    color: var(--pm-texto);
+    background: var(--pm-blanco);
+    border-color: var(--pm-borde);
 }
 
-.pm-btn--secundario {
-    color: #64584d;
-    background: #fff;
-    border: 1px solid #e2d9cf;
+#modalPersonal .pm-btn--cancelar:hover:not(:disabled) {
+    background: #f0e8de;
+    border-color: #c9b6a2;
 }
 
-.pm-btn--secundario:hover {
-    background: #f8f4ef;
-}
-
-.pm-btn--principal {
+#modalPersonal .pm-btn--guardar {
     color: #fff;
-    background: var(--pm-primary);
-    border: 1px solid var(--pm-primary);
-    box-shadow: 0 4px 10px rgba(99, 75, 57, .13);
+    background: var(--pm-principal);
 }
 
-.pm-btn--principal:hover:not(:disabled) {
-    background: var(--pm-primary-dark);
-    box-shadow: 0 6px 15px rgba(99, 75, 57, .2);
+#modalPersonal .pm-btn--guardar:hover:not(:disabled) {
+    background: var(--pm-principal-hover);
 }
 
-/* Notificaciones flotantes */
+#modalPersonal .pm-btn__cargando:not([hidden]) {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgb(255 255 255 / 45%);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: pm-girar 0.7s linear infinite;
+}
+
+/* =========================================
+   NOTIFICACIONES TEMPORALES
+========================================= */
+
 .pm-toast-region {
     position: fixed;
     z-index: 11000;
@@ -454,144 +424,112 @@ body.pm-modal-bloqueado {
     flex-direction: column;
     align-items: flex-end;
     gap: 10px;
-    width: min(390px, calc(100vw - 32px));
+    width: min(370px, calc(100vw - 32px));
     pointer-events: none;
 }
 
 .pm-toast {
     display: flex;
     align-items: flex-start;
-    gap: 12px;
+    gap: 11px;
     width: 100%;
-    padding: 15px 16px;
+    box-sizing: border-box;
+    padding: 15px 17px;
+    color: var(--pm-texto, #352d27);
     background: #fff;
-    border: 1px solid #e9e1d8;
-    border-radius: 14px;
-    box-shadow: 0 12px 35px rgba(43, 32, 23, .16);
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(-10px) scale(.98);
-    transition: opacity .22s ease, transform .22s ease;
+    border: 1px solid #e6ded4;
+    border-left: 4px solid #80634d;
+    border-radius: 13px;
+    box-shadow: 0 12px 35px rgb(35 29 24 / 15%);
+    font-size: 13px;
+    line-height: 1.5;
+    animation: pm-toast-entrada 0.25s ease both;
 }
 
-.pm-toast.pm-toast--visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+.pm-toast--exito {
+    border-left-color: #18794e;
+}
+
+.pm-toast--error {
+    border-left-color: #b42318;
 }
 
 .pm-toast.pm-toast--salida {
-    opacity: 0;
-    transform: translateY(-6px) scale(.99);
+    animation: pm-toast-salida 0.25s ease both;
 }
 
-.pm-toast__icono {
-    display: grid;
-    place-items: center;
-    flex: 0 0 34px;
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+/* =========================================
+   ANIMACIONES
+========================================= */
+
+@keyframes pm-girar {
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.pm-toast__icono svg {
-    width: 19px;
-    height: 19px;
+@keyframes pm-aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.pm-toast--exito .pm-toast__icono {
-    color: #347452;
-    background: #e8f4ec;
+@keyframes pm-toast-entrada {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
-.pm-toast--error .pm-toast__icono {
-    color: #ad4540;
-    background: #fbecea;
+@keyframes pm-toast-salida {
+    to {
+        opacity: 0;
+        transform: translateX(15px);
+    }
 }
 
-.pm-toast__texto {
-    flex: 1;
-    min-width: 0;
-}
+/* =========================================
+   RESPONSIVE
+========================================= */
 
-.pm-toast__texto strong {
-    display: block;
-    margin: 1px 0 4px;
-    color: #352d27;
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.pm-toast__texto p {
-    margin: 0;
-    color: #786d63;
-    font-size: 12px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-}
-
-.pm-toast__cerrar {
-    padding: 0;
-    color: #93877c;
-    background: none;
-    border: 0;
-    font-size: 19px;
-    line-height: 1;
-    cursor: pointer;
-}
-
-@media (max-width: 560px) {
-    .pm-modal {
-        align-items: center;
+@media (max-width: 600px) {
+    #modalPersonal {
         padding: 10px;
     }
 
-    .pm-modal__ventana {
-        width: 100%;
-        max-height: 94dvh;
+    #modalPersonal .pm-modal__ventana {
+        max-height: calc(100dvh - 20px);
         border-radius: 17px;
     }
 
-    .pm-modal__cabecera {
-        gap: 11px;
-        padding: 19px 16px;
+    #modalPersonal .pm-modal__encabezado {
+        padding: 21px 18px 17px;
+        border-radius: 17px 17px 0 0;
     }
 
-    .pm-modal__icono-principal {
-        flex-basis: 40px;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
+    #modalPersonal .pm-modal__contenido {
+        padding: 20px 18px 22px;
     }
 
-    .pm-modal__icono-principal svg {
-        width: 22px;
-        height: 22px;
+    #modalPersonal .pm-campos-dobles {
+        grid-template-columns: 1fr;
     }
 
-    .pm-modal__titulos p {
-        font-size: 12px;
+    #modalPersonal .pm-modal__acciones {
+        flex-direction: column-reverse;
     }
 
-    #formCrearPersonal {
-        padding: 20px 16px;
-    }
-
-    .pm-formulario {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 17px;
-    }
-
-    .pm-campo--completo {
-        margin-bottom: 17px;
-    }
-
-    .pm-modal__acciones {
-        gap: 8px;
-    }
-
-    .pm-btn {
-        flex: 1;
-        padding: 0 10px;
+    #modalPersonal .pm-btn {
+        width: 100%;
     }
 
     .pm-toast-region {
@@ -602,11 +540,9 @@ body.pm-modal-bloqueado {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .pm-modal,
-    .pm-modal__ventana,
-    .pm-toast,
-    .pm-btn,
-    .pm-control {
-        transition: none !important;
+    #modalPersonal *,
+    .pm-toast-region * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
     }
 }

@@ -171,3 +171,119 @@ def obtener_huesped(huesped_id):
     if error:
         return error
     return HuespedesController.obtener_huesped(huesped_id)
+
+
+@admin_bp.route("/notificaciones/api", methods=["GET"])
+def listar_notificaciones():
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+
+    conexion = None
+    cursor = None
+    try:
+        conexion = db.get_connection()
+        cursor = conexion.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT n.id, n.reservacion_id, n.asunto, n.mensaje,
+                   n.estado, n.fecha_creacion
+            FROM notificaciones n
+            WHERE n.usuario_id = %s
+            ORDER BY n.fecha_creacion DESC, n.id DESC
+            LIMIT 30
+        """, (session["user_id"],))
+        notificaciones = cursor.fetchall()
+        for notificacion in notificaciones:
+            if notificacion.get("fecha_creacion"):
+                notificacion["fecha_creacion"] = notificacion["fecha_creacion"].strftime(
+                    "%Y-%m-%d %H:%M"
+                )
+
+        cursor.execute("""
+            SELECT COUNT(*) AS pendientes
+            FROM notificaciones
+            WHERE usuario_id = %s AND estado <> 'LEIDA'
+        """, (session["user_id"],))
+        pendientes = cursor.fetchone()["pendientes"]
+        return jsonify({
+            "success": True,
+            "notificaciones": notificaciones,
+            "pendientes": pendientes
+        }), 200
+    except Exception:
+        logger.exception("Error al consultar las notificaciones administrativas.")
+        return jsonify({
+            "success": False,
+            "message": "No fue posible consultar las notificaciones."
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion:
+            conexion.close()
+
+
+@admin_bp.route("/notificaciones/api/<int:notificacion_id>/leer", methods=["PATCH"])
+def marcar_notificacion_leida(notificacion_id):
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+
+    conexion = None
+    cursor = None
+    try:
+        conexion = db.get_connection()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            UPDATE notificaciones
+            SET estado = 'LEIDA'
+            WHERE id = %s AND usuario_id = %s AND estado <> 'LEIDA'
+        """, (notificacion_id, session["user_id"]))
+        conexion.commit()
+        return jsonify({"success": True}), 200
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        logger.exception("Error al marcar como leída la notificación %s.", notificacion_id)
+        return jsonify({
+            "success": False,
+            "message": "No fue posible actualizar la notificación."
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion:
+            conexion.close()
+
+
+@admin_bp.route("/notificaciones/api/leer-todas", methods=["POST"])
+def marcar_todas_notificaciones_leidas():
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+
+    conexion = None
+    cursor = None
+    try:
+        conexion = db.get_connection()
+        cursor = conexion.cursor()
+        cursor.execute("""
+            UPDATE notificaciones
+            SET estado = 'LEIDA'
+            WHERE usuario_id = %s AND estado <> 'LEIDA'
+        """, (session["user_id"],))
+        conexion.commit()
+        return jsonify({"success": True}), 200
+    except Exception:
+        if conexion:
+            conexion.rollback()
+        logger.exception("Error al marcar todas las notificaciones como leídas.")
+        return jsonify({
+            "success": False,
+            "message": "No fue posible actualizar las notificaciones."
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion:
+            conexion.close()

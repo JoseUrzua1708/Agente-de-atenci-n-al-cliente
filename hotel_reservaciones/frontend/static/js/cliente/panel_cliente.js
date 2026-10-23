@@ -63,7 +63,7 @@
 
         if (!response.ok) {
             throw new Error(
-                data.error || data.mensaje || `Error ${response.status}`
+                data.error || data.mensaje || data.message || `Error ${response.status}`
             );
         }
 
@@ -460,6 +460,7 @@
 
             toast(
                 result.mensaje ||
+                result.message ||
                 "Tu solicitud de reservación fue registrada."
             );
 

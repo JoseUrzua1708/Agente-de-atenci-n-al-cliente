@@ -1,6 +1,4 @@
 
-/* static/js/admin/modales/modal_personal.js */
-
 (() => {
     "use strict";
 
@@ -14,11 +12,11 @@
     modal.dataset.inicializado = "true";
 
     const ventana = modal.querySelector(".pm-modal__ventana");
-    const contenido = modal.querySelector(".pm-modal__contenido");
-    const btnGuardar = document.getElementById("pmBtnGuardar");
-    const mensajeFormulario = document.getElementById("pmMensajeFormulario");
-    const regionToast = document.getElementById("pmToastRegion");
     const btnAbrir = document.getElementById("btnInsertarPersonal");
+    const btnGuardar = document.getElementById("pmBtnGuardar");
+    const btnCancelar = modal.querySelector("[data-modal-cerrar]");
+    const textoGuardar = btnGuardar?.querySelector(".pm-btn__texto");
+    const indicadorGuardar = btnGuardar?.querySelector(".pm-btn__cargando");
 
     const campoRol = document.getElementById("pmRol");
     const campoNombre = document.getElementById("pmNombre");
@@ -26,276 +24,336 @@
     const campoEmail = document.getElementById("pmEmail");
     const campoTelefono = document.getElementById("pmTelefono");
     const campoPassword = document.getElementById("pmPassword");
-    const campoConfirmar = document.getElementById("pmConfirmarPassword");
+    const campoConfirmacion = document.getElementById("pmConfirmarPassword");
+
+    const mensajeFormulario = document.getElementById("pmMensajeFormulario");
+    const regionToast = document.getElementById("pmToastRegion");
+    const indicadorSeguridad = document.getElementById("pmSeguridadPassword");
+    const estadoPassword = document.getElementById("pmEstadoPassword");
 
     const URL_ADMIN = modal.dataset.urlAdmin;
     const URL_RECEPCION = modal.dataset.urlRecepcion;
 
-    let modalAbierto = false;
     let enviando = false;
-    let temporizadorCierre = null;
-    let temporizadoresToast = new Map();
-    let elementoAnterior = null;
-    let desplazamientoAnterior = 0;
+    let temporizadorMensaje = null;
+    let temporizadoresToast = new WeakMap();
 
-    const iconosToast = {
-        exito: `
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="m5 12 4 4L19 6"
-                    stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>`,
-        error: `
-            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <circle cx="12" cy="12" r="9"
-                    stroke="currentColor" stroke-width="1.8"/>
-                <path d="M12 8v5m0 3h.01"
-                    stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round"/>
-            </svg>`
-    };
+    // =========================================
+    // MENSAJES TEMPORALES
+    // =========================================
+
+    function mostrarMensaje(texto, tipo = "error") {
+        if (temporizadorMensaje) {
+            clearTimeout(temporizadorMensaje);
+        }
+
+        mensajeFormulario.textContent = texto;
+        mensajeFormulario.classList.toggle(
+            "pm-mensaje--exito",
+            tipo === "exito"
+        );
+        mensajeFormulario.hidden = false;
+
+        temporizadorMensaje = setTimeout(() => {
+            mensajeFormulario.hidden = true;
+            mensajeFormulario.textContent = "";
+        }, 3000);
+    }
+
+    function mostrarToast(texto, tipo = "exito") {
+        const toast = document.createElement("div");
+        toast.className = `pm-toast pm-toast--${tipo}`;
+        toast.setAttribute("role", tipo === "error" ? "alert" : "status");
+        toast.textContent = texto;
+
+        regionToast.appendChild(toast);
+
+        const temporizador = setTimeout(() => {
+            toast.classList.add("pm-toast--salida");
+
+            setTimeout(() => toast.remove(), 260);
+        }, 3000);
+
+        temporizadoresToast.set(toast, temporizador);
+    }
+
+    function limpiarMensaje() {
+        if (temporizadorMensaje) {
+            clearTimeout(temporizadorMensaje);
+            temporizadorMensaje = null;
+        }
+
+        mensajeFormulario.hidden = true;
+        mensajeFormulario.textContent = "";
+        mensajeFormulario.classList.remove("pm-mensaje--exito");
+    }
+
+    // =========================================
+    // APERTURA Y CIERRE DEL MODAL
+    // =========================================
 
     function abrirModal() {
-        if (modalAbierto || enviando) return;
-
-        clearTimeout(temporizadorCierre);
-        elementoAnterior = document.activeElement;
-        desplazamientoAnterior = window.scrollY;
-        modalAbierto = true;
-
-        modal.classList.remove("pm-modal--saliendo");
-        modal.classList.add("pm-modal--abierto");
         modal.setAttribute("aria-hidden", "false");
-
-        document.body.classList.add("pm-modal-bloqueado");
-
-        // Evita que la página de fondo siga desplazándose.
-        document.body.style.position = "fixed";
-        document.body.style.top = `-${desplazamientoAnterior}px`;
-        document.body.style.left = "0";
-        document.body.style.right = "0";
-        document.body.style.width = "100%";
+        document.body.style.overflow = "hidden";
 
         requestAnimationFrame(() => {
-            campoRol.focus({ preventScroll: true });
+            campoRol.focus();
         });
     }
 
     function cerrarModal() {
-        if (!modalAbierto || enviando) return;
+        if (enviando) return;
 
-        modalAbierto = false;
-        modal.classList.remove("pm-modal--abierto");
-        modal.classList.add("pm-modal--saliendo");
         modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
 
-        document.body.classList.remove("pm-modal-bloqueado");
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.right = "";
-        document.body.style.width = "";
-
-        window.scrollTo(0, desplazamientoAnterior);
-
-        temporizadorCierre = setTimeout(() => {
-            modal.classList.remove("pm-modal--saliendo");
-
-            if (elementoAnterior && elementoAnterior.isConnected) {
-                elementoAnterior.focus({ preventScroll: true });
-            }
-        }, 280);
-    }
-
-    function limpiarErrores() {
-        formulario.querySelectorAll(".pm-campo--error").forEach(campo => {
-            campo.classList.remove("pm-campo--error");
-        });
-
-        formulario.querySelectorAll("[data-error]").forEach(elemento => {
-            elemento.textContent = "";
-        });
-
-        mensajeFormulario.hidden = true;
-        mensajeFormulario.textContent = "";
-    }
-
-    function mostrarErrorCampo(nombre, mensaje) {
-        const campo = formulario.elements.namedItem(nombre);
-
-        if (!campo) return;
-
-        const contenedor = campo.closest(".pm-campo");
-        const salida = formulario.querySelector(`[data-error="${nombre}"]`);
-
-        if (contenedor) {
-            contenedor.classList.add("pm-campo--error");
-        }
-
-        if (salida) {
-            salida.textContent = mensaje;
+        if (btnAbrir) {
+            btnAbrir.focus();
         }
     }
 
-    function mostrarErrorFormulario(mensaje) {
-        mensajeFormulario.textContent = mensaje;
-        mensajeFormulario.hidden = false;
-    }
+    btnAbrir?.addEventListener("click", evento => {
+        evento.preventDefault();
 
-    function mostrarToast(tipo, titulo, mensaje, duracion = 3000) {
-        const toast = document.createElement("div");
-        const id = `${Date.now()}-${Math.random()}`;
+        if (enviando) return;
 
-        toast.className = `pm-toast pm-toast--${tipo}`;
-        toast.setAttribute("role", tipo === "error" ? "alert" : "status");
+        reiniciarFormulario();
+        abrirModal();
+    });
 
-        const icono = document.createElement("span");
-        icono.className = "pm-toast__icono";
-        icono.innerHTML = iconosToast[tipo] || iconosToast.error;
+    btnCancelar?.addEventListener("click", cerrarModal);
 
-        const texto = document.createElement("div");
-        texto.className = "pm-toast__texto";
+    modal.querySelector("[data-modal-fondo]")?.addEventListener(
+        "click",
+        cerrarModal
+    );
 
-        const encabezado = document.createElement("strong");
-        encabezado.textContent = titulo;
-
-        const descripcion = document.createElement("p");
-        descripcion.textContent = mensaje;
-
-        const cerrar = document.createElement("button");
-        cerrar.type = "button";
-        cerrar.className = "pm-toast__cerrar";
-        cerrar.setAttribute("aria-label", "Cerrar notificación");
-        cerrar.textContent = "×";
-
-        texto.append(encabezado, descripcion);
-        toast.append(icono, texto, cerrar);
-        regionToast.appendChild(toast);
-
-        requestAnimationFrame(() => {
-            toast.classList.add("pm-toast--visible");
-        });
-
-        function retirarToast() {
-            clearTimeout(temporizadoresToast.get(id));
-            temporizadoresToast.delete(id);
-
-            toast.classList.remove("pm-toast--visible");
-            toast.classList.add("pm-toast--salida");
-
-            setTimeout(() => toast.remove(), 240);
+    document.addEventListener("keydown", evento => {
+        if (
+            evento.key === "Escape" &&
+            modal.getAttribute("aria-hidden") === "false"
+        ) {
+            cerrarModal();
         }
+    });
 
-        cerrar.addEventListener("click", retirarToast);
+    // =========================================
+    // MOSTRAR / OCULTAR CONTRASEÑA
+    // =========================================
 
-        temporizadoresToast.set(id, setTimeout(retirarToast, duracion));
+    modal.querySelectorAll("[data-toggle-password]").forEach(boton => {
+        boton.addEventListener("click", () => {
+            const idCampo = boton.dataset.togglePassword;
+            const campo = document.getElementById(idCampo);
 
-        return toast;
+            if (!campo) return;
+
+            const mostrar = campo.type === "password";
+
+            campo.type = mostrar ? "text" : "password";
+            boton.setAttribute("aria-pressed", String(mostrar));
+
+            boton.setAttribute(
+                "aria-label",
+                mostrar ? "Ocultar contraseña" : "Mostrar contraseña"
+            );
+
+            campo.animate(
+                [
+                    { opacity: 0.7, transform: "scale(0.99)" },
+                    { opacity: 1, transform: "scale(1)" }
+                ],
+                { duration: 180, easing: "ease-out" }
+            );
+        });
+    });
+
+    // =========================================
+    // VALIDACIÓN DE CONTRASEÑA
+    // =========================================
+
+    function evaluarPassword(password) {
+        const reglas = [
+            password.length >= 8,
+            /[A-Z]/.test(password),
+            /[a-z]/.test(password),
+            /[0-9]/.test(password),
+            /[^A-Za-z0-9]/.test(password)
+        ];
+
+        const cumplidas = reglas.filter(Boolean).length;
+
+        return {
+            reglas,
+            segura: reglas.every(Boolean),
+            nivel: password.length === 0
+                ? 0
+                : cumplidas <= 2
+                    ? 1
+                    : cumplidas === 3
+                        ? 2
+                        : cumplidas === 4
+                            ? 3
+                            : 4
+        };
     }
 
-    function reiniciarFormulario() {
-        formulario.reset();
-        limpiarErrores();
+    function actualizarSeguridadPassword() {
+        const resultado = evaluarPassword(campoPassword.value);
 
-        // El rol inicial será recepción.
-        campoRol.value = "2";
+        indicadorSeguridad.dataset.nivel = String(resultado.nivel);
 
-        [campoPassword, campoConfirmar].forEach(campo => {
-            campo.type = "password";
-        });
+        if (!campoPassword.value) {
+            estadoPassword.textContent = "Escribe una contraseña segura.";
+        } else if (!resultado.segura) {
+            const faltantes = [];
 
-        formulario.querySelectorAll("[data-ver-password]").forEach(boton => {
-            boton.setAttribute("aria-pressed", "false");
-            boton.setAttribute("aria-label", "Mostrar contraseña");
-        });
+            if (!resultado.reglas[0]) faltantes.push("8 caracteres");
+            if (!resultado.reglas[1]) faltantes.push("una mayúscula");
+            if (!resultado.reglas[2]) faltantes.push("una minúscula");
+            if (!resultado.reglas[3]) faltantes.push("un número");
+            if (!resultado.reglas[4]) faltantes.push("un símbolo");
 
-        if (contenido) contenido.scrollTop = 0;
+            estadoPassword.textContent =
+                "Falta: " + faltantes.join(", ") + ".";
+        } else {
+            estadoPassword.textContent = "Contraseña segura.";
+        }
     }
+
+    campoPassword.addEventListener("input", actualizarSeguridadPassword);
+
+    // =========================================
+    // VALIDAR CAMPOS
+    // =========================================
 
     function validarFormulario() {
-        limpiarErrores();
+        const campos = [
+            campoRol,
+            campoNombre,
+            campoApellidos,
+            campoEmail,
+            campoTelefono,
+            campoPassword,
+            campoConfirmacion
+        ];
 
-        let primerCampoInvalido = null;
+        campos.forEach(campo => campo.classList.remove("pm-invalido"));
 
-        const nombre = campoNombre.value.trim();
-        const email = campoEmail.value.trim();
-        const password = campoPassword.value;
-        const confirmar = campoConfirmar.value;
+        for (const campo of campos) {
+            if (!campo.value.trim()) {
+                campo.classList.add("pm-invalido");
+                campo.focus();
 
-        function error(campo, mensaje) {
-            mostrarErrorCampo(campo, mensaje);
+                mostrarMensaje(
+                    `El campo "${campo.labels?.[0]?.textContent.replace("*", "").trim() || campo.name}" es obligatorio.`
+                );
 
-            if (!primerCampoInvalido) {
-                primerCampoInvalido = formulario.elements.namedItem(campo);
+                return false;
             }
         }
 
-        if (!nombre) {
-            error("nombre", "Escribe el nombre del usuario.");
-        } else if (nombre.length > 100) {
-            error("nombre", "El nombre no puede superar 100 caracteres.");
+        if (!campoEmail.validity.valid) {
+            campoEmail.classList.add("pm-invalido");
+            campoEmail.focus();
+            mostrarMensaje("Ingresa un correo electrónico válido.");
+            return false;
         }
 
-        if (campoApellidos.value.trim().length > 150) {
-            error("apellidos", "Los apellidos no pueden superar 150 caracteres.");
+        const password = campoPassword.value;
+        const resultado = evaluarPassword(password);
+
+        if (!resultado.segura) {
+            campoPassword.classList.add("pm-invalido");
+            campoPassword.focus();
+
+            mostrarMensaje(
+                "La contraseña debe tener al menos 8 caracteres, mayúscula, minúscula, número y símbolo."
+            );
+
+            return false;
         }
 
-        if (!email) {
-            error("email", "El correo electrónico es obligatorio.");
-        } else if (
-            email.length > 150 ||
-            !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
-        ) {
-            error("email", "Escribe un correo electrónico válido.");
+        if (password.length > 128) {
+            campoPassword.classList.add("pm-invalido");
+            campoPassword.focus();
+            mostrarMensaje("La contraseña no puede superar 128 caracteres.");
+            return false;
         }
 
-        if (campoTelefono.value.trim().length > 25) {
-            error("telefono", "El teléfono no puede superar 25 caracteres.");
-        }
-
-        if (password.length < 8) {
-            error("password", "La contraseña debe tener al menos 8 caracteres.");
-        }
-
-        if (password !== confirmar) {
-            error("confirmar_password", "Las contraseñas no coinciden.");
-        }
-
-        if (primerCampoInvalido) {
-            primerCampoInvalido.focus();
+        if (password !== campoConfirmacion.value) {
+            campoConfirmacion.classList.add("pm-invalido");
+            campoConfirmacion.focus();
+            mostrarMensaje("Las contraseñas no coinciden.");
             return false;
         }
 
         return true;
     }
 
+    // =========================================
+    // BLOQUEAR CONTROLES DURANTE EL REGISTRO
+    // =========================================
+
+    function establecerEstadoEnvio(activo) {
+        enviando = activo;
+
+        formulario.querySelectorAll("input, select").forEach(campo => {
+            campo.disabled = activo;
+        });
+
+        modal.querySelectorAll("[data-toggle-password]").forEach(boton => {
+            boton.disabled = activo;
+        });
+
+        if (btnCancelar) {
+            btnCancelar.disabled = activo;
+        }
+
+        if (btnGuardar) {
+            btnGuardar.disabled = activo;
+        }
+
+        if (textoGuardar) {
+            textoGuardar.textContent = activo
+                ? "Creando usuario..."
+                : "Crear usuario";
+        }
+
+        if (indicadorGuardar) {
+            indicadorGuardar.hidden = !activo;
+        }
+    }
+
+    // =========================================
+    // CREAR USUARIO EN FLASK
+    // =========================================
+
     async function registrarUsuario(evento) {
         evento.preventDefault();
 
         if (enviando || !validarFormulario()) return;
 
-        const rolId = campoRol.value;
+        limpiarMensaje();
 
-        if (!["1", "2"].includes(rolId)) {
-            mostrarErrorFormulario("Selecciona un tipo de cuenta válido.");
+        const rol = campoRol.value;
+        const endpoint = rol === "1" ? URL_ADMIN : URL_RECEPCION;
+
+        if (!endpoint) {
+            mostrarMensaje("No se encontró la dirección para crear la cuenta.");
             return;
         }
-
-        const endpoint = rolId === "1" ? URL_ADMIN : URL_RECEPCION;
 
         const datos = {
             nombre: campoNombre.value.trim(),
             apellidos: campoApellidos.value.trim(),
-            email: campoEmail.value.trim().toLowerCase(),
+            email: campoEmail.value.trim(),
             telefono: campoTelefono.value.trim(),
             password: campoPassword.value,
-            confirmar_password: campoConfirmar.value
+            confirmar_password: campoConfirmacion.value
         };
 
-        enviando = true;
-        btnGuardar.disabled = true;
-        btnGuardar.setAttribute("aria-busy", "true");
-        btnGuardar.querySelector("span").textContent = "Registrando...";
+        establecerEstadoEnvio(true);
 
         try {
             const respuesta = await fetch(endpoint, {
@@ -308,182 +366,65 @@
                 body: JSON.stringify(datos)
             });
 
-            let resultado;
+            const resultado = await respuesta.json().catch(() => null);
 
-            try {
-                resultado = await respuesta.json();
-            } catch {
-                throw new Error(
-                    "El servidor devolvió una respuesta que no se pudo interpretar."
+            if (!respuesta.ok || !resultado?.success) {
+                mostrarMensaje(
+                    resultado?.message ||
+                    "No fue posible crear la cuenta. Inténtalo nuevamente."
                 );
-            }
-
-            if (!respuesta.ok || !resultado.success) {
-                const mensaje = resultado.message ||
-                    "No fue posible registrar la cuenta.";
-
-                if (respuesta.status === 409) {
-                    mostrarErrorCampo("email", mensaje);
-                    campoEmail.focus();
-                } else {
-                    mostrarErrorFormulario(mensaje);
-                }
 
                 return;
             }
 
-            const tipoUsuario = rolId === "1"
-                ? "administrador"
-                : "personal de recepción";
-
-            const mensajeExito = resultado.message ||
-                `La cuenta de ${tipoUsuario} se creó correctamente.`;
-
-            reiniciarFormulario();
-
-            // Liberamos el estado antes de cerrar el modal.
-            enviando = false;
-            btnGuardar.disabled = false;
-            btnGuardar.removeAttribute("aria-busy");
-            btnGuardar.querySelector("span").textContent = "Crear cuenta";
-
-            cerrarModal();
-
             mostrarToast(
-                "exito",
-                "Registro completado",
-                mensajeExito,
-                3000
+                resultado.message || "Usuario creado correctamente.",
+                "exito"
             );
 
-            /*
-             * Actualiza el directorio desde el servidor.
-             * Se recarga después de mostrar la notificación.
-             */
+            modal.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+
+            formulario.reset();
+            actualizarSeguridadPassword();
+
+            // Recargar el directorio para mostrar al usuario recién creado.
             setTimeout(() => {
                 window.location.reload();
-            }, 3200);
+            }, 3000);
 
         } catch (error) {
-            console.error("Error al registrar usuario:", error);
+            console.error("Error al crear usuario:", error);
 
-            mostrarErrorFormulario(
-                error instanceof TypeError
-                    ? "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo."
-                    : error.message || "Ocurrió un error inesperado."
+            mostrarMensaje(
+                "No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo nuevamente."
             );
         } finally {
-            enviando = false;
-            btnGuardar.disabled = false;
-            btnGuardar.removeAttribute("aria-busy");
-            btnGuardar.querySelector("span").textContent = "Crear cuenta";
+            establecerEstadoEnvio(false);
         }
     }
 
-    // Botón que ya existe en personal.html.
-    btnAbrir?.addEventListener("click", evento => {
-        evento.preventDefault();
-        reiniciarFormulario();
-        abrirModal();
-    });
-
-    // Cerrar desde los botones de cancelar y la X.
-    modal.querySelectorAll("[data-modal-cerrar]").forEach(boton => {
-        boton.addEventListener("click", cerrarModal);
-    });
-
-    // No cerramos al pulsar el fondo: evitamos pérdidas accidentales.
-    modal.querySelector("[data-modal-fondo]")?.addEventListener("click", evento => {
-        evento.preventDefault();
-    });
-
     formulario.addEventListener("submit", registrarUsuario);
 
-    // Limpiar errores individuales al modificar el campo.
-    formulario.querySelectorAll("input, select").forEach(campo => {
-        campo.addEventListener("input", () => {
-            const contenedor = campo.closest(".pm-campo");
+    // =========================================
+    // RESTABLECER FORMULARIO
+    // =========================================
 
-            if (contenedor) {
-                contenedor.classList.remove("pm-campo--error");
-            }
+    function reiniciarFormulario() {
+        formulario.reset();
+        limpiarMensaje();
 
-            const salida = formulario.querySelector(
-                `[data-error="${campo.name}"]`
-            );
-
-            if (salida) salida.textContent = "";
-
-            if (!campoPassword.value || !campoConfirmar.value) return;
-
-            if (
-                campo === campoPassword ||
-                campo === campoConfirmar
-            ) {
-                if (campoPassword.value === campoConfirmar.value) {
-                    formulario.querySelector(
-                        '[data-error="confirmar_password"]'
-                    ).textContent = "";
-
-                    campoConfirmar.closest(".pm-campo")
-                        .classList.remove("pm-campo--error");
-                }
-            }
+        formulario.querySelectorAll(".pm-invalido").forEach(campo => {
+            campo.classList.remove("pm-invalido");
         });
-    });
 
-    // Mostrar y ocultar contraseñas.
-    formulario.querySelectorAll("[data-ver-password]").forEach(boton => {
-        boton.addEventListener("click", () => {
-            const campo = document.getElementById(
-                boton.dataset.verPassword
-            );
-
-            const mostrar = campo.type === "password";
-
-            campo.type = mostrar ? "text" : "password";
-            boton.setAttribute("aria-pressed", String(mostrar));
-            boton.setAttribute(
-                "aria-label",
-                mostrar ? "Ocultar contraseña" : "Mostrar contraseña"
-            );
+        modal.querySelectorAll("[data-toggle-password]").forEach(boton => {
+            boton.setAttribute("aria-pressed", "false");
+            boton.setAttribute("aria-label", "Mostrar contraseña");
         });
-    });
 
-    // Escape para cerrar y navegación de teclado dentro del diálogo.
-    document.addEventListener("keydown", evento => {
-        if (!modalAbierto) return;
+        actualizarSeguridadPassword();
+    }
 
-        if (evento.key === "Escape") {
-            evento.preventDefault();
-            cerrarModal();
-            return;
-        }
-
-        if (evento.key !== "Tab") return;
-
-        const elementos = [
-            ...ventana.querySelectorAll(
-                'button:not(:disabled), input:not(:disabled), select:not(:disabled), [tabindex="0"]'
-            )
-        ].filter(elemento => elemento.offsetParent !== null);
-
-        if (!elementos.length) {
-            evento.preventDefault();
-            ventana.focus();
-            return;
-        }
-
-        const primero = elementos[0];
-        const ultimo = elementos[elementos.length - 1];
-
-        if (evento.shiftKey && document.activeElement === primero) {
-            evento.preventDefault();
-            ultimo.focus();
-        } else if (!evento.shiftKey && document.activeElement === ultimo) {
-            evento.preventDefault();
-            primero.focus();
-        }
-    });
-
+    actualizarSeguridadPassword();
 })();

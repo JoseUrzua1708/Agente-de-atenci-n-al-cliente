@@ -1,9 +1,10 @@
-from flask import Blueprint, session, redirect, url_for
+from flask import Blueprint, session, redirect, url_for, request
 from app.controllers.recepcion_controller import RecepcionController, ROL_RECEPCIONISTA
 from app.controllers.solicitudes_controller import SolicitudesController
 from app.controllers.checkin_controller import CheckinController
 from app.controllers.info_controller import InfoController
 from app.controllers.agentes_controller import AgentesController
+from app.controllers.reservaciones_controller import ReservacionesController
 import logging
 
 logger = logging.getLogger("SecurityAuditor")
@@ -118,6 +119,30 @@ def agentes_responder(conversacion_id):
 @recepcion_bp.route("/agentes/mensajes/<int:mensaje_id>/revision", methods=["POST"])
 def agentes_marcar(mensaje_id):
     return AgentesController.marcar_mensaje(mensaje_id)
+
+
+# ============================================================
+# RESERVACIONES
+# ============================================================
+@recepcion_bp.route("/reservaciones/api", methods=["POST"])
+def crear_reservacion_recepcion():
+    return ReservacionesController.crear_reservacion(
+        request.get_json(silent=True), origen_forzado="RECEPCION"
+    )
+
+
+@recepcion_bp.route("/reservaciones/clientes", methods=["GET"])
+def listar_clientes_reservacion_recepcion():
+    return ReservacionesController.listar_clientes(roles_permitidos=(2,))
+
+
+@recepcion_bp.route("/reservaciones/disponibles", methods=["GET"])
+def listar_habitaciones_disponibles_recepcion():
+    return ReservacionesController.habitaciones_disponibles(
+        request.args.get("entrada"),
+        request.args.get("salida"),
+        roles_permitidos=(2,)
+    )
 
 
 # ============================================================

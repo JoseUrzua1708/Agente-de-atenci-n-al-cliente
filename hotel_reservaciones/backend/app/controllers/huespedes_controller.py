@@ -24,9 +24,23 @@ class HuespedesController:
                     c.email,
                     c.telefono,
                     c.fecha_registro,
-                    u.estado
+                                        u.estado,
+                                        h.numero AS numero_habitacion,
+                                        th.nombre AS tipo_habitacion
                 FROM clientes c
                 INNER JOIN usuarios u ON u.id = c.usuario_id
+                                LEFT JOIN reservaciones r ON r.id = (
+                                        SELECT r2.id
+                                        FROM reservaciones r2
+                                        WHERE r2.cliente_id = c.id
+                                            AND r2.estado = 'CHECK_IN'
+                                            AND CURDATE() >= r2.fecha_entrada
+                                            AND CURDATE() <= r2.fecha_salida
+                                        ORDER BY r2.fecha_reservacion DESC, r2.id DESC
+                                        LIMIT 1
+                                )
+                                LEFT JOIN habitaciones h ON h.id = r.habitacion_id
+                                LEFT JOIN tipos_habitacion th ON th.id = h.tipo_id
                 WHERE u.rol_id = 3
                   AND u.estado = 'ACTIVO'
                 ORDER BY c.apellidos ASC, c.nombre ASC, c.id ASC
@@ -69,9 +83,23 @@ class HuespedesController:
                     c.email,
                     c.telefono,
                     c.fecha_registro,
-                    u.estado
+                    u.estado,
+                    h.numero AS numero_habitacion,
+                    th.nombre AS tipo_habitacion
                 FROM clientes c
                 INNER JOIN usuarios u ON u.id = c.usuario_id
+                LEFT JOIN reservaciones r ON r.id = (
+                    SELECT r2.id
+                    FROM reservaciones r2
+                    WHERE r2.cliente_id = c.id
+                      AND r2.estado = 'CHECK_IN'
+                      AND CURDATE() >= r2.fecha_entrada
+                                            AND CURDATE() <= r2.fecha_salida
+                    ORDER BY r2.fecha_reservacion DESC, r2.id DESC
+                    LIMIT 1
+                )
+                LEFT JOIN habitaciones h ON h.id = r.habitacion_id
+                LEFT JOIN tipos_habitacion th ON th.id = h.tipo_id
                 WHERE c.id = %s
                   AND u.rol_id = 3
                   AND u.estado = 'ACTIVO'

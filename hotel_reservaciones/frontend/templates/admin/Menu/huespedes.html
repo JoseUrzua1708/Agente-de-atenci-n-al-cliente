@@ -33,9 +33,9 @@ Consulta el directorio de huéspedes activos.
 						class="hab-search"
 						id="buscarHuesped"
 						type="search"
-						placeholder="Buscar huésped..."
+							placeholder="Buscar huésped o habitación..."
 						autocomplete="off"
-						aria-label="Buscar por nombre, correo, teléfono o identificador"
+							aria-label="Buscar por huésped, correo, teléfono, identificador o habitación"
 					>
 				</label>
 			</div>
@@ -49,6 +49,7 @@ Consulta el directorio de huéspedes activos.
 						<th scope="col">Huésped</th>
 						<th scope="col">Correo electrónico</th>
 						<th scope="col">Teléfono</th>
+						<th scope="col">Habitación</th>
 						<th scope="col">Fecha de registro</th>
 						<th scope="col">Estado</th>
 						<th scope="col">Consulta</th>
@@ -56,7 +57,7 @@ Consulta el directorio de huéspedes activos.
 				</thead>
 				<tbody id="tablaHuespedes">
 					<tr>
-						<td colspan="7" class="hab-empty">
+						<td colspan="8" class="hab-empty">
 							<span class="hab-loading-spinner" aria-hidden="true"></span>
 							<strong>Cargando huéspedes activos...</strong>
 						</td>

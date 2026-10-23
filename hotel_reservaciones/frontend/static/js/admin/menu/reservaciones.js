@@ -310,7 +310,7 @@
             const puedeCancelar = CANCELABLES.includes(estado);
 
             return `
-                <tr style="--fila-index:${indice}">
+                <tr data-reservacion-id="${id}" style="--fila-index:${indice}">
                     <td><span class="res-folio">${escaparHTML(r.codigo_reservacion)}</span></td>
 
                     <td>${escaparHTML(r.cliente)}</td>
@@ -377,6 +377,24 @@
 
             reservacionesData = data.reservaciones;
             renderizar();
+
+            const reservacionSolicitada = new URLSearchParams(location.search)
+                .get("reservacion_id");
+            const reservacion = reservacionesData.find(
+                r => String(r.id) === reservacionSolicitada
+            );
+            if (reservacion) {
+                elementos.busqueda.value = reservacion.codigo_reservacion;
+                paginaActual = 1;
+                renderizar();
+                requestAnimationFrame(() => {
+                    const fila = elementos.tabla.querySelector(
+                        `tr[data-reservacion-id="${Number(reservacion.id)}"]`
+                    );
+                    fila?.classList.add("res-notification-target");
+                    fila?.scrollIntoView({ behavior: "smooth", block: "center" });
+                });
+            }
 
         } catch (error) {
             console.error("Error al cargar reservaciones:", error);

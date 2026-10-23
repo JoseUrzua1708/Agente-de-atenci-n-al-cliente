@@ -33,8 +33,8 @@ class ReservacionesController:
     # SESIÓN
     # ------------------------------------------------------------
     @staticmethod
-    def _verificar_sesion_admin():
-        """Valida que exista sesión activa y que el usuario sea Administrador (role_id = 1)."""
+    def _verificar_sesion_roles(roles_permitidos):
+        """Valida una sesión activa y restringe el acceso a los roles indicados."""
         if not session.get("user_id"):
             return jsonify({
                 "success": False,
@@ -43,7 +43,7 @@ class ReservacionesController:
             }), 401
 
         try:
-            if int(session.get("role_id", 0)) != 1:
+            if int(session.get("role_id", 0)) not in roles_permitidos:
                 return jsonify({
                     "success": False,
                     "message": "No tienes permiso para realizar esta acción."
@@ -57,6 +57,10 @@ class ReservacionesController:
             }), 401
 
         return None  # Todo OK
+
+    @staticmethod
+    def _verificar_sesion_admin():
+        return ReservacionesController._verificar_sesion_roles((1,))
 
     # ------------------------------------------------------------
     # UTILIDADES
@@ -250,6 +254,29 @@ class ReservacionesController:
             (reservacion_id, session.get("user_id"), estado_anterior, estado_nuevo, comentario)
         )
 
+    @staticmethod
+    def _notificar_nueva_reservacion(cursor, reservacion_id, cliente_id, codigo, nombre):
+        cursor.execute("SELECT id FROM usuarios WHERE rol_id = 1 AND estado = 'ACTIVO'")
+        administradores = cursor.fetchall()
+        mensaje = (
+            f"{nombre} registró la reservación {codigo}. "
+            f"Fecha de registro: {datetime.now():%d/%m/%Y %H:%M}."
+        )
+
+        for administrador in administradores:
+            cursor.execute(
+                """
+                INSERT INTO notificaciones (
+                    usuario_id, cliente_id, reservacion_id, tipo, canal,
+                    asunto, mensaje, estado
+                ) VALUES (%s, %s, %s, 'GENERAL', 'WEB', %s, %s, 'PENDIENTE')
+                """,
+                (
+                    administrador["id"], cliente_id, reservacion_id,
+                    "Nueva reservación registrada", mensaje
+                )
+            )
+
     # ------------------------------------------------------------
     # CONSULTAS
     # ------------------------------------------------------------
@@ -293,9 +320,9 @@ class ReservacionesController:
             if conexion: conexion.close()
 
     @staticmethod
-    def listar_clientes():
+    def listar_clientes(roles_permitidos=(1,)):
         """Clientes para llenar el menú desplegable del formulario."""
-        error_sesion = ReservacionesController._verificar_sesion_admin()
+        error_sesion = ReservacionesController._verificar_sesion_roles(roles_permitidos)
         if error_sesion:
             return error_sesion
 
@@ -321,9 +348,11 @@ class ReservacionesController:
             if conexion: conexion.close()
 
     @staticmethod
-    def habitaciones_disponibles(entrada_texto, salida_texto, excluir_texto=None):
+    def habitaciones_disponibles(
+        entrada_texto, salida_texto, excluir_texto=None, roles_permitidos=(1,)
+    ):
         """Habitaciones libres entre dos fechas (límites abiertos)."""
-        error_sesion = ReservacionesController._verificar_sesion_admin()
+        error_sesion = ReservacionesController._verificar_sesion_roles(roles_permitidos)
         if error_sesion:
             return error_sesion
 
@@ -391,23 +420,60 @@ class ReservacionesController:
     # CREAR
     # ------------------------------------------------------------
     @staticmethod
-    def crear_reservacion(data):
-        error_sesion = ReservacionesController._verificar_sesion_admin()
-        if error_sesion:
-            return error_sesion
+    def crear_reservacion(data, origen_forzado=None):
+        try:
+            role_id = int(session.get("role_id", 0))
+        except (TypeError, ValueError):
+            role_id = 0
+
+        if origen_forzado == "RECEPCION":
+            if not session.get("user_id") or role_id != 2:
+                return jsonify({
+                    "success": False,
+                    "message": "No tienes permiso para registrar reservaciones desde recepción."
+                }), 403
+        elif origen_forzado == "WEB":
+            if not session.get("user_id") or role_id != 3:
+                return jsonify({
+                    "success": False,
+                    "message": "Inicia sesión como huésped para realizar una reservación."
+                }), 401
+        else:
+            error_sesion = ReservacionesController._verificar_sesion_admin()
+            if error_sesion:
+                return error_sesion
 
         conexion = None
         cursor = None
         try:
+            conexion = db.get_connection()
+            cursor = conexion.cursor(dictionary=True)
+
+            if origen_forzado == "WEB":
+                cursor.execute(
+                    """
+                    SELECT c.id, c.nombre, c.apellidos
+                    FROM clientes c
+                    INNER JOIN usuarios u ON u.id = c.usuario_id
+                    WHERE c.usuario_id = %s AND u.rol_id = 3 AND u.estado = 'ACTIVO'
+                    LIMIT 1
+                    """,
+                    (session["user_id"],)
+                )
+                cliente = cursor.fetchone()
+                if not cliente:
+                    raise ErrorNegocio("No se encontró un perfil de huésped activo.", 403)
+                data = dict(data or {})
+                data["cliente_id"] = cliente["id"]
+                data["origen"] = "WEB"
+                data["estado"] = "PENDIENTE"
+
             datos = ReservacionesController._validar_datos(data)
 
             if datos["fecha_entrada"] < date.today():
                 raise ErrorNegocio("La fecha de entrada no puede ser anterior a hoy.")
             if datos["estado"] not in ("PENDIENTE", "CONFIRMADA"):
                 raise ErrorNegocio("Una reservación nueva solo puede iniciar como Pendiente o Confirmada.")
-
-            conexion = db.get_connection()
-            cursor = conexion.cursor(dictionary=True)
 
             ReservacionesController._verificar_cliente(cursor, datos["cliente_id"])
             habitacion = ReservacionesController._obtener_habitacion(cursor, datos)
@@ -443,9 +509,25 @@ class ReservacionesController:
             )
             reservacion_id = cursor.lastrowid
 
+            cursor.execute(
+                "SELECT nombre, apellidos FROM clientes WHERE id = %s",
+                (datos["cliente_id"],)
+            )
+            cliente_notificacion = cursor.fetchone()
+            nombre_huesped = " ".join(filter(None, (
+                cliente_notificacion["nombre"], cliente_notificacion["apellidos"]
+            )))
+            ReservacionesController._notificar_nueva_reservacion(
+                cursor, reservacion_id, datos["cliente_id"], codigo, nombre_huesped
+            )
+
+            comentario_historial = {
+                "WEB": "Reservación creada por el huésped desde el panel del cliente.",
+                "RECEPCION": "Reservación creada desde el módulo de recepción.",
+            }.get(origen_forzado, "Reservación creada desde el panel de administración.")
             ReservacionesController._registrar_historial(
                 cursor, reservacion_id, None, datos["estado"],
-                "Reservación creada desde el panel de administración."
+                comentario_historial
             )
 
             conexion.commit()

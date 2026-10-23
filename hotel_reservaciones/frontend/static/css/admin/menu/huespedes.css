@@ -1,3 +1,18 @@
+.huesped-room-number,
+.huesped-room-type {
+    display: block;
+}
+
+.huesped-room-number {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.huesped-room-type {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 11px;
+}
 #huespedesPage .hab-table {
     min-width: 900px;
 }
