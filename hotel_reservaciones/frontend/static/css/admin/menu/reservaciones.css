@@ -290,11 +290,20 @@
 }
 
 .res-modal__footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+
     display: flex;
     align-items: center;
     justify-content: flex-end;
     gap: 10px;
-    margin-top: 22px;
+
+    margin: 22px -28px -26px;
+    padding: 14px 28px;
+
+    background: #fff;
+    border-top: 1px solid var(--hab-border);
 }
 
 /* Botones del modal (mismo aspecto que hab-btn) */
@@ -384,7 +393,85 @@
     .res-modal__footer {
         flex-direction: column-reverse;
         align-items: stretch;
+        margin: 22px -16px -20px;
+        padding: 14px 16px;
     }
 }
 
+/* =====================================================
+   VENTANA DE CONFIRMACIÓN (cancelar reservación)
+===================================================== */
 
+.res-confirm {
+    z-index: 1100;
+}
+
+.res-confirm__dialog {
+    width: min(420px, 100%);
+    padding: 28px 26px 24px;
+    text-align: center;
+}
+
+.res-confirm__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 14px;
+
+    color: #963f3f;
+    background: #fbefef;
+    border: 1px solid #ead0d0;
+    border-radius: 50%;
+}
+
+.res-confirm__icon svg {
+    width: 22px;
+    height: 22px;
+}
+
+.res-confirm__dialog h3 {
+    margin: 0 0 8px;
+
+    color: var(--hab-text);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+.res-confirm__dialog p {
+    margin: 0 0 22px;
+
+    color: var(--hab-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.res-confirm__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.res-btn-danger {
+    color: #fff;
+    background: #963f3f;
+    border-color: #963f3f;
+}
+
+.res-btn-danger:hover:not(:disabled) {
+    background: #7d3232;
+    border-color: #7d3232;
+    box-shadow: 0 3px 9px rgba(125, 50, 50, .18);
+}
+
+@media (max-width: 700px) {
+    .res-confirm__actions {
+        flex-direction: column-reverse;
+        align-items: stretch;
+    }
+}

@@ -393,7 +393,8 @@
     <span>Habitaciones</span>
 </a>
 
-            <button class="nav-item" type="button" data-page="huespedes">
+                <a class="nav-item {% if request.endpoint == 'admin.vista_huespedes' %}active{% endif %}"
+                    href="{{ url_for('admin.vista_huespedes') }}">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <circle cx="9" cy="8" r="4"
                             stroke="currentColor" stroke-width="1.6"/>
@@ -404,7 +405,7 @@
                     />
                 </svg>
                 <span>Huéspedes</span>
-            </button>
+            </a>
 
             
 <a class="nav-item {% if request.endpoint == 'usuarios.vista_personal' %}active{% endif %}"

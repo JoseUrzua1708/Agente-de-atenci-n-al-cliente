@@ -1,0 +1,101 @@
+{% extends "admin/panel_admin.html" %}
+
+{% block titulo_pagina %}
+Huéspedes
+{% endblock titulo_pagina %}
+
+{% block descripcion_pagina %}
+Consulta el directorio de huéspedes activos.
+{% endblock descripcion_pagina %}
+
+{% block estilos_pagina %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/habitaciones.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/huespedes.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/modales/modal_huesped.css') }}">
+{% endblock estilos_pagina %}
+
+{% block contenido %}
+<section class="habitaciones-page huespedes-page" id="huespedesPage">
+	<section class="hab-table-card" aria-labelledby="huespedesTitulo">
+		<header class="hab-table-header">
+			<div class="hab-table-heading">
+				<h3 id="huespedesTitulo">Directorio de huéspedes activos</h3>
+				<p>Consulta los datos de contacto y registro.</p>
+			</div>
+
+			<div class="hab-table-tools">
+				<label class="hab-search-wrapper" for="buscarHuesped">
+					<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.7"/>
+						<path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+					</svg>
+					<input
+						class="hab-search"
+						id="buscarHuesped"
+						type="search"
+						placeholder="Buscar huésped..."
+						autocomplete="off"
+						aria-label="Buscar por nombre, correo, teléfono o identificador"
+					>
+				</label>
+			</div>
+		</header>
+
+		<div class="hab-table-wrapper">
+			<table class="hab-table">
+				<thead>
+					<tr>
+						<th scope="col">ID</th>
+						<th scope="col">Huésped</th>
+						<th scope="col">Correo electrónico</th>
+						<th scope="col">Teléfono</th>
+						<th scope="col">Fecha de registro</th>
+						<th scope="col">Estado</th>
+						<th scope="col">Consulta</th>
+					</tr>
+				</thead>
+				<tbody id="tablaHuespedes">
+					<tr>
+						<td colspan="7" class="hab-empty">
+							<span class="hab-loading-spinner" aria-hidden="true"></span>
+							<strong>Cargando huéspedes activos...</strong>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<footer class="hab-table-footer">
+			<div class="hab-table-footer-info">
+				<span id="contadorHuespedes" aria-live="polite">Cargando registros...</span>
+			</div>
+			<div class="hab-pagination">
+				<label class="hab-page-size-label" for="huespedesRegistrosPorPagina">
+					Mostrar
+					<select class="hab-page-size" id="huespedesRegistrosPorPagina" aria-label="Registros por página">
+						<option value="5">5</option>
+						<option value="10" selected>10</option>
+						<option value="20">20</option>
+						<option value="todos">Todos</option>
+					</select>
+				</label>
+				<div class="hab-page-controls">
+					<button class="hab-page-btn" id="huespedPaginaAnterior" type="button" aria-label="Página anterior" disabled>
+						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14.5 18-6-6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					</button>
+					<span class="hab-page-indicator" id="huespedPaginaActual" aria-live="polite">1 / 1</span>
+					<button class="hab-page-btn" id="huespedPaginaSiguiente" type="button" aria-label="Página siguiente" disabled>
+						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m9.5 18 6-6-6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+					</button>
+				</div>
+			</div>
+		</footer>
+	</section>
+</section>
+
+{% include "admin/Modales/modal_huesped.html" %}
+{% endblock contenido %}
+
+{% block scripts_pagina %}
+<script src="{{ url_for('static', filename='js/admin/menu/huespedes.js') }}" defer></script>
+{% endblock scripts_pagina %}

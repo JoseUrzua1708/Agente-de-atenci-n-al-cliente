@@ -54,7 +54,14 @@
         comentarios: $("resComentarios"),
         resumen: $("resResumen"),
         errorFormulario: $("resErrorFormulario"),
-        botonGuardar: $("btnGuardarReservacion")
+        botonGuardar: $("btnGuardarReservacion"),
+
+        // Ventana de confirmación
+        confirmacion: $("modalConfirmarRes"),
+        confirmTitulo: $("resConfirmTitulo"),
+        confirmTexto: $("resConfirmTexto"),
+        confirmSi: $("btnConfirmarSiRes"),
+        confirmNo: $("btnConfirmarNoRes")
     };
 
     // =====================================================
@@ -177,11 +184,11 @@
     // TABLA
     // =====================================================
 
-    function mostrarCarga(texto) {
+    function mostrarCarga(texto, conSpinner = true) {
         elementos.tabla.innerHTML = `
             <tr>
                 <td colspan="8" class="hab-empty">
-                    <span class="hab-loading-spinner" aria-hidden="true"></span>
+                    ${conSpinner ? '<span class="hab-loading-spinner" aria-hidden="true"></span>' : ""}
                     <strong>${escaparHTML(texto)}</strong>
                 </td>
             </tr>
@@ -283,7 +290,8 @@
             mostrarCarga(
                 reservacionesData.length === 0
                     ? "No hay reservaciones registradas."
-                    : "No se encontraron reservaciones con esos filtros."
+                    : "No se encontraron reservaciones con esos filtros.",
+                false
             );
             return;
         }
@@ -605,6 +613,37 @@
     }
 
     // =====================================================
+    // VENTANA DE CONFIRMACIÓN
+    // =====================================================
+
+    let resolverConfirmacion = null;
+
+    function confirmarAccion({ titulo, texto, textoBoton = "Confirmar" }) {
+        return new Promise(resolve => {
+            resolverConfirmacion = resolve;
+
+            elementos.confirmTitulo.textContent = titulo;
+            elementos.confirmTexto.textContent = texto;
+            elementos.confirmSi.textContent = textoBoton;
+
+            elementos.confirmacion.classList.add("is-open");
+            elementos.confirmacion.setAttribute("aria-hidden", "false");
+
+            elementos.confirmNo.focus();
+        });
+    }
+
+    function cerrarConfirmacion(resultado) {
+        elementos.confirmacion.classList.remove("is-open");
+        elementos.confirmacion.setAttribute("aria-hidden", "true");
+
+        if (resolverConfirmacion) {
+            resolverConfirmacion(resultado);
+            resolverConfirmacion = null;
+        }
+    }
+
+    // =====================================================
     // ACCIONES
     // =====================================================
 
@@ -709,10 +748,13 @@
             return;
         }
 
-        const confirmado = window.confirm(
-            `¿Deseas cancelar la reservación ${reservacion.codigo_reservacion} ` +
-            `de ${reservacion.cliente}? Se conservará su historial.`
-        );
+        const confirmado = await confirmarAccion({
+            titulo: "¿Cancelar reservación?",
+            texto:
+                `Vas a cancelar la reservación ${reservacion.codigo_reservacion} ` +
+                `de ${reservacion.cliente}. Se conservará su historial.`,
+            textoBoton: "Sí, cancelar"
+        });
 
         if (!confirmado) return;
 
@@ -726,7 +768,7 @@
                 throw new Error(data.message || "No se pudo cancelar la reservación.");
             }
 
-            mostrarMensaje(data.message || "La reservación se canceló correctamente.");
+            ocultarMensaje();
             await cargarReservaciones();
 
         } catch (error) {
@@ -799,8 +841,23 @@
         if (evento.target === elementos.modal) cerrarModal();
     });
 
+    elementos.confirmSi.addEventListener("click", () => cerrarConfirmacion(true));
+    elementos.confirmNo.addEventListener("click", () => cerrarConfirmacion(false));
+
+    elementos.confirmacion.addEventListener("click", evento => {
+        if (evento.target === elementos.confirmacion) cerrarConfirmacion(false);
+    });
+
     document.addEventListener("keydown", evento => {
-        if (evento.key === "Escape" && elementos.modal.classList.contains("is-open")) {
+        if (evento.key !== "Escape") return;
+
+        // Si la confirmación está abierta, Escape solo cierra esa ventana
+        if (elementos.confirmacion.classList.contains("is-open")) {
+            cerrarConfirmacion(false);
+            return;
+        }
+
+        if (elementos.modal.classList.contains("is-open")) {
             cerrarModal();
         }
     });
@@ -822,4 +879,4 @@
         iniciar();
     }
 
-})(); 
+})();

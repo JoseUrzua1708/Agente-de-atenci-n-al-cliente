@@ -1,0 +1,43 @@
+<div
+	class="huesped-modal"
+	id="modalHuesped"
+	aria-hidden="true"
+>
+	<section
+		class="huesped-modal__dialog"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="huespedModalTitulo"
+		aria-describedby="huespedModalDescripcion"
+		tabindex="-1"
+	>
+		<header class="huesped-modal__header">
+			<div class="huesped-modal__icon" aria-hidden="true">
+				<svg viewBox="0 0 24 24" fill="none">
+					<circle cx="9" cy="8" r="4" stroke="currentColor" stroke-width="1.7"/>
+					<path d="M2 21v-2a7 7 0 0 1 14 0v2M16 4a4 4 0 0 1 0 8M18 15a5 5 0 0 1 4 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+				</svg>
+			</div>
+			<div class="huesped-modal__heading">
+				<span class="huesped-modal__eyebrow">DIRECTORIO DE HUÉSPEDES</span>
+				<h2 id="huespedModalTitulo">Detalle del huésped</h2>
+				<p id="huespedModalDescripcion">Información del huésped seleccionado.</p>
+			</div>
+			<button class="huesped-modal__close" type="button" data-huesped-modal-cerrar aria-label="Cerrar ventana">
+				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+				</svg>
+			</button>
+		</header>
+
+		<div class="huesped-modal__body" id="huespedModalContenido" aria-live="polite">
+			<p class="huesped-modal__loading">Cargando información...</p>
+		</div>
+
+		<footer class="huesped-modal__footer">
+			<button class="hab-btn hab-btn-secondary" type="button" data-huesped-modal-cerrar>
+				Cerrar
+			</button>
+		</footer>
+	</section>
+</div>

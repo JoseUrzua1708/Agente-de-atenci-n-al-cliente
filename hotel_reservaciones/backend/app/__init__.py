@@ -62,7 +62,6 @@ def create_app():
     usuarios_routes = UsuariosRoutes()
     app.register_blueprint(usuarios_routes.get_blueprint())
 
-
     # Evitar que el navegador almacene páginas de la aplicación
     @app.after_request
     def evitar_cache_privada(response):

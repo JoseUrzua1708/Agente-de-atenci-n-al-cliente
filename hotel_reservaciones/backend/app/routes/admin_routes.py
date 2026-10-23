@@ -9,6 +9,8 @@ from flask import (
 
 from app.controllers.auth_controller import AuthController
 from app.controllers.perfil_controller import PerfilController
+from app.controllers.huespedes_controller import HuespedesController
+from app.config.database import db
 
 import logging
 
@@ -49,6 +51,7 @@ def protect_admin_section():
         if (
             request.path.endswith("/perfil/datos")
             or request.path.endswith("/cerrar-sesion")
+            or request.path.startswith("/admin/huespedes/")
         ):
             return jsonify({
                 "success": False,
@@ -101,3 +104,70 @@ def admin_inicio_view():
     """Muestra el resumen general del administrador."""
 
     return AuthController.render_admin_panel()
+
+
+def _verificar_cuenta_admin_activa():
+    usuario_id = session.get("user_id")
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = db.get_connection()
+        cursor = conexion.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT id
+            FROM usuarios
+            WHERE id = %s
+              AND rol_id = 1
+              AND estado = 'ACTIVO'
+            LIMIT 1
+        """, (usuario_id,))
+
+        if not cursor.fetchone():
+            session.clear()
+            return jsonify({
+                "success": False,
+                "message": "La cuenta no está autorizada o está inactiva.",
+                "redirect": url_for("auth.login_view")
+            }), 403
+    except Exception:
+        logger.exception("Error al validar el acceso al módulo de huéspedes.")
+        return jsonify({
+            "success": False,
+            "message": "No fue posible verificar los permisos."
+        }), 500
+    finally:
+        if cursor:
+            cursor.close()
+        if conexion:
+            conexion.close()
+
+    return None
+
+
+@admin_bp.route("/huespedes", methods=["GET"], endpoint="vista_huespedes")
+def vista_huespedes():
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+    return render_template("admin/Menu/huespedes.html")
+
+
+@admin_bp.route("/huespedes/api", methods=["GET"], endpoint="listar_huespedes")
+def listar_huespedes():
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+    return HuespedesController.listar_huespedes()
+
+
+@admin_bp.route(
+    "/huespedes/<int:huesped_id>",
+    methods=["GET"],
+    endpoint="obtener_huesped"
+)
+def obtener_huesped(huesped_id):
+    error = _verificar_cuenta_admin_activa()
+    if error:
+        return error
+    return HuespedesController.obtener_huesped(huesped_id)

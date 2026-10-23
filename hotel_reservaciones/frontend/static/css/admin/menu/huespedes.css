@@ -1,0 +1,78 @@
+#huespedesPage .hab-table {
+    min-width: 900px;
+}
+
+#huespedesPage .hab-table-tools {
+    flex: 0 1 360px;
+}
+
+#huespedesPage .hab-table-heading p {
+    margin: 5px 0 0;
+    color: #858078;
+    font-size: 12px;
+}
+
+#huespedesPage .hab-table td {
+    vertical-align: middle;
+}
+
+.huesped-id {
+    color: #796448;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.huesped-name {
+    color: #302d28;
+    font-weight: 600;
+}
+
+.huesped-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    color: #426a45;
+    background: #edf4eb;
+    border: 1px solid #d5e7d3;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+#huespedesPage .huesped-view-btn {
+    min-height: 34px;
+    padding: 6px 10px;
+}
+
+#huespedesPage .huesped-view-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+.huespedes-empty {
+    min-height: 110px;
+}
+
+.huespedes-empty--error {
+    color: #963f3f;
+}
+
+@media (max-width: 700px) {
+    #huespedesPage .hab-table-header {
+        align-items: stretch;
+    }
+
+    #huespedesPage .hab-table-tools {
+        flex-basis: 100%;
+    }
+
+    #huespedesPage .hab-search-wrapper {
+        width: 100%;
+    }
+
+    #huespedesPage .hab-table-footer,
+    #huespedesPage .hab-pagination {
+        align-items: flex-start;
+    }
+}

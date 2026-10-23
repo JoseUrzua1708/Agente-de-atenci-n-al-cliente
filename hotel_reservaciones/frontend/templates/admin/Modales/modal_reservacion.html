@@ -123,3 +123,43 @@
     </div>
 </div>
 
+<!-- MODAL DE CONFIRMACIÓN (reemplaza el aviso "localhost dice") -->
+<div
+    class="res-modal res-confirm"
+    id="modalConfirmarRes"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="resConfirmTitulo"
+    aria-describedby="resConfirmTexto"
+    aria-hidden="true"
+>
+    <div class="res-modal__dialog res-confirm__dialog">
+
+        <div class="res-confirm__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M9 9l6 6m0-6-6 6" stroke="currentColor"
+                      stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <h3 id="resConfirmTitulo">¿Cancelar reservación?</h3>
+
+        <p id="resConfirmTexto"></p>
+
+        <div class="res-confirm__actions">
+            <button
+                type="button"
+                class="res-btn res-btn-secondary"
+                id="btnConfirmarNoRes"
+            >No, volver</button>
+
+            <button
+                type="button"
+                class="res-btn res-btn-danger"
+                id="btnConfirmarSiRes"
+            >Sí, cancelar</button>
+        </div>
+
+    </div>
+</div>
