@@ -2,14 +2,12 @@ import logging
 import re
 
 from flask import request, jsonify
-from werkzeug.security import generate_password_hash
 from mysql.connector import Error
 
 from app.config.database import db
 
 
 logger = logging.getLogger("SecurityAuditor")
-
 
 class UsuariosController:
 
@@ -32,10 +30,10 @@ class UsuariosController:
 
     @staticmethod
     def _validar_datos(data, es_creacion=True):
-        nombre = data.get("nombre", "").strip()
-        apellidos = data.get("apellidos", "").strip()
-        email = data.get("email", "").strip().lower()
-        telefono = data.get("telefono", "").strip()
+        nombre = (data.get("nombre") or "").strip()
+        apellidos = (data.get("apellidos") or "").strip()
+        email = (data.get("email") or "").strip().lower()
+        telefono = (data.get("telefono") or "").strip()
 
         if not nombre:
             return None, "El nombre es obligatorio."
@@ -91,26 +89,27 @@ class UsuariosController:
             cursor = conexion.cursor(dictionary=True)
 
             cursor.execute("""
-                SELECT
-                    u.id,
-                    u.nombre,
-                    u.apellidos,
-                    u.email,
-                    u.telefono,
-                    u.estado,
-                    u.ultimo_acceso,
-                    u.fecha_creacion,
-                    u.fecha_actualizacion,
-                    r.id AS rol_id,
-                    r.nombre AS rol
-                FROM usuarios u
-                INNER JOIN roles r ON r.id = u.rol_id
-                WHERE u.rol_id IN (1, 2)
-                ORDER BY
-                    u.rol_id ASC,
-                    CASE WHEN u.estado = 'ACTIVO' THEN 0 ELSE 1 END,
-                    u.nombre ASC
-            """)
+    SELECT
+        u.id,
+        u.nombre,
+        u.apellidos,
+        u.email,
+        u.telefono,
+        u.password_hash,
+        u.estado,
+        u.ultimo_acceso,
+        u.fecha_creacion,
+        u.fecha_actualizacion,
+        r.id AS rol_id,
+        r.nombre AS rol
+    FROM usuarios u
+    INNER JOIN roles r ON r.id = u.rol_id
+    WHERE u.rol_id IN (1, 2)
+    ORDER BY
+        u.rol_id ASC,
+        CASE WHEN u.estado = 'ACTIVO' THEN 0 ELSE 1 END,
+        u.nombre ASC
+""")
 
             usuarios = cursor.fetchall()
 
@@ -199,9 +198,8 @@ class UsuariosController:
                     400
                 )
 
-            password_hash = generate_password_hash(
-                data["password"]
-            )
+            # Contraseña en texto plano
+            password_plano = data["password"]
 
             cursor.execute("""
                 INSERT INTO usuarios (
@@ -219,7 +217,7 @@ class UsuariosController:
                 datos["nombre"],
                 datos["apellidos"],
                 datos["email"],
-                password_hash,
+                password_plano,
                 datos["telefono"]
             ))
 
@@ -240,7 +238,6 @@ class UsuariosController:
             if conexion:
                 conexion.rollback()
 
-            # MySQL: clave duplicada.
             if getattr(error, "errno", None) == 1062:
                 return UsuariosController._respuesta(
                     "El correo electrónico ya está registrado.",
@@ -274,6 +271,7 @@ class UsuariosController:
     # PUT /admin/usuarios/<id>
     # =========================================================
 
+    
     @staticmethod
     def editar_recepcionista(usuario_id):
         conexion = None
@@ -288,12 +286,30 @@ class UsuariosController:
                 )
 
             datos, error = UsuariosController._validar_datos(
-                data,
-                es_creacion=False
+                data, es_creacion=False
             )
 
             if error:
                 return UsuariosController._respuesta(error)
+
+            password = data.get("password", "")
+            confirmar = data.get("confirmar_password", "")
+
+            if not isinstance(password, str) or not isinstance(confirmar, str):
+                return UsuariosController._respuesta(
+                    "Los datos de contraseña no son válidos."
+                )
+
+            if password or confirmar:
+                if len(password) < 8:
+                    return UsuariosController._respuesta(
+                        "La nueva contraseña debe tener al menos 8 caracteres."
+                    )
+
+                if password != confirmar:
+                    return UsuariosController._respuesta(
+                        "Las contraseñas no coinciden."
+                    )
 
             conexion = UsuariosController._conexion()
             cursor = conexion.cursor(dictionary=True)
@@ -309,14 +325,12 @@ class UsuariosController:
 
             if not usuario:
                 return UsuariosController._respuesta(
-                    "El usuario no existe.",
-                    404
+                    "El usuario no existe.", 404
                 )
 
             if usuario["rol_id"] != 2:
                 return UsuariosController._respuesta(
-                    "Esta operación solo permite editar recepcionistas.",
-                    403
+                    "Solo puedes editar cuentas de recepcionistas.", 403
                 )
 
             cursor.execute("""
@@ -332,20 +346,7 @@ class UsuariosController:
                     409
                 )
 
-            password = data.get("password", "")
-            confirmar = data.get("confirmar_password", "")
-
-            if password or confirmar:
-                if not isinstance(password, str) or len(password) < 8:
-                    return UsuariosController._respuesta(
-                        "La nueva contraseña debe tener al menos 8 caracteres."
-                    )
-
-                if password != confirmar:
-                    return UsuariosController._respuesta(
-                        "Las contraseñas no coinciden."
-                    )
-
+            if password:
                 cursor.execute("""
                     UPDATE usuarios
                     SET nombre = %s,
@@ -359,7 +360,7 @@ class UsuariosController:
                     datos["apellidos"],
                     datos["email"],
                     datos["telefono"],
-                    generate_password_hash(password),
+                    password,  # Contraseña en texto plano
                     usuario_id
                 ))
             else:
@@ -391,14 +392,12 @@ class UsuariosController:
 
             if getattr(error, "errno", None) == 1062:
                 return UsuariosController._respuesta(
-                    "El correo electrónico ya está registrado.",
-                    409
+                    "El correo electrónico ya está registrado.", 409
                 )
 
             logger.exception("Error al editar recepcionista.")
             return UsuariosController._respuesta(
-                "No fue posible actualizar la cuenta.",
-                500
+                "No fue posible actualizar la cuenta.", 500
             )
 
         except Exception:
@@ -407,8 +406,7 @@ class UsuariosController:
 
             logger.exception("Error inesperado al editar recepcionista.")
             return UsuariosController._respuesta(
-                "Ocurrió un error al actualizar la cuenta.",
-                500
+                "Ocurrió un error al actualizar la cuenta.", 500
             )
 
         finally:

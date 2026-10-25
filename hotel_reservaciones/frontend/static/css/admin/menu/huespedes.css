@@ -14,7 +14,7 @@
     font-size: 11px;
 }
 #huespedesPage .hab-table {
-    min-width: 900px;
+    min-width: 820px;
 }
 
 #huespedesPage .hab-table-tools {
@@ -29,13 +29,6 @@
 
 #huespedesPage .hab-table td {
     vertical-align: middle;
-}
-
-.huesped-id {
-    color: #796448;
-    font-size: 12px;
-    font-weight: 700;
-    white-space: nowrap;
 }
 
 .huesped-name {

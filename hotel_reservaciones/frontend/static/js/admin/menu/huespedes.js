@@ -9,18 +9,11 @@
         registros: document.getElementById("huespedesRegistrosPorPagina"),
         anterior: document.getElementById("huespedPaginaAnterior"),
         siguiente: document.getElementById("huespedPaginaSiguiente"),
-        pagina: document.getElementById("huespedPaginaActual"),
-        modal: document.getElementById("modalHuesped"),
-        dialogo: document.querySelector(".huesped-modal__dialog"),
-        titulo: document.getElementById("huespedModalTitulo"),
-        descripcion: document.getElementById("huespedModalDescripcion"),
-        contenidoModal: document.getElementById("huespedModalContenido")
+        pagina: document.getElementById("huespedPaginaActual")
     };
 
     let huespedes = [];
     let paginaActual = 1;
-    let solicitudDetalle = 0;
-    let elementoEnFoco = null;
 
     function escaparHTML(valor) {
         return String(valor ?? "").replace(/[&<>"']/g, caracter => ({
@@ -46,7 +39,7 @@
     function mostrarEstadoTabla(texto, tipo = "info") {
         elementos.tabla.innerHTML = `
             <tr>
-                <td colspan="8" class="hab-empty huespedes-empty huespedes-empty--${tipo}">
+                <td colspan="7" class="hab-empty huespedes-empty huespedes-empty--${tipo}">
                     <strong>${escaparHTML(texto)}</strong>
                 </td>
             </tr>
@@ -105,7 +98,6 @@
             const nombre = `${huesped.nombre || ""} ${huesped.apellidos || ""}`.trim();
             return `
                 <tr>
-                    <td><span class="huesped-id">#${escaparHTML(huesped.id)}</span></td>
                     <td><strong class="huesped-name">${escaparHTML(nombre || "Sin nombre")}</strong></td>
                     <td>${escaparHTML(huesped.email || "No disponible")}</td>
                     <td>${escaparHTML(huesped.telefono || "No disponible")}</td>
@@ -168,89 +160,6 @@
         }
     }
 
-    function agregarDato(etiqueta, valor) {
-        const fila = document.createElement("div");
-        fila.className = "huesped-modal__field";
-
-        const nombreCampo = document.createElement("span");
-        nombreCampo.className = "huesped-modal__label";
-        nombreCampo.textContent = etiqueta;
-
-        const dato = document.createElement("strong");
-        dato.className = "huesped-modal__value";
-        dato.textContent = valor || "No disponible";
-
-        fila.append(nombreCampo, dato);
-        elementos.contenidoModal.append(fila);
-    }
-
-    function abrirModal() {
-        elementoEnFoco = document.activeElement;
-        elementos.contenidoModal.replaceChildren();
-        elementos.titulo.textContent = "Cargando huésped...";
-        elementos.descripcion.textContent = "Consultando información actualizada.";
-        elementos.modal.classList.add("is-open");
-        elementos.modal.setAttribute("aria-hidden", "false");
-        document.body.classList.add("huesped-modal-active");
-        elementos.dialogo.focus();
-    }
-
-    function cerrarModal() {
-        solicitudDetalle += 1;
-        elementos.modal.classList.remove("is-open");
-        elementos.modal.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("huesped-modal-active");
-        elementos.contenidoModal.replaceChildren();
-        elementos.titulo.textContent = "Detalle del huésped";
-        elementos.descripcion.textContent = "Información del huésped seleccionado.";
-        if (elementoEnFoco?.isConnected) elementoEnFoco.focus();
-    }
-
-    async function consultarHuesped(id, boton) {
-        const solicitud = ++solicitudDetalle;
-        abrirModal();
-        const indicador = document.createElement("p");
-        indicador.className = "huesped-modal__loading";
-        indicador.textContent = "Cargando información...";
-        elementos.contenidoModal.append(indicador);
-
-        try {
-            const datos = await obtenerJSON(`/admin/huespedes/${encodeURIComponent(id)}`);
-            if (solicitud !== solicitudDetalle) return;
-
-            const huesped = datos.huesped;
-            const nombre = `${huesped.nombre || ""} ${huesped.apellidos || ""}`.trim();
-            elementos.titulo.textContent = nombre || "Detalle del huésped";
-            elementos.descripcion.textContent = `Huésped #${huesped.id}`;
-            elementos.contenidoModal.replaceChildren();
-            agregarDato("Identificador", `#${huesped.id}`);
-            agregarDato("Nombre completo", nombre);
-            agregarDato("Correo electrónico", huesped.email);
-            agregarDato("Teléfono", huesped.telefono);
-            agregarDato(
-                "Habitación",
-                huesped.numero_habitacion
-                    ? `${huesped.numero_habitacion} · ${huesped.tipo_habitacion || "Tipo no disponible"}`
-                    : "Sin habitación asignada"
-            );
-            agregarDato("Fecha de registro", formatearFecha(huesped.fecha_registro));
-            agregarDato("Estado", "Activo");
-        } catch (error) {
-            if (solicitud !== solicitudDetalle) return;
-            elementos.titulo.textContent = "No se pudo consultar";
-            elementos.descripcion.textContent = "La información no está disponible.";
-            elementos.contenidoModal.replaceChildren();
-            const mensaje = document.createElement("p");
-            mensaje.className = "huesped-modal__error";
-            mensaje.textContent = error.message || "Error al recuperar la información.";
-            elementos.contenidoModal.append(mensaje);
-        }
-
-        if (boton && elementos.modal.classList.contains("is-open")) {
-            elementos.dialogo.focus();
-        }
-    }
-
     elementos.busqueda.addEventListener("input", () => {
         paginaActual = 1;
         renderizar();
@@ -269,20 +178,5 @@
         paginaActual += 1;
         renderizar();
     });
-    elementos.tabla.addEventListener("click", evento => {
-        const boton = evento.target.closest("button[data-huesped-consultar]");
-        if (boton) consultarHuesped(boton.dataset.huespedConsultar, boton);
-    });
-    elementos.modal.addEventListener("click", evento => {
-        if (evento.target === elementos.modal || evento.target.closest("[data-huesped-modal-cerrar]")) {
-            cerrarModal();
-        }
-    });
-    document.addEventListener("keydown", evento => {
-        if (evento.key === "Escape" && elementos.modal.classList.contains("is-open")) {
-            cerrarModal();
-        }
-    });
-
     cargarHuespedes();
 })();

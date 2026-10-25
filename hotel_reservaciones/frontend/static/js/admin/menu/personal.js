@@ -318,5 +318,78 @@ const API_USUARIOS = "/admin/usuarios/api";
         }));
     });
 
+    
+window.addEventListener("usuario:actualizado", function (evento) {
+    const actualizado = evento.detail?.usuario;
+    if (!actualizado) return;
+
+    const indice = usuarios.findIndex(
+        usuario => String(usuario.id) === String(actualizado.id)
+    );
+
+    if (indice === -1) return;
+
+    usuarios[indice] = {
+        ...usuarios[indice],
+        ...actualizado
+    };
+
+    renderizar();
+});
+
     cargarUsuarios();
+
+    // =========================================
+// SISTEMA GLOBAL DE NOTIFICACIONES
+// =========================================
+
+const toastPersonal = document.getElementById("personalToast");
+const toastIcono = document.getElementById("personalToastIcono");
+const toastTitulo = document.getElementById("personalToastTitulo");
+const toastMensaje = document.getElementById("personalToastMensaje");
+
+let temporizadorToastPersonal = null;
+
+window.mostrarNotificacionPersonal = function (
+    tipo,
+    titulo,
+    mensaje,
+    duracion = 3500
+) {
+    if (!toastPersonal || !toastIcono || !toastTitulo || !toastMensaje) {
+        return;
+    }
+
+    const configuracion = {
+        exito: { icono: "✓", etiqueta: "exito" },
+        error: { icono: "!", etiqueta: "error" },
+        info: { icono: "i", etiqueta: "info" }
+    };
+
+    const estilo = configuracion[tipo] || configuracion.info;
+
+    // Reinicia la notificación anterior.
+    clearTimeout(temporizadorToastPersonal);
+
+    toastPersonal.classList.remove(
+        "personal-toast--exito",
+        "personal-toast--error",
+        "personal-toast--info"
+    );
+
+    toastPersonal.classList.add(
+        `personal-toast--${estilo.etiqueta}`
+    );
+
+    toastIcono.textContent = estilo.icono;
+    toastTitulo.textContent = titulo;
+    toastMensaje.textContent = mensaje;
+
+    // Mostrar después de actualizar el contenido.
+    toastPersonal.setAttribute("aria-hidden", "false");
+
+    temporizadorToastPersonal = setTimeout(() => {
+        toastPersonal.setAttribute("aria-hidden", "true");
+    }, duracion);
+};
 })();

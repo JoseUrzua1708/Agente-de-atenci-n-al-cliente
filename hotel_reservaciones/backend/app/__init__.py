@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, render_template
 from app.routes.auth_routes import AuthRoutes
 from app.routes.admin_routes import admin_bp
 from app.routes.register_routes import register_bp
@@ -71,5 +71,9 @@ def create_app():
         response.headers["Pragma"] = "no-cache"
         response.headers["Expires"] = "0"
         return response
+
+    @app.route('/chatbot')
+    def vista_chatbot():
+        return render_template('chatbot/index.html')
 
     return app

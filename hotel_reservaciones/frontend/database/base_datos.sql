@@ -533,5 +533,45 @@ INNER JOIN tipos_habitacion th ON th.id = h.tipo_id;
 -- );
 
 -- ============================================================
+-- 13. CONVERSACIONES (Historial del Chatbot)
+-- ============================================================
+CREATE TABLE conversaciones (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    cliente_id BIGINT UNSIGNED NULL,
+    usuario_id BIGINT UNSIGNED NULL,
+    canal ENUM('WEB','CHATBOT','WHATSAPP') DEFAULT 'CHATBOT',
+    iniciada_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_conversaciones_cliente
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id) 
+        ON UPDATE CASCADE ON DELETE SET NULL,
+        
+    CONSTRAINT fk_conversaciones_usuario
+        FOREIGN KEY (usuario_id) REFERENCES usuarios(id) 
+        ON UPDATE CASCADE ON DELETE SET NULL,
+        
+    INDEX idx_conversaciones_cliente (cliente_id),
+    INDEX idx_conversaciones_usuario (usuario_id)
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- 14. MENSAJES DE CONVERSACIÓN
+-- ============================================================
+CREATE TABLE mensajes_conversacion (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    conversacion_id BIGINT UNSIGNED NOT NULL,
+    rol ENUM('user','assistant','tool','system') NOT NULL,
+    contenido MEDIUMTEXT,
+    tool_calls JSON NULL,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_mensajes_conversacion
+        FOREIGN KEY (conversacion_id) REFERENCES conversaciones(id) 
+        ON UPDATE CASCADE ON DELETE CASCADE,
+        
+    INDEX idx_mensajes_conversacion (conversacion_id)
+) ENGINE=InnoDB;
+
+-- ============================================================
 -- FIN DEL SCRIPT
 -- ============================================================

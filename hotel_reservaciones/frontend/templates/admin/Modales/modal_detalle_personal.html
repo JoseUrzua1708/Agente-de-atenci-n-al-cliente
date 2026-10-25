@@ -1,0 +1,202 @@
+
+<div
+    class="pd-modal"
+    id="modalDetallePersonal"
+    aria-hidden="true"
+>
+    <div class="pd-modal__fondo" data-detalle-cerrar></div>
+
+    <section
+        class="pd-modal__ventana"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pdTitulo"
+        tabindex="-1"
+    >
+        <header class="pd-modal__encabezado">
+            <div class="pd-modal__avatar" id="pdAvatar">US</div>
+
+            <div>
+                <span class="pd-modal__etiqueta">DIRECTORIO DE PERSONAL</span>
+                <h2 id="pdTitulo">Información del usuario</h2>
+                <p id="pdSubtitulo">Detalles de la cuenta</p>
+            </div>
+
+            <button
+                type="button"
+                class="pd-modal__cerrar"
+                data-detalle-cerrar
+                aria-label="Cerrar ventana"
+            >×</button>
+        </header>
+
+        <div class="pd-modal__contenido">
+            <div class="pd-modal__estado">
+                <span>Estado de la cuenta</span>
+                <strong id="pdEstado">—</strong>
+            </div>
+
+            <div class="pd-modal__grid">
+                <article class="pd-modal__dato">
+                    <span>Identificador</span>
+                    <strong id="pdId">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Rol</span>
+                    <strong id="pdRol">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Nombre</span>
+                    <strong id="pdNombre">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Apellidos</span>
+                    <strong id="pdApellidos">—</strong>
+                </article>
+
+                <article class="pd-modal__dato pd-modal__dato--completo">
+                    <span>Correo electrónico</span>
+                    <strong id="pdEmail">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Teléfono</span>
+                    <strong id="pdTelefono">—</strong>
+                </article>
+
+                <article class="pd-modal__dato pd-modal__dato--completo">
+    <span>Contraseña</span>
+    <strong id="pdPassword">Protegida por seguridad</strong>
+</article>
+
+                <article class="pd-modal__dato">
+                    <span>Último acceso</span>
+                    <strong id="pdUltimoAcceso">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Fecha de creación</span>
+                    <strong id="pdFechaCreacion">—</strong>
+                </article>
+
+                <article class="pd-modal__dato">
+                    <span>Última actualización</span>
+                    <strong id="pdFechaActualizacion">—</strong>
+                </article>
+            </div>
+        </div>
+
+        
+<footer class="pd-modal__acciones">
+    <button
+        type="button"
+        class="pd-btn-cerrar"
+        data-detalle-cerrar
+    >
+        Cerrar
+    </button>
+
+    <button
+        type="button"
+        class="pd-btn-accion"
+        id="pdEditar"
+        hidden
+    >
+        Editar datos
+    </button>
+
+    <button
+        type="button"
+        class="pd-btn-accion"
+        id="pdGuardar"
+        hidden
+    >
+        Guardar cambios
+    </button>
+
+    <button
+        type="button"
+        class="pd-btn-cerrar"
+        id="pdCancelarEdicion"
+        hidden
+    >
+        Cancelar edición
+    </button>
+
+    <button
+        type="button"
+        class="pd-btn-estado"
+        id="pdCambiarEstado"
+        hidden
+    >
+        Bloquear cuenta
+    </button>
+</footer>
+</section>
+
+<!-- Confirmación profesional de cambio de estado -->
+<div class="pd-confirmacion" id="pdConfirmacion" aria-hidden="true">
+    <div class="pd-confirmacion__fondo" data-confirmacion-cancelar></div>
+
+    <section
+        class="pd-confirmacion__caja"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="pdConfirmacionTitulo"
+        aria-describedby="pdConfirmacionTexto"
+        tabindex="-1"
+    >
+        <div class="pd-confirmacion__icono" id="pdConfirmacionIcono">
+            <svg id="pdConfirmacionSvg" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                    d="M12 3 2.8 20h18.4L12 3Z M12 9v5m0 3h.01"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </div>
+
+        <span class="pd-confirmacion__etiqueta">MAISON HOTEL · SEGURIDAD</span>
+
+        <h3 id="pdConfirmacionTitulo">¿Confirmas esta acción?</h3>
+
+        <p id="pdConfirmacionTexto">
+            Revisa la acción antes de continuar.
+        </p>
+
+        <div class="pd-confirmacion__acciones">
+            <button type="button" class="pd-confirmacion__cancelar"
+                    data-confirmacion-cancelar>
+                No, volver
+            </button>
+
+            <button type="button" class="pd-confirmacion__aceptar"
+                    id="pdConfirmacionAceptar">
+                Sí, confirmar
+            </button>
+        </div>
+    </section>
+</div>
+<!-- Confirmación de edición, exclusiva del modal de detalles -->
+<div class="pd-toast"
+     id="pdToast"
+     aria-hidden="true"
+     role="status"
+     aria-live="polite">
+
+    <span class="pd-toast__icono">✓</span>
+
+    <div class="pd-toast__contenido">
+        <strong id="pdToastTitulo">¡Datos actualizados!</strong>
+        <p id="pdToastTexto">
+            La información del recepcionista se guardó correctamente.
+        </p>
+    </div>
+</div>
+</div>

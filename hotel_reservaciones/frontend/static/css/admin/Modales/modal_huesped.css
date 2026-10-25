@@ -156,30 +156,6 @@
     color: #963f3f;
 }
 
-.huesped-modal__footer {
-    display: flex;
-    justify-content: flex-end;
-    padding-top: 15px;
-    border-top: 1px solid var(--huesped-border);
-}
-
-.huesped-modal__footer .hab-btn {
-    min-height: 38px;
-    padding: 9px 15px;
-    color: var(--huesped-text);
-    background: #fff;
-    border: 1px solid var(--huesped-border);
-    border-radius: 5px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.huesped-modal__footer .hab-btn:hover {
-    background: #f7f5f0;
-    border-color: #d5cbbb;
-}
-
 body.huesped-modal-active {
     overflow: hidden;
 }

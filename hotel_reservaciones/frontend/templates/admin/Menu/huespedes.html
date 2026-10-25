@@ -35,7 +35,7 @@ Consulta el directorio de huéspedes activos.
 						type="search"
 							placeholder="Buscar huésped o habitación..."
 						autocomplete="off"
-							aria-label="Buscar por huésped, correo, teléfono, identificador o habitación"
+							aria-label="Buscar por huésped, correo, teléfono o habitación"
 					>
 				</label>
 			</div>
@@ -45,7 +45,6 @@ Consulta el directorio de huéspedes activos.
 			<table class="hab-table">
 				<thead>
 					<tr>
-						<th scope="col">ID</th>
 						<th scope="col">Huésped</th>
 						<th scope="col">Correo electrónico</th>
 						<th scope="col">Teléfono</th>
@@ -57,7 +56,7 @@ Consulta el directorio de huéspedes activos.
 				</thead>
 				<tbody id="tablaHuespedes">
 					<tr>
-						<td colspan="8" class="hab-empty">
+						<td colspan="7" class="hab-empty">
 							<span class="hab-loading-spinner" aria-hidden="true"></span>
 							<strong>Cargando huéspedes activos...</strong>
 						</td>
@@ -98,5 +97,6 @@ Consulta el directorio de huéspedes activos.
 {% endblock contenido %}
 
 {% block scripts_pagina %}
+<script src="{{ url_for('static', filename='js/admin/modales/modal_huesped.js') }}" defer></script>
 <script src="{{ url_for('static', filename='js/admin/menu/huespedes.js') }}" defer></script>
 {% endblock scripts_pagina %}

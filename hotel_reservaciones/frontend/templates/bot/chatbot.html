@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asistente Virtual - Hotel</title>
+    
+    <!-- Importamos el CSS usando Jinja2 (Flask) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/chatbot.css') }}">
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">Recepción Virtual</div>
+    
+    <div class="chat-box" id="chat-box">
+        <div class="message bot">¡Hola! Soy tu asistente virtual. ¿En qué puedo ayudarte hoy? (Ej: "Busco habitación para 2 personas del 10 al 12 de noviembre")</div>
+    </div>
+    
+    <div class="chat-input">
+        <input type="text" id="user-input" placeholder="Escribe tu mensaje...">
+        <button onclick="enviarMensaje()">Enviar</button>
+    </div>
+</div>
+
+<!-- Importamos el JS usando Jinja2 -->
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+</body>
+</html>

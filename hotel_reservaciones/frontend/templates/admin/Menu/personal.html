@@ -10,10 +10,8 @@ Administra las cuentas, revisa sus datos y consulta su estado.
 
 {% block estilos_pagina %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/menu/personal.css') }}" >
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/admin/modales/modal_personal.css') }}"
->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/modales/modal_personal.css') }}" >
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/modales/modal_detalle_personal.css') }}" >
 {% endblock estilos_pagina %}
 
 {% block contenido %}
@@ -100,6 +98,24 @@ Administra las cuentas, revisa sus datos y consulta su estado.
 </div>
 
 {% include "admin/Modales/modal_personal.html" %}
+{% include "admin/Modales/modal_detalle_personal.html" %}
+
+<!-- Notificaciones globales de Personal -->
+<div id="personalToast"
+     class="personal-toast"
+     aria-hidden="true"
+     role="status"
+     aria-live="polite">
+
+    <div class="personal-toast__icono" id="personalToastIcono">
+        ✓
+    </div>
+
+    <div class="personal-toast__contenido">
+        <strong id="personalToastTitulo">Operación completada</strong>
+        <p id="personalToastMensaje">Los cambios se guardaron correctamente.</p>
+    </div>
+</div>
 
 {% endblock contenido %}
 
@@ -107,4 +123,5 @@ Administra las cuentas, revisa sus datos y consulta su estado.
 {% block scripts_pagina %}
 <script src="{{ url_for('static', filename='js/admin/menu/personal.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin/modales/modal_personal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/admin/modales/modal_detalle_personal.js') }}"></script>
 {% endblock scripts_pagina %}
