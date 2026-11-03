@@ -12,6 +12,8 @@ Consulta y administra las reservaciones del hotel.
 {# Se reutiliza el CSS de habitaciones para conservar el mismo diseño #}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/habitaciones.css') }}" >
 <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Menu/reservaciones.css') }}" >
+{# El modal tiene su propio CSS, independiente de habitaciones.css #}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin/Modales/modal_reservacion.css') }}" >
 {% endblock estilos_pagina %}
 
 {% block contenido %}
@@ -38,14 +40,6 @@ Consulta y administra las reservaciones del hotel.
         </button>
 
     </div>
-
-    <!-- MENSAJES DEL SISTEMA -->
-    <div
-        id="resMensaje"
-        class="hab-message"
-        role="status"
-        aria-live="polite"
-    ></div>
 
     <!-- RESUMEN DE RESERVACIONES -->
     <div class="hab-summary">
@@ -242,7 +236,7 @@ Consulta y administra las reservaciones del hotel.
                         <th scope="col">Salida</th>
                         <th scope="col">Total</th>
                         <th scope="col">Estado</th>
-                        <th scope="col">Acciones</th>
+                        <th scope="col" id="thAccionesRes">Acciones</th>
                     </tr>
                 </thead>
 
@@ -355,8 +349,11 @@ Consulta y administra las reservaciones del hotel.
 {% endblock contenido %}
 
 {% block scripts_pagina %}
+{# Primero el modal, después la página #}
+<script
+    src="{{ url_for('static', filename='js/admin/Modales/modal_reservacion.js') }}"
+></script>
 <script
     src="{{ url_for('static', filename='js/admin/Menu/reservaciones.js') }}"
 ></script>
-{% endblock scripts_pagina %}
-
+{% endblock scripts_pagina %} 

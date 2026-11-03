@@ -10,20 +10,11 @@
     <div class="res-modal__dialog">
 
         <header class="res-modal__header">
-            <div>
-                <span class="res-modal__eyebrow">Maison Hotel / Reservaciones</span>
-                <h3 id="resModalTitulo">Nueva reservación</h3>
-            </div>
-
-            <button
-                type="button"
-                class="res-modal__close"
-                id="btnCerrarModalRes"
-                aria-label="Cerrar"
-            >&times;</button>
+            <span class="res-modal__eyebrow">Maison Hotel / Reservaciones</span>
+            <h3 id="resModalTitulo">Nueva reservación</h3>
         </header>
 
-        <form id="formReservacion">
+        <form id="formReservacion" novalidate>
 
             <input type="hidden" id="resId">
 
@@ -61,7 +52,7 @@
 
                 <div class="res-field">
                     <label for="resAdultos">Adultos</label>
-                    <input type="number" id="resAdultos" min="1" max="20" value="1" required>
+                    <input type="number" id="resAdultos" min="0" max="20" value="0" required>
                 </div>
 
                 <div class="res-field">
@@ -70,23 +61,26 @@
                 </div>
 
                 <div class="res-field">
-                    <label for="resDescuento">Descuento (MXN)</label>
-                    <input type="number" id="resDescuento" min="0" step="0.01" value="0">
+                    <label for="resEstado">Estado</label>
+                    <select id="resEstado" required>
+                        <option value="">Seleccione</option>
+                    </select>
                 </div>
 
                 <div class="res-field">
-                    <label for="resEstado">Estado</label>
-                    <select id="resEstado" required></select>
-                </div>
-
-                <div class="res-field res-field--full">
                     <label for="resOrigen">Origen</label>
-                    <select id="resOrigen">
+                    <select id="resOrigen" required>
+                        <option value="">Seleccione</option>
                         <option value="RECEPCION">Recepción</option>
                         <option value="TELEFONO">Teléfono</option>
                         <option value="WEB">Web</option>
                         <option value="CHATBOT">Chatbot</option>
                     </select>
+                </div>
+
+                <div class="res-field">
+                    <label for="resDescuento">Descuento (MXN)</label>
+                    <input type="number" id="resDescuento" min="0" step="0.01" value="0">
                 </div>
 
                 <div class="res-field res-field--full">
@@ -123,7 +117,7 @@
     </div>
 </div>
 
-<!-- MODAL DE CONFIRMACIÓN (reemplaza el aviso "localhost dice") -->
+<!-- VENTANA DE CONFIRMACIÓN (cancelar / guardar cambios) -->
 <div
     class="res-modal res-confirm"
     id="modalConfirmarRes"
@@ -136,10 +130,16 @@
     <div class="res-modal__dialog res-confirm__dialog">
 
         <div class="res-confirm__icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" fill="none">
+            <svg class="res-confirm__svg res-confirm__svg--danger" viewBox="0 0 24 24" fill="none">
                 <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
                 <path d="M9 9l6 6m0-6-6 6" stroke="currentColor"
                       stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+
+            <svg class="res-confirm__svg res-confirm__svg--ok" viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="m8.5 12 2.3 2.3 4.7-4.8" stroke="currentColor"
+                      stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
         </div>
 
