@@ -235,7 +235,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <strong class="stat-number">--</strong>
+                        <strong class="stat-number" id="statHabitaciones">--</strong>
                         <span class="stat-description">Total de habitaciones</span>
                     </article>
 
@@ -253,7 +253,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <strong class="stat-number">--</strong>
+                        <strong class="stat-number" id="statReservaciones">--</strong>
                         <span class="stat-description">Reservaciones registradas</span>
                     </article>
 
@@ -273,7 +273,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <strong class="stat-number">--</strong>
+                        <strong class="stat-number" id="statHuespedes">--</strong>
                         <span class="stat-description">Huéspedes registrados</span>
                     </article>
 
@@ -291,7 +291,7 @@
                                 </svg>
                             </span>
                         </div>
-                        <strong class="stat-number">--</strong>
+                        <strong class="stat-number" id="statIngresos">--</strong>
                         <span class="stat-description">Ingresos del periodo</span>
                     </article>
 
@@ -300,9 +300,9 @@
                 <div class="section-heading activity-heading">
                     <div>
                         <h2>Actividad reciente</h2>
-                        <p>Consulta los movimientos de la operación hotelera.</p>
+                        <p>Consulta los movimientos de la operación hotelera.</p> 
                     </div>
-                    < class="text-button" type="button" data-page="reservaciones">
+                    <class="text-button" type="button">
                         Ver reservaciones
                     </a>
                 </div>
@@ -363,7 +363,8 @@
         <div class="sidebar-divider"></div>
         <span class="menu-label">MENÚ PRINCIPAL</span>
 
-        <nav class="side-nav" aria-label="Navegación principal">
+        <nav class="side-nav" aria-label="Navegación principal"> 
+            
 
             <a class="nav-item {% if request.endpoint == 'admin.admin_inicio_view' %}active{% endif %}"
    href="{{ url_for('admin.admin_inicio_view') }}">
@@ -407,8 +408,8 @@
     <span>Habitaciones</span>
 </a>
 
-                <a class="nav-item {% if request.endpoint == 'admin.vista_huespedes' %}active{% endif %}"
-                    href="{{ url_for('admin.vista_huespedes') }}">
+                <a class="nav-item {% if request.endpoint == 'huespedes.vista_huespedes' %}active{% endif %}"
+                    href="{{ url_for('huespedes.vista_huespedes') }}">
                 <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <circle cx="9" cy="8" r="4"
                             stroke="currentColor" stroke-width="1.6"/>

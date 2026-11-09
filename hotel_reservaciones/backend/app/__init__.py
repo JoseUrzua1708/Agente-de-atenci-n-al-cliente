@@ -10,6 +10,8 @@ from app.routes.habitaciones_routes import HabitacionesRoutes
 from app.routes.reservaciones_routes import ReservacionesRoutes
 from app.routes.routes_cliente.cliente_routes import cliente_bp
 from app.routes.usuarios_routes import UsuariosRoutes
+from app.routes.huespedes_routes import huespedes_bp
+from app.routes.pagos_routes import PagosRoutes
 
 def create_app():
     # Apuntamos la carpeta de templates y estáticos
@@ -44,10 +46,10 @@ def create_app():
     auth_routes = AuthRoutes()
     app.register_blueprint(auth_routes.get_blueprint())
     app.register_blueprint(admin_bp)
+    app.register_blueprint(huespedes_bp)
     app.register_blueprint(register_bp)
     app.register_blueprint(recovery_bp)
     app.register_blueprint(recepcion_bp)
-    
 
     app.register_blueprint(PerfilRoutes().get_blueprint())
     habitaciones_routes = HabitacionesRoutes(url_prefix="/admin")
@@ -55,6 +57,9 @@ def create_app():
     
     reservaciones_routes = ReservacionesRoutes(url_prefix="/admin")
     app.register_blueprint(reservaciones_routes.get_blueprint())
+
+    pagos_routes = PagosRoutes(url_prefix="/admin")
+    app.register_blueprint(pagos_routes.get_blueprint())
     
     app.register_blueprint(cliente_bp)
 

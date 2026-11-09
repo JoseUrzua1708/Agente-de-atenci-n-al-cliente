@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarModalCerrarSesion();
     cargarPerfilUsuario();
     inicializarNotificaciones();
+    cargarIndicadoresHotel();
 });
 
 
@@ -670,3 +671,128 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+/* ========================================
+   INDICADORES DEL HOTEL
+======================================== */
+
+
+
+async function cargarIndicadoresHotel() {
+    const habitaciones = document.getElementById("statHabitaciones");
+    const reservaciones = document.getElementById("statReservaciones");
+    const huespedes = document.getElementById("statHuespedes");
+    const ingresos = document.getElementById("statIngresos");
+
+    // INDICADOR DE HABITACIONES
+    if (habitaciones) {
+        try {
+            const respuesta = await fetch("/admin/habitaciones/indicadores", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: { "Accept": "application/json" }
+            });
+
+            const datos = await respuesta.json();
+
+            if (respuesta.status === 401 && datos.redirect) {
+                window.location.assign(datos.redirect);
+                return;
+            }
+
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "Error al cargar habitaciones.");
+            }
+
+            habitaciones.textContent = datos.total;
+        } catch (error) {
+            console.error("Error en indicador de habitaciones:", error);
+            habitaciones.textContent = "--";
+        }
+    }
+
+    // INDICADOR DE RESERVACIONES
+    if (reservaciones) {
+        try {
+            const respuesta = await fetch("/admin/reservaciones/indicadores", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: { "Accept": "application/json" }
+            });
+
+            const datos = await respuesta.json();
+
+            if (respuesta.status === 401 && datos.redirect) {
+                window.location.assign(datos.redirect);
+                return;
+            }
+
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "Error al cargar reservaciones.");
+            }
+
+            reservaciones.textContent = datos.total;
+        } catch (error) {
+            console.error("Error en indicador de reservaciones:", error);
+            reservaciones.textContent = "--";
+        }
+    }
+
+    // INDICADOR DE HUÉSPEDES
+    if (huespedes) {
+        try {
+            const respuesta = await fetch("/admin/huespedes/indicadores", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: { "Accept": "application/json" }
+            });
+
+            const datos = await respuesta.json();
+
+            if (respuesta.status === 401 && datos.redirect) {
+                window.location.assign(datos.redirect);
+                return;
+            }
+
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "Error al cargar huéspedes.");
+            }
+
+            huespedes.textContent = datos.total;
+        } catch (error) {
+            console.error("Error en indicador de huéspedes:", error);
+            huespedes.textContent = "--";
+        }
+    }
+
+    // INDICADOR DE INGRESOS
+    if (ingresos) {
+        try {
+            const respuesta = await fetch("/admin/pagos/indicadores", {
+                method: "GET",
+                credentials: "same-origin",
+                headers: { "Accept": "application/json" }
+            });
+
+            const datos = await respuesta.json();
+
+            if (respuesta.status === 401 && datos.redirect) {
+                window.location.assign(datos.redirect);
+                return;
+            }
+
+            if (!respuesta.ok || !datos.success) {
+                throw new Error(datos.message || "Error al cargar ingresos.");
+            }
+
+            ingresos.textContent = Number(datos.total).toLocaleString("es-MX", {
+                style: "currency",
+                currency: "MXN"
+            });
+
+        } catch (error) {
+            console.error("Error en indicador de ingresos:", error);
+            ingresos.textContent = "--";
+        }
+    }
+}

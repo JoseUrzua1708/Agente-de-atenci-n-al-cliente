@@ -37,6 +37,10 @@ class HabitacionesRoutes:
         def listar_habitaciones():
             return HabitacionesController.listar_habitaciones()
 
+        @self.blueprint.route("/habitaciones/indicadores", methods=["GET"])
+        def indicadores_habitaciones():
+            return HabitacionesController.obtener_indicadores()
+
         @self.blueprint.route("/habitaciones/api", methods=["POST"])
         def crear_habitacion():
             data = request.get_json()

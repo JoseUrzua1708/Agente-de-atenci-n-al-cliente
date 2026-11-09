@@ -1,11 +1,8 @@
 import logging
-
 from flask import jsonify
 from app.config.database import db
 
-
 logger = logging.getLogger("HuespedesController")
-
 
 class HuespedesController:
     @staticmethod
@@ -126,6 +123,43 @@ class HuespedesController:
                 "success": False,
                 "message": "No fue posible consultar el huésped."
             }), 500
+        finally:
+            if cursor:
+                cursor.close()
+            if conexion:
+                conexion.close()
+
+    @staticmethod
+    def obtener_indicadores():
+        conexion = None
+        cursor = None
+
+        try:
+            conexion = db.get_connection()
+            cursor = conexion.cursor(dictionary=True)
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM clientes c
+                INNER JOIN usuarios u ON u.id = c.usuario_id
+                WHERE u.rol_id = 3
+                  AND u.estado = 'ACTIVO'
+            """)
+
+            resultado = cursor.fetchone()
+
+            return jsonify({
+                "success": True,
+                "total": int(resultado["total"] or 0)
+            }), 200
+
+        except Exception:
+            logger.exception("Error al obtener indicadores de huéspedes.")
+            return jsonify({
+                "success": False,
+                "message": "No se pudieron cargar los indicadores."
+            }), 500
+
         finally:
             if cursor:
                 cursor.close()

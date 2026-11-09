@@ -277,6 +277,44 @@ class ReservacionesController:
                 )
             )
 
+    @staticmethod
+    def obtener_indicadores():
+        error_sesion = ReservacionesController._verificar_sesion_admin()
+        if error_sesion:
+            return error_sesion
+
+        conexion = None
+        cursor = None
+
+        try:
+            conexion = db.get_connection()
+            cursor = conexion.cursor(dictionary=True)
+
+            cursor.execute("""
+                SELECT COUNT(*) AS total
+                FROM reservaciones
+            """)
+
+            resultado = cursor.fetchone()
+
+            return jsonify({
+                "success": True,
+                "total": int(resultado["total"] or 0)
+            }), 200
+
+        except Exception:
+            logger.exception("Error al obtener indicadores de reservaciones")
+            return jsonify({
+                "success": False,
+                "message": "No se pudieron cargar los indicadores."
+            }), 500
+
+        finally:
+            if cursor:
+                cursor.close()
+            if conexion:
+                conexion.close() 
+
     # ------------------------------------------------------------
     # CONSULTAS
     # ------------------------------------------------------------

@@ -45,6 +45,10 @@ class ReservacionesRoutes:
         def listar_reservaciones():
             return ReservacionesController.listar_reservaciones()
 
+        @self.blueprint.route("/reservaciones/indicadores", methods=["GET"])
+        def indicadores_reservaciones():
+            return ReservacionesController.obtener_indicadores()
+
         @self.blueprint.route("/reservaciones/api", methods=["POST"])
         def crear_reservacion():
             data = request.get_json(silent=True)

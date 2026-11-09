@@ -1,26 +1,14 @@
-from flask import (
-    Blueprint,
-    render_template,
-    session,
-    jsonify,
-    url_for,
-    request,
-)
+from flask import ( Blueprint, render_template, session, jsonify, url_for, request, )
 
 from app.controllers.auth_controller import AuthController
 from app.controllers.perfil_controller import PerfilController
-from app.controllers.huespedes_controller import HuespedesController
 from app.config.database import db
 
 import logging
 
 logger = logging.getLogger("SecurityAuditor")
 
-admin_bp = Blueprint(
-    "admin",
-    __name__,
-    url_prefix="/admin"
-)
+admin_bp = Blueprint( "admin", __name__, url_prefix="/admin" )
 
 
 # ============================================================
@@ -143,34 +131,6 @@ def _verificar_cuenta_admin_activa():
             conexion.close()
 
     return None
-
-
-@admin_bp.route("/huespedes", methods=["GET"], endpoint="vista_huespedes")
-def vista_huespedes():
-    error = _verificar_cuenta_admin_activa()
-    if error:
-        return error
-    return render_template("admin/Menu/huespedes.html")
-
-
-@admin_bp.route("/huespedes/api", methods=["GET"], endpoint="listar_huespedes")
-def listar_huespedes():
-    error = _verificar_cuenta_admin_activa()
-    if error:
-        return error
-    return HuespedesController.listar_huespedes()
-
-
-@admin_bp.route(
-    "/huespedes/<int:huesped_id>",
-    methods=["GET"],
-    endpoint="obtener_huesped"
-)
-def obtener_huesped(huesped_id):
-    error = _verificar_cuenta_admin_activa()
-    if error:
-        return error
-    return HuespedesController.obtener_huesped(huesped_id)
 
 
 @admin_bp.route("/notificaciones/api", methods=["GET"])
