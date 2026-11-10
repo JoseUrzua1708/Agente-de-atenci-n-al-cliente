@@ -277,6 +277,10 @@ class ReservacionesController:
                 )
             )
 
+    # ------------------------------------------------------------
+    # INDICADORES
+    # ------------------------------------------------------------
+
     @staticmethod
     def obtener_indicadores():
         error_sesion = ReservacionesController._verificar_sesion_admin()
@@ -314,6 +318,61 @@ class ReservacionesController:
                 cursor.close()
             if conexion:
                 conexion.close() 
+
+
+    # ------------------------------------------------------------
+    # ACTIVIDAD RECIENTE
+    # ------------------------------------------------------------
+    @staticmethod
+    def obtener_actividad_reciente():
+        error_sesion = ReservacionesController._verificar_sesion_admin()
+        if error_sesion:
+            return error_sesion
+
+        conexion = None
+        cursor = None
+
+        try:
+            conexion = db.get_connection()
+            cursor = conexion.cursor(dictionary=True)
+
+            cursor.execute("""
+                SELECT
+                    r.id,
+                    r.codigo_reservacion,
+                    CONCAT(c.nombre, ' ', COALESCE(c.apellidos, '')) AS cliente,
+                    h.numero AS habitacion,
+                    r.estado,
+                    DATE_FORMAT(
+                        r.fecha_reservacion,
+                        '%Y-%m-%d %H:%i:%s'
+                    ) AS fecha
+                FROM reservaciones r
+                INNER JOIN clientes c ON c.id = r.cliente_id
+                INNER JOIN habitaciones h ON h.id = r.habitacion_id
+                ORDER BY r.fecha_reservacion DESC, r.id DESC
+                LIMIT 10
+            """)
+
+            actividades = cursor.fetchall()
+
+            return jsonify({
+                "success": True,
+                "actividades": actividades
+            }), 200
+
+        except Exception:
+            logger.exception("Error al obtener actividad reciente.")
+            return jsonify({
+                "success": False,
+                "message": "No se pudo cargar la actividad reciente."
+            }), 500
+
+        finally:
+            if cursor:
+                cursor.close()
+            if conexion:
+                conexion.close()
 
     # ------------------------------------------------------------
     # CONSULTAS

@@ -1935,3 +1935,226 @@ body.logout-modal-active {
     overflow: hidden !important;
     overscroll-behavior: none !important;
 }
+.text-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    background-color: #8b7355;
+    color: #ffffff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.text-button:hover {
+    background-color: #705b43;
+    color: #ffffff;
+    text-decoration: none;
+}
+/* CARGA DE ACTIVIDAD RECIENTE */
+.activity-loading {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.activity-spinner {
+    width: 38px;
+    height: 38px;
+    border: 3px solid #e8e1d8;
+    border-top-color: #8b7355;
+    border-radius: 50%;
+    animation: activitySpin 0.8s linear infinite;
+}
+
+.activity-loading h3 {
+    margin: 4px 0 0;
+    font-size: 15px;
+    color: #443b32;
+}
+
+.activity-loading p {
+    margin: 0;
+    font-size: 13px;
+    color: #888078;
+}
+
+@keyframes activitySpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+/* LISTA DE ACTIVIDAD RECIENTE */
+.activity-list {
+    max-height: 304px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: #c8b9a6 #f5f0e8;
+}
+
+.activity-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.activity-list::-webkit-scrollbar-track {
+    background: #f5f0e8;
+}
+
+.activity-list::-webkit-scrollbar-thumb {
+    background: #c8b9a6;
+    border-radius: 10px;
+}
+
+.activity-item {
+    box-sizing: border-box;
+    min-height: 76px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #eee9e2;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+/* CONTROLES DE ACTIVIDAD RECIENTE */
+.activity-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    width: 100%;
+}
+
+.activity-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.activity-controls label {
+    color: #888078;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.activity-filter-wrapper {
+    position: relative;
+    width: 190px;
+}
+
+.activity-filter {
+    width: 100%;
+    min-height: 38px;
+    padding: 10px 30px 10px 12px;
+    border: 1px solid #e8e1d8;
+    border-radius: 8px;
+    background-color: #fff;
+    color: #443b32;
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.activity-filter:focus {
+    border-color: #8b7355;
+}
+
+.activity-filter-arrow {
+    width: 8px;
+    height: 8px;
+    border-right: 1.5px solid #8b7355;
+    border-bottom: 1.5px solid #8b7355;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+}
+
+.activity-filter-wrapper.is-open .activity-filter-arrow {
+    transform: rotate(225deg);
+}
+
+.activity-filter-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    width: 100%;
+    z-index: 20;
+    background: #fff;
+    border: 1px solid #e8e1d8;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.activity-filter-menu button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    background: #fff;
+    color: #443b32;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.activity-filter-menu button:hover:not(:disabled) {
+    background: #f5f0e8;
+}
+
+.activity-filter-menu button:disabled {
+    color: #aaa39b;
+    cursor: not-allowed;
+}
+
+/* TARJETA DE ACTIVIDAD */
+.activity-card {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+    .activity-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .activity-controls {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .activity-filter-wrapper {
+        flex: 1;
+        width: auto;
+        min-width: 0;
+    }
+
+    .activity-item {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .activity-item__date {
+        font-size: 11px;
+    }
+}

@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarPerfilUsuario();
     inicializarNotificaciones();
     cargarIndicadoresHotel();
+    cargarActividadReciente();
+    mostrarFechaIndicadores();
 });
 
 
@@ -794,5 +796,204 @@ async function cargarIndicadoresHotel() {
             console.error("Error en indicador de ingresos:", error);
             ingresos.textContent = "--";
         }
+    }
+}
+function mostrarFechaIndicadores() {
+    const elemento = document.getElementById("currentDate");
+
+    if (!elemento) return;
+
+    const fecha = new Date();
+
+    elemento.textContent = fecha.toLocaleDateString("es-MX", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+    });
+}
+/* ========================================
+   ACTIVIDAD RECIENTE DEL HOTEL
+======================================== */
+
+async function cargarActividadReciente() {
+    const contenedor = document.getElementById("activityCard");
+    const filtro = document.getElementById("activityFilter");
+
+    // CONTROL DEL FILTRO Y ANIMACIÓN DE LA FLECHA
+const dropdown = document.getElementById("activityFilterButton");
+
+if (dropdown && filtro) {
+    const wrapper = dropdown.parentElement;
+    const menu = wrapper.querySelector(".activity-filter-menu");
+    const texto = document.getElementById("activityFilterTexto");
+
+    function cerrarFiltro() {
+        wrapper.classList.remove("is-open");
+        dropdown.setAttribute("aria-expanded", "false");
+        menu.hidden = true;
+    }
+
+    dropdown.addEventListener("click", () => {
+        const abierto = !wrapper.classList.contains("is-open");
+
+        wrapper.classList.toggle("is-open", abierto);
+        dropdown.setAttribute("aria-expanded", String(abierto));
+        menu.hidden = !abierto;
+    });
+
+    menu.querySelectorAll("[data-value]").forEach(opcion => {
+        opcion.addEventListener("click", () => {
+            filtro.value = opcion.dataset.value;
+            texto.textContent = opcion.textContent.trim();
+
+            filtro.dispatchEvent(new Event("change"));
+
+            cerrarFiltro();
+        });
+    });
+
+    document.addEventListener("click", evento => {
+        if (!wrapper.contains(evento.target)) {
+            cerrarFiltro();
+        }
+    });
+
+    document.addEventListener("keydown", evento => {
+        if (evento.key === "Escape") {
+            cerrarFiltro();
+        }
+    });
+}
+
+    if (!contenedor) return;
+
+    let actividades = [];
+
+    function mostrarMensaje(titulo, mensaje) {
+        const estado = document.createElement("div");
+        estado.className = "activity-empty";
+
+        const encabezado = document.createElement("h3");
+        encabezado.textContent = titulo;
+
+        const descripcion = document.createElement("p");
+        descripcion.textContent = mensaje;
+
+        estado.append(encabezado, descripcion);
+        contenedor.replaceChildren(estado);
+    }
+
+    function renderizarActividades() {
+        const lista = document.createElement("div");
+        lista.className = "activity-list";
+
+        if (actividades.length === 0) {
+            mostrarMensaje(
+                "Sin actividad reciente",
+                "Cuando se registren reservaciones, aparecerán aquí."
+            );
+            return;
+        }
+
+        actividades.forEach(actividad => {
+            const elemento = document.createElement("article");
+            elemento.className = "activity-item";
+
+            const icono = document.createElement("div");
+            icono.className = "activity-item__icon";
+            icono.textContent = "📅";
+
+            const contenido = document.createElement("div");
+            contenido.className = "activity-item__content";
+
+            const titulo = document.createElement("strong");
+            titulo.textContent = "Reservación registrada";
+
+            const descripcion = document.createElement("p");
+            descripcion.textContent =
+                `${actividad.codigo_reservacion || "Sin código"} · ` +
+                `${actividad.cliente || "Cliente no disponible"} · ` +
+                `Habitación ${actividad.habitacion || "N/D"}`;
+
+            const estado = document.createElement("span");
+            estado.className = "activity-item__status";
+            estado.textContent = actividad.estado || "Sin estado";
+
+            contenido.append(titulo, descripcion, estado);
+
+            const fecha = document.createElement("time");
+            fecha.className = "activity-item__date";
+
+            if (actividad.fecha) {
+                const fechaLocal = new Date(
+                    actividad.fecha.replace(" ", "T")
+                );
+
+                if (!Number.isNaN(fechaLocal.getTime())) {
+                    fecha.dateTime = actividad.fecha.replace(" ", "T");
+
+                    fecha.textContent = fechaLocal.toLocaleString("es-MX", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    });
+                } else {
+                    fecha.textContent = actividad.fecha;
+                }
+            }
+
+            elemento.append(icono, contenido, fecha);
+            lista.appendChild(elemento);
+        });
+
+        contenedor.replaceChildren(lista);
+    }
+
+    // Cambiar el filtro sin volver a consultar el servidor.
+    if (filtro) {
+        filtro.addEventListener("change", renderizarActividades);
+    }
+
+    try {
+        const respuesta = await fetch(
+            "/admin/reservaciones/actividad-reciente",
+            {
+                method: "GET",
+                credentials: "same-origin",
+                headers: {
+                    "Accept": "application/json"
+                }
+            }
+        );
+
+        const datos = await respuesta.json();
+
+        if (respuesta.status === 401 && datos.redirect) {
+            window.location.assign(datos.redirect);
+            return;
+        }
+
+        if (!respuesta.ok || !datos.success) {
+            throw new Error(
+                datos.message || "No se pudo cargar la actividad reciente."
+            );
+        }
+
+        actividades = Array.isArray(datos.actividades)
+            ? datos.actividades
+            : [];
+
+        renderizarActividades();
+
+    } catch (error) {
+        console.error("Error al cargar actividad reciente:", error);
+
+        mostrarMensaje(
+            "No se pudo cargar la actividad",
+            "Intenta actualizar la página nuevamente."
+        );
     }
 }
