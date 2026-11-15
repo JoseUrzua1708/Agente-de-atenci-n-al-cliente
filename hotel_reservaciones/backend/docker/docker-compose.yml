@@ -13,19 +13,19 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ../database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/1_schema.sql
     networks:
       - hotel_network
 
   # Servicio del Backend (Python / Flask)
   backend:
     build:
-      context: ../backend
-      dockerfile: ../docker/Dockerfile
+      context: .
+      dockerfile: Dockerfile
     container_name: hotel_backend_app
     restart: always
     ports:
-      - "4005:4005"  # <--- Actualizado al puerto 4005
+      - "4005:4005"
     environment:
       - DB_HOST=db
       - DB_PORT=3306
@@ -35,7 +35,7 @@ services:
       - SECRET_KEY=${SECRET_KEY}
       - PORT=4005
     env_file:
-      - ../backend/.env
+      - .env
     depends_on:
       - db
     networks:
